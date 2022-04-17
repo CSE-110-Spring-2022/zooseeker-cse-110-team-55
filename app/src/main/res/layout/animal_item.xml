@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginTop="8dp">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp">
+        <TextView
+            android:id="@+id/animal_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@+id/animal_distance"
+            android:text="Animal"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
+
+        <CheckBox
+            android:id="@+id/animal_checked"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            tools:text=" " />
+
+        <TextView
+            android:id="@+id/animal_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/animal_name"
+            android:text="Location" />
+
+        <TextView
+            android:id="@+id/animal_distance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@+id/animal_checked"
+            android:text="100 Feet Away"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>
