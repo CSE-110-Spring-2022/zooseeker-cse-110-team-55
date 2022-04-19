@@ -8,6 +8,8 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import com.example.zooseeker.models.Animal;
+
 import java.util.List;
 import java.util.concurrent.Executors;
 

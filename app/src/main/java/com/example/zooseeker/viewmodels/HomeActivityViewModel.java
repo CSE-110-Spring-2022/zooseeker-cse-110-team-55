@@ -1,5 +1,6 @@
 package com.example.zooseeker.viewmodels;
 
+import androidx.databinding.ObservableInt;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -8,15 +9,38 @@ import com.example.zooseeker.models.Animal;
 
 import java.util.ArrayList;
 import java.util.*;
+import java.util.stream.Collectors;
 
-public class MainActivityViewModel extends ViewModel {
-    private MutableLiveData<List<Animal>> animals;
+public class HomeActivityViewModel extends ViewModel {
+    // List of animals to be displayed
+    private List<Animal> _animals = new ArrayList<>();
+    private MutableLiveData<List<Animal>> animals = new MutableLiveData<>();
+
+
+    // List of selected animals
+    private List<Animal> _selectedAnimals = new ArrayList<>();
+    private MutableLiveData<List<Animal>> selectedAnimals = new MutableLiveData<>();
+    public ObservableInt numSelectedAnimals = new ObservableInt(0);
 
     // Constructor
-    public MainActivityViewModel() {
+    public HomeActivityViewModel() {
         // TODO: Instantiate repository instance
         initAnimals();
     }
+
+    public void toggleSelectedAnimal(Animal animal) {
+        if (_selectedAnimals.contains(animal)) {
+            _selectedAnimals.remove(animal);
+            numSelectedAnimals.set(numSelectedAnimals.get() - 1);
+        } else {
+            _selectedAnimals.add(animal);
+            numSelectedAnimals.set(numSelectedAnimals.get() + 1);
+        }
+
+        selectedAnimals.setValue(_selectedAnimals);
+    }
+
+    public LiveData<List<Animal>> getSelectedAnimals() { return selectedAnimals; }
 
     public LiveData<List<Animal>> getAnimals() {
         return animals;
@@ -27,7 +51,6 @@ public class MainActivityViewModel extends ViewModel {
     }
 
     private void initAnimals() {
-        animals = new MutableLiveData<>();
         animals.setValue(new ArrayList<>(
                 Arrays.asList(
                         new Animal("Animal One", "Location 1"),

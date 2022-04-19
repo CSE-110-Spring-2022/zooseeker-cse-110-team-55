@@ -28,8 +28,7 @@
             android:name=".PlanActivity"
             android:exported="false" />
 
-        <activity
-            android:name=".MainActivity"
+        <activity android:name=".activities.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
