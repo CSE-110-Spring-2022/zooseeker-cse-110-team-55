@@ -31,12 +31,11 @@ public class HomeActivityViewModel extends ViewModel {
     public void toggleSelectedAnimal(Animal animal) {
         if (_selectedAnimals.contains(animal)) {
             _selectedAnimals.remove(animal);
-            numSelectedAnimals.set(numSelectedAnimals.get() - 1);
         } else {
             _selectedAnimals.add(animal);
-            numSelectedAnimals.set(numSelectedAnimals.get() + 1);
         }
 
+        numSelectedAnimals.set(_selectedAnimals.size());
         selectedAnimals.setValue(_selectedAnimals);
     }
 
