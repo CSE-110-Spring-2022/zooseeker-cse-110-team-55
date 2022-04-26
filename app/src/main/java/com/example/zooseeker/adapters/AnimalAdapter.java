@@ -73,7 +73,7 @@ public class AnimalAdapter extends RecyclerView.Adapter<AnimalAdapter.AnimalHold
             super(itemView);
             animalName = itemView.findViewById(R.id.animal_name);
             checkBox = itemView.findViewById(R.id.animal_checked);
-            checkBox.setActivated(false);
+            checkBox.setClickable(false);
             this.onAnimalClickListener = onAnimalClickListener;
 
             itemView.setOnClickListener(this);

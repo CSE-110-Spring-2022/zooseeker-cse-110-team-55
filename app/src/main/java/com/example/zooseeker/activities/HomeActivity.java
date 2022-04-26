@@ -54,6 +54,7 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
 
     @Override
     public void onAnimalClick(int position) {
+       // Log.d("selected animal", String.valueOf(position));
         Animal selectedAnimal = viewModel.getAnimals().getValue().get(position);
         viewModel.toggleSelectedAnimal(selectedAnimal);
     }
