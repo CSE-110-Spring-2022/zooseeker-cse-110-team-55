@@ -1,5 +1,11 @@
 <resources>
     <string name="app_name">ZooSeeker</string>
+
     <string name="exhibit_left">0</string>
     <string name="planned_count">0</string>
+
+    <string name="app_label">ZooSeeker</string>
+    <string name="search_hint">Search here</string>
+
+
 </resources>

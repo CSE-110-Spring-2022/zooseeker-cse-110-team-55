@@ -24,6 +24,9 @@ public class MainActivity extends AppCompatActivity {
         viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
 
         // TODO: Observe changes of LiveData objects
+
+        Intent intent = new Intent (this, SearchActivity.class);
+        startActivity(intent);
     }
 
     public void onLaunchPlanClicked(View view) {
