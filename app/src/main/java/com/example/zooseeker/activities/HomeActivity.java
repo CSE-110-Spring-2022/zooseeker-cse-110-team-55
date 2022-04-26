@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.SearchView;
 
@@ -65,7 +66,10 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
     }
 
     @Override
-    public boolean onQueryTextChange(String s) {
-        return false;
+    public boolean onQueryTextChange(String query) {
+        List<Animal> results = viewModel.searchInDatabase(this, query);
+        // TODO: Implement autocomplete
+        Log.d("[HomeActivity]", String.valueOf(results.size()));
+        return true;
     }
 }
