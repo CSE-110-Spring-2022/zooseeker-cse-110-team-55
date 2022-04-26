@@ -3,20 +3,18 @@ package com.example.zooseeker;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
 import java.util.List;
 
-public class SearchActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
-
+        setContentView(R.layout.activity_home);
         // Get the intent, verify the action and get the query
         Intent intent = getIntent();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
@@ -34,8 +32,5 @@ public class SearchActivity extends AppCompatActivity {
         return animalItems;
 
     }
-
-
-
 
 }
