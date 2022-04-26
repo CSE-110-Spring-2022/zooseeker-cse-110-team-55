@@ -1,6 +1,7 @@
 package com.example.zooseeker.viewmodels;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.databinding.ObservableInt;
 import androidx.lifecycle.LiveData;
@@ -32,6 +33,8 @@ public class HomeActivityViewModel extends ViewModel {
     }
 
     public void toggleSelectedAnimal(Animal animal) {
+
+        Log.d("selected animal", animal.name);
         Optional<Animal> potentialMatch = _selectedAnimals
                 .stream()
                 .filter(a -> a.name.equals(animal.name))
@@ -45,6 +48,7 @@ public class HomeActivityViewModel extends ViewModel {
         }
 
         numSelectedAnimals.set(_selectedAnimals.size());
+       // Log.d("array_size", String.valueOf(_selectedAnimals.size()));
         selectedAnimals.setValue(_selectedAnimals);
     }
 
