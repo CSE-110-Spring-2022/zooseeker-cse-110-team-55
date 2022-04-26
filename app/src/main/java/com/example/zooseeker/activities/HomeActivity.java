@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.SearchView;
 
 import com.example.zooseeker.repositories.AnimalDatabase;
 import com.example.zooseeker.models.AnimalItemDao;
@@ -21,7 +22,7 @@ import com.example.zooseeker.viewmodels.HomeActivityViewModel;
 
 import java.util.List;
 
-public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnAnimalClickListener {
+public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnAnimalClickListener, SearchView.OnQueryTextListener {
     private ActivityHomeBinding binding;
     private HomeActivityViewModel viewModel;
 
@@ -44,6 +45,8 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
         rv.setAdapter(adapter);
 
         viewModel.getAnimals().observe(this, adapter::setAnimals);
+
+        binding.search.setOnQueryTextListener(this);
 
         // Get the intent, verify the action and get the query
         Intent intent = getIntent();
@@ -74,6 +77,13 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
         viewModel.toggleSelectedAnimal(selectedAnimal);
     }
 
+    @Override
+    public boolean onQueryTextSubmit(String s) {
+        throw new UnsupportedOperationException("Method not yet implemented");
+    }
 
-
+    @Override
+    public boolean onQueryTextChange(String s) {
+        throw new UnsupportedOperationException("Method not yet implemented");
+    }
 }
