@@ -1,4 +1,4 @@
-package com.example.zooseeker;
+package com.example.zooseeker.models;
 
 import androidx.room.Dao;
 import androidx.room.Delete;

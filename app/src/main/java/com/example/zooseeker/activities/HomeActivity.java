@@ -1,4 +1,4 @@
-package com.example.zooseeker;
+package com.example.zooseeker.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -11,9 +11,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import com.example.zooseeker.repositories.AnimalDatabase;
+import com.example.zooseeker.models.AnimalItemDao;
+import com.example.zooseeker.R;
 import com.example.zooseeker.adapters.AnimalAdapter;
 import com.example.zooseeker.databinding.ActivityHomeBinding;
-import com.example.zooseeker.databinding.ActivityMainBinding;
 import com.example.zooseeker.models.Animal;
 import com.example.zooseeker.viewmodels.HomeActivityViewModel;
 
@@ -25,6 +27,8 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
         // Create viewmodel instance
         viewModel = new ViewModelProvider(this).get(HomeActivityViewModel.class);
         // Set view binding
@@ -39,8 +43,8 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
         AnimalAdapter adapter = new AnimalAdapter(this);
         rv.setAdapter(adapter);
 
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+        viewModel.getAnimals().observe(this, adapter::setAnimals);
+
         // Get the intent, verify the action and get the query
         Intent intent = getIntent();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {

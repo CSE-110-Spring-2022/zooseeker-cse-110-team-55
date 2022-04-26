@@ -10,8 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ZooSeeker">
         <activity
-<<<<<<< HEAD
-            android:name=".HomeActivity"
+            android:name=".activities.HomeActivity"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
@@ -23,19 +22,13 @@
         </activity>
 
         <activity
-            android:name=".DirectionActivity"
+            android:name=".activities.DirectionActivity"
             android:exported="false" />
         <activity
-            android:name=".PlanActivity"
+            android:name=".activities.PlanActivity"
             android:exported="false" />
 
         <activity android:name=".activities.MainActivity"
-=======
-            android:name=".activities.AnimalListActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activities.MainActivity"
->>>>>>> dfad0fc (RecyclerView layout and logic)
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

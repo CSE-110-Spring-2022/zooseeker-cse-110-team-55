@@ -11,11 +11,7 @@ import java.util.ArrayList;
 import java.util.*;
 import java.util.stream.Collectors;
 
-<<<<<<<< HEAD:app/src/main/java/com/example/zooseeker/viewmodels/HomeActivityViewModel.java
 public class HomeActivityViewModel extends ViewModel {
-========
-public class AnimalListViewModel extends ViewModel {
->>>>>>>> dfad0fc (RecyclerView layout and logic):app/src/main/java/com/example/zooseeker/viewmodels/AnimalListViewModel.java
     // List of animals to be displayed
     private List<Animal> _animals = new ArrayList<>();
     private MutableLiveData<List<Animal>> animals = new MutableLiveData<>();
@@ -27,11 +23,7 @@ public class AnimalListViewModel extends ViewModel {
     public ObservableInt numSelectedAnimals = new ObservableInt(0);
 
     // Constructor
-<<<<<<<< HEAD:app/src/main/java/com/example/zooseeker/viewmodels/HomeActivityViewModel.java
     public HomeActivityViewModel() {
-========
-    public AnimalListViewModel() {
->>>>>>>> dfad0fc (RecyclerView layout and logic):app/src/main/java/com/example/zooseeker/viewmodels/AnimalListViewModel.java
         // TODO: Instantiate repository instance
         initAnimals();
     }

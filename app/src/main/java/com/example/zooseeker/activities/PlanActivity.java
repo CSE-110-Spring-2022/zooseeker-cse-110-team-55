@@ -1,10 +1,13 @@
-package com.example.zooseeker;
+package com.example.zooseeker.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+
+import com.example.zooseeker.R;
+import com.example.zooseeker.activities.DirectionActivity;
 
 public class PlanActivity extends AppCompatActivity {
 
