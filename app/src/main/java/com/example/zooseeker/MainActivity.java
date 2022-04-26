@@ -4,7 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import com.example.zooseeker.databinding.ActivityMainBinding;
 import com.example.zooseeker.viewmodels.MainActivityViewModel;
@@ -22,5 +24,10 @@ public class MainActivity extends AppCompatActivity {
         viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
 
         // TODO: Observe changes of LiveData objects
+    }
+
+    public void onLaunchPlanClicked(View view) {
+        Intent intent = new Intent(this, PlanActivity.class);
+        startActivity(intent);
     }
 }
