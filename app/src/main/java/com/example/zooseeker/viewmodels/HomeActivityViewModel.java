@@ -9,13 +9,11 @@ import com.example.zooseeker.models.Animal;
 
 import java.util.ArrayList;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class HomeActivityViewModel extends ViewModel {
     // List of animals to be displayed
     private List<Animal> _animals = new ArrayList<>();
     private MutableLiveData<List<Animal>> animals = new MutableLiveData<>();
-
 
     // List of selected animals
     private List<Animal> _selectedAnimals = new ArrayList<>();
@@ -25,7 +23,7 @@ public class HomeActivityViewModel extends ViewModel {
     // Constructor
     public HomeActivityViewModel() {
         // TODO: Instantiate repository instance
-        initAnimals();
+        setAnimals(new MutableLiveData<>());
     }
 
     public void toggleSelectedAnimal(Animal animal) {
@@ -49,7 +47,10 @@ public class HomeActivityViewModel extends ViewModel {
         this.animals = animals;
     }
 
-    private void initAnimals() {
+    /**
+     * Only used to test the RecyclerView
+     */
+    private void initAnimalsTest() {
         setAnimals(new MutableLiveData<>(new ArrayList<>(
                 Arrays.asList(
                         new Animal("Animal One", "Location 1"),
