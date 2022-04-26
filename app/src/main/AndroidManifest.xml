@@ -10,11 +10,24 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ZooSeeker">
         <activity
+            android:name=".HomeActivity"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
+
+        <activity
             android:name=".DirectionActivity"
             android:exported="false" />
         <activity
             android:name=".PlanActivity"
             android:exported="false" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
