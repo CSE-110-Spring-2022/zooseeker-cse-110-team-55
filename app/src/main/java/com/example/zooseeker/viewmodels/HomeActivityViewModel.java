@@ -1,11 +1,15 @@
 package com.example.zooseeker.viewmodels;
 
+import android.content.Context;
+
 import androidx.databinding.ObservableInt;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.zooseeker.models.Animal;
+import com.example.zooseeker.models.AnimalItemDao;
+import com.example.zooseeker.repositories.AnimalDatabase;
 
 import java.util.ArrayList;
 import java.util.*;
@@ -23,12 +27,19 @@ public class HomeActivityViewModel extends ViewModel {
     // Constructor
     public HomeActivityViewModel() {
         // TODO: Instantiate repository instance
-        setAnimals(new MutableLiveData<>());
+        setAnimals(new ArrayList<>());
+        selectedAnimals.setValue(_selectedAnimals);
     }
 
     public void toggleSelectedAnimal(Animal animal) {
-        if (_selectedAnimals.contains(animal)) {
-            _selectedAnimals.remove(animal);
+        Optional<Animal> potentialMatch = _selectedAnimals
+                .stream()
+                .filter(a -> a.name.equals(animal.name))
+                .findFirst();
+        Animal matchedAnimal = potentialMatch.orElse(null);
+
+        if (matchedAnimal != null) {
+            _selectedAnimals.remove(matchedAnimal);
         } else {
             _selectedAnimals.add(animal);
         }
@@ -43,29 +54,12 @@ public class HomeActivityViewModel extends ViewModel {
         return animals;
     }
 
-    public void setAnimals(MutableLiveData<List<Animal>> animals) {
-        this.animals = animals;
+    public void setAnimals(List<Animal> animals) {
+        this.animals.setValue(animals);
     }
 
-    /**
-     * Only used to test the RecyclerView
-     */
-    private void initAnimalsTest() {
-        setAnimals(new MutableLiveData<>(new ArrayList<>(
-                Arrays.asList(
-                        new Animal("Animal One", "Location 1"),
-                        new Animal("Animal Two", "Location Two"),
-                        new Animal("Animal Three", "Location Three3"),
-                        new Animal("Animal One", "Location 1"),
-                        new Animal("Animal Two", "Location Two"),
-                        new Animal("Animal Three", "Location Three3"),
-                        new Animal("Animal One", "Location 1"),
-                        new Animal("Animal Two", "Location Two"),
-                        new Animal("Animal Three", "Location Three3"),
-                        new Animal("Animal One", "Location 1"),
-                        new Animal("Animal Two", "Location Two"),
-                        new Animal("Animal Three", "Location Three3")
-                )
-        )));
+    public List<Animal> searchInDatabase(Context context, String query) {
+        AnimalItemDao animalItemDao = AnimalDatabase.getSingleton(context).animalItemDao();
+        return animalItemDao.get(query);
     }
 }

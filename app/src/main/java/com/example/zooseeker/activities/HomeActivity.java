@@ -2,18 +2,15 @@ package com.example.zooseeker.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.SearchView;
 
-import com.example.zooseeker.repositories.AnimalDatabase;
-import com.example.zooseeker.models.AnimalItemDao;
 import com.example.zooseeker.R;
 import com.example.zooseeker.adapters.AnimalAdapter;
 import com.example.zooseeker.databinding.ActivityHomeBinding;
@@ -41,29 +38,12 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
         // Sets RecyclerView
         RecyclerView rv = binding.recyclerView;
         rv.setHasFixedSize(true);
-        AnimalAdapter adapter = new AnimalAdapter(this);
+        AnimalAdapter adapter = new AnimalAdapter(this, viewModel);
         rv.setAdapter(adapter);
 
         viewModel.getAnimals().observe(this, adapter::setAnimals);
 
         binding.search.setOnQueryTextListener(this);
-
-        // Get the intent, verify the action and get the query
-        Intent intent = getIntent();
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            doMySearch(query);
-        }
-
-    }
-
-    private List<Animal> doMySearch(String query) {
-
-        AnimalItemDao animalItemDao = AnimalDatabase.getSingleton(this).animalItemDao();
-        List<Animal> animalItems = animalItemDao.get(query);
-        Log.d("SearchActivity", String.valueOf(animalItems.size()));
-        return animalItems;
-
     }
 
     public void onLaunchPlanClicked(View view) {
@@ -78,12 +58,14 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
     }
 
     @Override
-    public boolean onQueryTextSubmit(String s) {
-        throw new UnsupportedOperationException("Method not yet implemented");
+    public boolean onQueryTextSubmit(String query) {
+        List<Animal> results = viewModel.searchInDatabase(this, query);
+        viewModel.setAnimals(results);
+        return true;
     }
 
     @Override
     public boolean onQueryTextChange(String s) {
-        throw new UnsupportedOperationException("Method not yet implemented");
+        return false;
     }
 }
