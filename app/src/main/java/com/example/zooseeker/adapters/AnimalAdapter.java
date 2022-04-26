@@ -38,7 +38,6 @@ public class AnimalAdapter extends RecyclerView.Adapter<AnimalAdapter.AnimalHold
     public void onBindViewHolder(@NonNull AnimalHolder holder, int position) {
         Animal curAnimal = animals.get(position);
         holder.animalName.setText(curAnimal.name);
-        holder.animalLocation.setText(curAnimal.location);
         holder.checkBox.setChecked(false);
     }
 
@@ -58,7 +57,6 @@ public class AnimalAdapter extends RecyclerView.Adapter<AnimalAdapter.AnimalHold
      */
     class AnimalHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView animalName;
-        private TextView animalLocation;
         private CheckBox checkBox;
 
         private OnAnimalClickListener onAnimalClickListener;
@@ -66,7 +64,6 @@ public class AnimalAdapter extends RecyclerView.Adapter<AnimalAdapter.AnimalHold
         public AnimalHolder(@NonNull View itemView, OnAnimalClickListener onAnimalClickListener) {
             super(itemView);
             animalName = itemView.findViewById(R.id.animal_name);
-            animalLocation = itemView.findViewById(R.id.animal_location);
             checkBox = itemView.findViewById(R.id.animal_checked);
             checkBox.setActivated(false);
             this.onAnimalClickListener = onAnimalClickListener;
