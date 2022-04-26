@@ -6,6 +6,7 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import java.util.List;
 
@@ -31,6 +32,11 @@ public class HomeActivity extends AppCompatActivity {
         Log.d("SearchActivity", String.valueOf(animalItems.size()));
         return animalItems;
 
+    }
+
+    public void onLaunchPlanClicked(View view) {
+        Intent intent = new Intent(this, PlanActivity.class);
+        startActivity(intent);
     }
 
 }

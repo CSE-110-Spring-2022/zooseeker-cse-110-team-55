@@ -22,12 +22,12 @@ public class Animal {
 
 
     @PrimaryKey(autoGenerate = true)
-    private long id;
+    public long id;
 
 
     @NonNull
-    private String name;
-    private String location;
+    public String name;
+    public String location;
 
     public Animal(@NonNull String name, @NonNull String location) {
 
