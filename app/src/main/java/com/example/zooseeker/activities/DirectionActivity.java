@@ -1,9 +1,11 @@
-package com.example.zooseeker;
+package com.example.zooseeker.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.View;
+
+import com.example.zooseeker.R;
 
 public class DirectionActivity extends AppCompatActivity {
 

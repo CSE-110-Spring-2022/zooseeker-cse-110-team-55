@@ -20,20 +20,24 @@ import java.util.List;
  */
 public class AnimalAdapter extends RecyclerView.Adapter<AnimalAdapter.AnimalHolder> {
     List<Animal> animals = new ArrayList<>();
+    OnAnimalClickListener onAnimalClickListener;
+
+    public AnimalAdapter(OnAnimalClickListener onAnimalClickListener) {
+        this.onAnimalClickListener = onAnimalClickListener;
+    }
 
     @NonNull
     @Override
     public AnimalHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.animal_item, parent, false);
-        return new AnimalHolder(itemView);
+        return new AnimalHolder(itemView, onAnimalClickListener);
     }
 
     @Override
     public void onBindViewHolder(@NonNull AnimalHolder holder, int position) {
         Animal curAnimal = animals.get(position);
         holder.animalName.setText(curAnimal.name);
-        holder.animalLocation.setText(curAnimal.location);
         holder.checkBox.setChecked(false);
     }
 
@@ -51,16 +55,30 @@ public class AnimalAdapter extends RecyclerView.Adapter<AnimalAdapter.AnimalHold
     /**
      * Internal ViewHolder to hold
      */
-    class AnimalHolder extends RecyclerView.ViewHolder {
+    class AnimalHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView animalName;
-        private TextView animalLocation;
         private CheckBox checkBox;
 
-        public AnimalHolder(@NonNull View itemView) {
+        private OnAnimalClickListener onAnimalClickListener;
+
+        public AnimalHolder(@NonNull View itemView, OnAnimalClickListener onAnimalClickListener) {
             super(itemView);
             animalName = itemView.findViewById(R.id.animal_name);
-            animalLocation = itemView.findViewById(R.id.animal_location);
             checkBox = itemView.findViewById(R.id.animal_checked);
+            checkBox.setActivated(false);
+            this.onAnimalClickListener = onAnimalClickListener;
+
+            itemView.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View view) {
+            onAnimalClickListener.onAnimalClick(getAdapterPosition());
+            checkBox.setChecked(!checkBox.isChecked());
+        }
+    }
+
+    public interface OnAnimalClickListener {
+        void onAnimalClick(int position);
     }
 }

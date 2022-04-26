@@ -3,43 +3,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="8dp"
-    android:layout_marginEnd="8dp"
-    android:layout_marginTop="8dp">
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginBottom="16dp">
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="96dp"
         android:padding="5dp">
+
+        <ImageView
+            android:id="@+id/animal_image"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="8dp" />
+
         <TextView
             android:id="@+id/animal_name"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_toStartOf="@+id/animal_distance"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="8dp"
+            android:layout_toStartOf="@id/animal_checked"
+            android:layout_toEndOf="@id/animal_image"
+            android:gravity="center_vertical"
             android:text="Animal"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
+            android:textAlignment="gravity"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
         <CheckBox
             android:id="@+id/animal_checked"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
-            tools:text=" " />
-
-        <TextView
-            android:id="@+id/animal_location"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/animal_name"
-            android:text="Location" />
-
-        <TextView
-            android:id="@+id/animal_distance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toStartOf="@+id/animal_checked"
-            android:text="100 Feet Away"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+            android:layout_gravity="center"
+            tools:text=" "/>
 
     </RelativeLayout>
 

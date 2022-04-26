@@ -1,4 +1,4 @@
-package com.example.zooseeker;
+package com.example.zooseeker.repositories;
 
 import android.content.Context;
 
@@ -7,6 +7,9 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
+
+import com.example.zooseeker.models.Animal;
+import com.example.zooseeker.models.AnimalItemDao;
 
 import java.util.List;
 import java.util.concurrent.Executors;
