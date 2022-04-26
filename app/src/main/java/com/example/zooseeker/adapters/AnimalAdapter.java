@@ -7,10 +7,12 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModel;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.zooseeker.R;
 import com.example.zooseeker.models.Animal;
+import com.example.zooseeker.viewmodels.HomeActivityViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,9 +23,11 @@ import java.util.List;
 public class AnimalAdapter extends RecyclerView.Adapter<AnimalAdapter.AnimalHolder> {
     List<Animal> animals = new ArrayList<>();
     OnAnimalClickListener onAnimalClickListener;
+    HomeActivityViewModel vm;
 
-    public AnimalAdapter(OnAnimalClickListener onAnimalClickListener) {
+    public AnimalAdapter(OnAnimalClickListener onAnimalClickListener, HomeActivityViewModel vm) {
         this.onAnimalClickListener = onAnimalClickListener;
+        this.vm = vm;
     }
 
     @NonNull
@@ -38,7 +42,11 @@ public class AnimalAdapter extends RecyclerView.Adapter<AnimalAdapter.AnimalHold
     public void onBindViewHolder(@NonNull AnimalHolder holder, int position) {
         Animal curAnimal = animals.get(position);
         holder.animalName.setText(curAnimal.name);
-        holder.checkBox.setChecked(false);
+        List<Animal> selectedAnimals = vm.getSelectedAnimals().getValue();
+        holder.checkBox.setChecked(selectedAnimals
+                .stream()
+                .anyMatch(a -> a.name.equals(curAnimal.name))
+        );
     }
 
     @Override
