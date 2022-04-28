@@ -19,18 +19,14 @@ import java.util.List;
 
 @Entity(tableName = "animal_items")
 public class Animal {
-
-
     @PrimaryKey(autoGenerate = true)
     public long id;
-
 
     @NonNull
     public String name;
     public String location;
 
     public Animal(@NonNull String name, @NonNull String location) {
-
         this.name = name;
         this.location = location;
     }
