@@ -16,6 +16,9 @@ public interface AnimalItemDao {
     @Insert
     long insert(Animal animal);
 
+    @Insert
+    List<Long> insertAll(List<Animal> animals);
+
     @Query("SELECT * FROM `animal_items` WHERE `id`=:id")
     Animal get(long id);
 
@@ -27,7 +30,4 @@ public interface AnimalItemDao {
 
     @Delete
     int delete(Animal animal);
-
-    @Insert
-    List<Long> insertAll(List<Animal> animals);
 }
