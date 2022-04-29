@@ -19,16 +19,16 @@ import java.util.List;
 
 @Entity(tableName = "animal_items")
 public class Animal {
-    @PrimaryKey(autoGenerate = true)
-    public long id;
+    @PrimaryKey
+    @NonNull
+    public String id;
 
     @NonNull
     public String name;
-    public String location;
 
-    public Animal(@NonNull String name, @NonNull String location) {
+    public Animal(@NonNull String name, @NonNull String id) {
         this.name = name;
-        this.location = location;
+        this.id = id;
     }
 
     public static List<Animal> loadJSON(Context context, String path) {
