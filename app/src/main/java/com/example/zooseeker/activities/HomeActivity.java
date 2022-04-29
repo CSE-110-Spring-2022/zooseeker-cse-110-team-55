@@ -44,7 +44,6 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
         rv.setLayoutManager(new LinearLayoutManager(this));
         rv.setHasFixedSize(true);
         AnimalAdapter adapter = new AnimalAdapter(this, viewModel);
-        adapter.setHasStableIds(true);
         rv.setAdapter(adapter);
 
         viewModel.getAnimals().observe(this, adapter::setAnimals);

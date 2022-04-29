@@ -48,7 +48,6 @@ public class HomeActivityViewModel extends ViewModel {
         }
 
         numSelectedAnimals.set(_selectedAnimals.size());
-        numSelectedAnimals.notifyAll();
         selectedAnimals.setValue(_selectedAnimals);
     }
 
