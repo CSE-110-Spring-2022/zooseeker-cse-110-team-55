@@ -55,6 +55,7 @@ public class AnimalAdapter extends RecyclerView.Adapter<AnimalAdapter.AnimalHold
     }
 
     public void setAnimals(List<Animal> animals) {
+        this.animals.clear();
         this.animals = animals;
         // TODO: Avoid using notifyDataSetChanged
         notifyDataSetChanged();

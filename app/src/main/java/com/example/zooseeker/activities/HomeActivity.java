@@ -26,7 +26,6 @@ import java.util.List;
 public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnAnimalClickListener, SearchView.OnQueryTextListener {
     private ActivityHomeBinding binding;
     private HomeActivityViewModel viewModel;
-    public RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,18 +41,15 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
         // TODO: Observe changes of LiveData objects
         // Sets RecyclerView
         RecyclerView rv = binding.recyclerView;
+        rv.setLayoutManager(new LinearLayoutManager(this));
         rv.setHasFixedSize(true);
         AnimalAdapter adapter = new AnimalAdapter(this, viewModel);
+        adapter.setHasStableIds(true);
         rv.setAdapter(adapter);
 
         viewModel.getAnimals().observe(this, adapter::setAnimals);
 
         binding.search.setOnQueryTextListener(this);
-
-        // test by alfred
-        recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(adapter);
     }
 
     public void onLaunchPlanClicked(View view) {
@@ -63,7 +59,6 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
 
     @Override
     public void onAnimalClick(int position) {
-       // Log.d("selected animal", String.valueOf(position));
         Animal selectedAnimal = viewModel.getAnimals().getValue().get(position);
         viewModel.toggleSelectedAnimal(selectedAnimal);
     }
@@ -82,4 +77,9 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
         Log.d("[HomeActivity]", String.valueOf(results.size()));
         return true;
     }
+
+    public ActivityHomeBinding getBinding() {
+        return this.binding;
+    }
+
 }

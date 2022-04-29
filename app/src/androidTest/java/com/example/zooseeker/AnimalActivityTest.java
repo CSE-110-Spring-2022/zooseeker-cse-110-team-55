@@ -3,6 +3,7 @@ package com.example.zooseeker;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
 import android.content.Context;
@@ -21,6 +22,7 @@ import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.example.zooseeker.activities.HomeActivity;
+import com.example.zooseeker.databinding.ActivityHomeBinding;
 import com.example.zooseeker.models.Animal;
 import com.example.zooseeker.models.AnimalItemDao;
 import com.example.zooseeker.repositories.AnimalDatabase;
@@ -55,24 +57,24 @@ public class AnimalActivityTest {
     }
 
     @Test
-    public void testCount() {
+    public void testListShowsDbItems() {
         ActivityScenario<HomeActivity> scenario = ActivityScenario.launch(HomeActivity.class);
         scenario.moveToState(Lifecycle.State.CREATED);
         scenario.moveToState(Lifecycle.State.STARTED);
         scenario.moveToState(Lifecycle.State.RESUMED);
 
         scenario.onActivity(activity -> {
-            SearchView searchView = activity.findViewById(R.id.search);
+            ActivityHomeBinding binding = activity.getBinding();
+
+            SearchView searchView = activity.getBinding().search;
             searchView.setQuery("Hippo", true);
 
-            RecyclerView recyclerView = activity.recyclerView;
-            RecyclerView.ViewHolder firstVH = recyclerView.findViewHolderForAdapterPosition(0);
+            RecyclerView recyclerView = binding.recyclerView;
+            recyclerView.getAdapter().getItemCount();
+            List<Animal> animals = binding.getVm().getAnimals().getValue();
 
-            CheckBox checkBox = firstVH.itemView.findViewById(R.id.animal_checked);
-            checkBox.performClick();
-
-            TextView count = activity.findViewById(R.id.count);
-            assertEquals(1, count);
+            assertTrue(animals.get(0).name.contains(searchView.getQuery()));
         });
+
     }
 }
