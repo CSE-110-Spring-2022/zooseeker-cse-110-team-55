@@ -40,7 +40,7 @@ import org.junit.runner.RunWith;
 public class SearchBarUITest {
 
     @Rule
-    public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
+    public ActivityTestRule<HomeActivity> mActivityTestRule = new ActivityTestRule<>(HomeActivity.class);
 
     @Test
     public void searchBarUITest() {
