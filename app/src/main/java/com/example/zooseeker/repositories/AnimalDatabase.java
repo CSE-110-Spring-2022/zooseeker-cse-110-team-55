@@ -3,6 +3,7 @@ package com.example.zooseeker.repositories;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
@@ -59,8 +60,14 @@ public abstract class AnimalDatabase extends RoomDatabase {
                     }
                 })
                 .build();
-
     }
 
-
+    // test by alfred
+    @VisibleForTesting
+    public static void injectTestDatabase(AnimalDatabase testDatabase) {
+        if (singleton != null) {
+            singleton.close();
+        }
+        singleton = testDatabase;
+    }
 }

@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
@@ -16,6 +17,8 @@ import com.example.zooseeker.R;
 import com.example.zooseeker.adapters.AnimalAdapter;
 import com.example.zooseeker.databinding.ActivityHomeBinding;
 import com.example.zooseeker.models.Animal;
+import com.example.zooseeker.models.AnimalItemDao;
+import com.example.zooseeker.repositories.AnimalDatabase;
 import com.example.zooseeker.viewmodels.HomeActivityViewModel;
 
 import java.util.List;
@@ -38,6 +41,7 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
         // TODO: Observe changes of LiveData objects
         // Sets RecyclerView
         RecyclerView rv = binding.recyclerView;
+        rv.setLayoutManager(new LinearLayoutManager(this));
         rv.setHasFixedSize(true);
         AnimalAdapter adapter = new AnimalAdapter(this, viewModel);
         rv.setAdapter(adapter);
@@ -54,7 +58,6 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
 
     @Override
     public void onAnimalClick(int position) {
-       // Log.d("selected animal", String.valueOf(position));
         Animal selectedAnimal = viewModel.getAnimals().getValue().get(position);
         viewModel.toggleSelectedAnimal(selectedAnimal);
     }
@@ -73,4 +76,9 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
         Log.d("[HomeActivity]", String.valueOf(results.size()));
         return true;
     }
+
+    public ActivityHomeBinding getBinding() {
+        return this.binding;
+    }
+
 }

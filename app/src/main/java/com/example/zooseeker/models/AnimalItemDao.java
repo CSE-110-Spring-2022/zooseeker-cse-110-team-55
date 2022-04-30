@@ -14,10 +14,7 @@ import java.util.List;
 public interface AnimalItemDao {
 
     @Insert
-    void insert(Animal animal);
-
-    @Query("SELECT * FROM `animal_items` WHERE `id`=:id")
-    Animal get(long id);
+    long insert(Animal animal);
 
     @Query("SELECT * FROM `animal_items` WHERE `name` LIKE '%' || :query || '%'")
     List<Animal> get(String query);
@@ -29,5 +26,5 @@ public interface AnimalItemDao {
     int delete(Animal animal);
 
     @Insert
-    void insertAll(List<Animal> animals);
+    List<Long> insertAll(List<Animal> animals);
 }

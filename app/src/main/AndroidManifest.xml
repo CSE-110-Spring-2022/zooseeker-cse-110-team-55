@@ -22,9 +22,6 @@
         </activity>
 
         <activity
-            android:name=".activities.DirectionActivity"
-            android:exported="false" />
-        <activity
             android:name=".activities.PlanActivity"
             android:exported="false" />
 
