@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
+import java.util.List;
 
 @RunWith(AndroidJUnit4.class)
 public class DatabaseTest {
@@ -43,8 +44,8 @@ public class DatabaseTest {
 
     @Test
     public void testInsert() {
-        Animal animal1 = new Animal("Lion", "North");
-        Animal animal2 = new Animal("Tiger", "South");
+        Animal animal1 = new Animal("Lion", "lion");
+        Animal animal2 = new Animal("Tiger", "tiger");
 
         long id1 = dao.insert(animal1);
         long id2 = dao.insert(animal2);
@@ -54,38 +55,38 @@ public class DatabaseTest {
 
     @Test
     public void testGet() {
-        Animal insertedItem = new Animal("Lion", "North");
-        long id = dao.insert(insertedItem);
+        Animal insertedItem = new Animal("Lion", "lion");
 
-        Animal item = dao.get(id);
-        assertEquals(id, item.id);
-        assertEquals(insertedItem.name, item.name);
-        assertEquals(insertedItem.location,item.location);
+        dao.insert(insertedItem);
+        List<Animal> item = dao.get("lion");
+
+        assertEquals("lion", item.get(0).id);
+        assertEquals("Lion", item.get(0).name);
     }
 
     @Test
     public void testUpdate() {
-        Animal item = new Animal("Lion", "North");
-        long id = dao.insert(item);
+        Animal insertedItem = new Animal("Lion", "lion");
+        dao.insert(insertedItem);
 
-        item = dao.get(id);
-        item.location = "East";
-        int itemsUpdated = dao.update(item);
+        List<Animal> item = dao.get("lion");
+        item.get(0).name = "LionKing";
+        int itemsUpdated = dao.update(item.get(0));
         assertEquals(1, itemsUpdated);
 
-        item = dao.get(id);
+        item = dao.get("lion");
         assertNotNull(item);
-        assertEquals("East", item.location);
+        assertEquals("LionKing", item.get(0).name);
     }
 
     @Test
     public void testDelete() {
-        Animal item = new Animal("Lion", "North");
-        long id = dao.insert(item);
+        Animal insertedItem = new Animal("Lion", "lion");
+        dao.insert(insertedItem);
 
-        item = dao.get(id);
-        int itemsDeleted = dao.delete(item);
+        List<Animal> item = dao.get("lion");
+        int itemsDeleted = dao.delete(item.get(0));
         assertEquals(1, itemsDeleted);
-        assertNull(dao.get(id));
+        assertEquals(0, dao.get("lion").size());
     }
 }

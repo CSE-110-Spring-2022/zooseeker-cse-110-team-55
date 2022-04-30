@@ -1,4 +1,4 @@
-package com.example.zooseeker;
+package com.example.zooseeker.activities;
 
 
 import static androidx.test.espresso.Espresso.onView;
@@ -26,7 +26,6 @@ import androidx.test.rule.ActivityTestRule;
 import androidx.test.runner.AndroidJUnit4;
 
 import com.example.zooseeker.R;
-import com.example.zooseeker.activities.MainActivity;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -38,7 +37,7 @@ import org.junit.runner.RunWith;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class searchBarUITest {
+public class SearchBarUITest {
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
@@ -54,10 +53,10 @@ public class searchBarUITest {
                                                 1)),
                                 0),
                         isDisplayed()));
-        searchAutoComplete.perform(replaceText("hippos"), closeSoftKeyboard());
+        searchAutoComplete.perform(replaceText("lion"), closeSoftKeyboard());
 
         ViewInteraction searchAutoComplete2 = onView(
-                allOf(withClassName(is("android.widget.SearchView$SearchAutoComplete")), withText("hippos"),
+                allOf(withClassName(is("android.widget.SearchView$SearchAutoComplete")), withText("lion"),
                         childAtPosition(
                                 allOf(withClassName(is("android.widget.LinearLayout")),
                                         childAtPosition(
@@ -67,6 +66,19 @@ public class searchBarUITest {
                         isDisplayed()));
         searchAutoComplete2.perform(pressImeActionButton());
 
+        ViewInteraction textView = onView(
+                allOf(withId(R.id.animal_name), withText("Lions"),
+                        withParent(withParent(IsInstanceOf.<View>instanceOf(android.widget.FrameLayout.class))),
+                        isDisplayed()));
+        textView.check(matches(withText("Lions")));
+
+        ViewInteraction textView2 = onView(
+                allOf(withId(R.id.count), withText("0"),
+                        withParent(allOf(withId(R.id.topbar),
+                                withParent(IsInstanceOf.<View>instanceOf(android.widget.RelativeLayout.class)))),
+                        isDisplayed()));
+        textView2.check(matches(withText("0")));
+
         ViewInteraction recyclerView = onView(
                 allOf(withId(R.id.recyclerView),
                         childAtPosition(
@@ -74,18 +86,12 @@ public class searchBarUITest {
                                 1)));
         recyclerView.perform(actionOnItemAtPosition(0, click()));
 
-        ViewInteraction textView = onView(
-                allOf(withId(R.id.animal_name), withText("Hippos"),
-                        withParent(withParent(IsInstanceOf.<View>instanceOf(android.widget.FrameLayout.class))),
-                        isDisplayed()));
-        textView.check(matches(withText("Hippos")));
-
-        ViewInteraction textView2 = onView(
+        ViewInteraction textView3 = onView(
                 allOf(withId(R.id.count), withText("1"),
                         withParent(allOf(withId(R.id.topbar),
                                 withParent(IsInstanceOf.<View>instanceOf(android.widget.RelativeLayout.class)))),
                         isDisplayed()));
-        textView2.check(matches(withText("1")));
+        textView3.check(matches(withText("1")));
     }
 
     private static Matcher<View> childAtPosition(

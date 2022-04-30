@@ -51,7 +51,7 @@ public class AnimalActivityTest {
                 .build();
         AnimalDatabase.injectTestDatabase(testDb);
 
-        List<Animal> animals = Animal.loadJSON(context, "sample_animals.json");
+        List<Animal> animals = Animal.loadJSON(context, "sample_node_info.json");
         animalItemDao = testDb.animalItemDao();
         animalItemDao.insertAll(animals);
     }
@@ -67,7 +67,7 @@ public class AnimalActivityTest {
             ActivityHomeBinding binding = activity.getBinding();
 
             SearchView searchView = activity.getBinding().search;
-            searchView.setQuery("Hippo", true);
+            searchView.setQuery("Lion", true);
 
             RecyclerView recyclerView = binding.recyclerView;
             recyclerView.getAdapter().getItemCount();
