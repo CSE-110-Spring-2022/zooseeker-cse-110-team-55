@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,7 +65,13 @@ public class Graph {
             plan.add(partialPath);
         }
 
+        plan.add(shortestPathToNode(u, start));
+
         return plan;
+    }
+
+    private ArrayList<GraphNode> shortestPathToNode(GraphNode start, GraphNode end) {
+        return pathToNearestNeighbor(start, new ArrayList<>(Collections.singleton(end)));
     }
 
     private ArrayList<GraphNode> pathToNearestNeighbor(GraphNode u, List<GraphNode> unplanned) {
