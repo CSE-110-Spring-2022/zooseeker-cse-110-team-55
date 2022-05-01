@@ -46,7 +46,7 @@ public class Graph {
         }
     }
 
-    public List<List<GraphNode>> createPlan(ArrayList<GraphNode> selected, GraphNode start) {
+    public List<List<GraphNode>> createPlan(List<GraphNode> selected, GraphNode start) {
         List<List<GraphNode>> plan = new ArrayList<>();
         // exhibits to be planned
         List<GraphNode> unplanned_exhibits = new ArrayList<>(selected);
