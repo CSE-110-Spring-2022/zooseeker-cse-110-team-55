@@ -33,8 +33,6 @@ public class HomeActivityViewModel extends ViewModel {
     }
 
     public void toggleSelectedAnimal(Animal animal) {
-
-        Log.d("selected animal", animal.name);
         Optional<Animal> potentialMatch = _selectedAnimals
                 .stream()
                 .filter(a -> a.name.equals(animal.name))
