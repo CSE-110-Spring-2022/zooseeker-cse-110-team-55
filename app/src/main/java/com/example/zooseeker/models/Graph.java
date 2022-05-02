@@ -157,7 +157,7 @@ public class Graph {
         public List<GraphEdge> edges;
 
         public static class GraphNode {
-            String id;
+            public String id;
         }
 
         public static class GraphEdge {
