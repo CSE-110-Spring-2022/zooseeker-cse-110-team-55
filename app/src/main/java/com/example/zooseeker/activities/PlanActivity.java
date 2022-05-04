@@ -2,6 +2,7 @@ package com.example.zooseeker.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -14,7 +15,10 @@ public class PlanActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plan);
     }
-
+    public void onLaunchDirectionClicked(View view) {
+        Intent intent = new Intent(this, DirectionActivity.class);
+        startActivity(intent);
+    }
     public void onBackClicked(View view) {
         finish();
     }

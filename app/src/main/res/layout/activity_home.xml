@@ -57,23 +57,22 @@
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_above="@id/plan_button"
+                android:layout_above="@id/direction_button"
                 android:layout_below="@id/topbar"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/animal_item" />
 
             <Button
-                android:id="@+id/plan_button"
+                android:id="@+id/direction_button"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_alignParentBottom="true"
-                android:layout_margin="10dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="16dp"
-                android:onClick="onLaunchPlanClicked"
-                android:text="PLAN" />
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:onClick="onLaunchDirectionClicked"
+                android:text="Direction" />
         </RelativeLayout>
 
 
