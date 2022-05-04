@@ -23,6 +23,13 @@ public class PlanActivity extends AppCompatActivity {
     }
 
 
+
+
+    public void onLaunchDirectionClicked(View view) {
+        Intent intent = new Intent(this, DirectionActivity.class);
+        startActivity(intent);
+    }
+
     public void onBackClicked(View view) {
         finish();
     }

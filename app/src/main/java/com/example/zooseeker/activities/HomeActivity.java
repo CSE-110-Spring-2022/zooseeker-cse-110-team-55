@@ -53,6 +53,7 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
         binding.search.setOnQueryTextListener(this);
     }
 
+
     public void onLaunchPlanClicked(View view) {
         Intent intent = new Intent(this, PlanActivity.class);
         ArrayList<String> selectedAnimals = new ArrayList<>();
@@ -60,6 +61,9 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
             selectedAnimals.add(a.id);
         }
         intent.putStringArrayListExtra("selected_animals",selectedAnimals);
+
+    public void onLaunchDirectionClicked(View view) {
+        Intent intent = new Intent(this, DirectionActivity.class);
         startActivity(intent);
     }
 
