@@ -51,8 +51,8 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
         binding.search.setOnQueryTextListener(this);
     }
 
-    public void onLaunchPlanClicked(View view) {
-        Intent intent = new Intent(this, PlanActivity.class);
+    public void onLaunchDirectionClicked(View view) {
+        Intent intent = new Intent(this, DirectionActivity.class);
         startActivity(intent);
     }
 
