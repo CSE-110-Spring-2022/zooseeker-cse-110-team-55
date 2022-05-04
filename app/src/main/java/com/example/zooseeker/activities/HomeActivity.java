@@ -64,6 +64,11 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
     }
     public void onLaunchDirectionClicked(View view) {
         Intent intent = new Intent(this, DirectionActivity.class);
+        ArrayList<String> selectedAnimals = new ArrayList<>();
+        for(Animal a : viewModel.getSelectedAnimals().getValue()){
+            selectedAnimals.add(a.id);
+        }
+        intent.putStringArrayListExtra("selected_animals",selectedAnimals);
         startActivity(intent);
     }
 

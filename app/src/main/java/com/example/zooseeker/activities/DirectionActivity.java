@@ -1,18 +1,32 @@
 package com.example.zooseeker.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProvider;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
 import com.example.zooseeker.R;
+import com.example.zooseeker.databinding.ActivityDirectionBinding;
+import com.example.zooseeker.databinding.ActivityHomeBinding;
+import com.example.zooseeker.viewmodels.PlanViewModel;
 
 public class DirectionActivity extends AppCompatActivity {
+    private PlanViewModel viewModel;
+    private ActivityDirectionBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_direction);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_direction);
+
+        Intent intent = getIntent();
+        viewModel = new ViewModelProvider(this).get(PlanViewModel.class);
+        binding.setVm(viewModel);
+
+        viewModel.setPlan(viewModel.getRoute(intent.getStringArrayListExtra("selected_animals")));
     }
 
     public void onLaunchEndClicked(View view) { finish(); }
