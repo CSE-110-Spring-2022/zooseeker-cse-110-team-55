@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.SearchView;
@@ -21,6 +22,7 @@ import com.example.zooseeker.models.AnimalItemDao;
 import com.example.zooseeker.repositories.AnimalDatabase;
 import com.example.zooseeker.viewmodels.HomeActivityViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnAnimalClickListener, SearchView.OnQueryTextListener {
@@ -51,6 +53,15 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
         binding.search.setOnQueryTextListener(this);
     }
 
+
+    public void onLaunchPlanClicked(View view) {
+        Intent intent = new Intent(this, PlanActivity.class);
+        ArrayList<String> selectedAnimals = new ArrayList<>();
+        for(Animal a : viewModel.getSelectedAnimals().getValue()){
+            selectedAnimals.add(a.id);
+        }
+        intent.putStringArrayListExtra("selected_animals",selectedAnimals);
+    }
     public void onLaunchDirectionClicked(View view) {
         Intent intent = new Intent(this, DirectionActivity.class);
         startActivity(intent);
