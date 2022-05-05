@@ -30,6 +30,7 @@ public class PlanViewModel extends AndroidViewModel {
     private int[] _distances;
 
     public MutableLiveData<List<GraphNode>> directions;
+    public ObservableField<Integer> remainingExhibits = new ObservableField<>(0);
     public ObservableField<String> curExhibitName = new ObservableField<>("");
     public ObservableField<Integer> curExhibitDist = new ObservableField<>(0);
     public ObservableField<String> nextExhibitName = new ObservableField<>("");
@@ -76,6 +77,8 @@ public class PlanViewModel extends AndroidViewModel {
             nextExhibitName.set(routeGraph.nodeInfo.get(nextExhibitId).name);
             nextExhibitDist.set(_distances[curExhibit + 1]);
         }
+
+        remainingExhibits.set(_plan.size() - curExhibit);
     }
 
     public void initRoute(List<String> selectedAnimals) {

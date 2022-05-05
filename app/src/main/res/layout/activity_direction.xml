@@ -47,7 +47,7 @@
                     android:gravity="center"
                     android:hint="@string/planned_count"
                     android:iconifiedByDefault="false"
-                    android:text=""
+                    android:text="@{`(` + vm.remainingExhibits.toString() + `)`}"
                     android:textColor="@color/black"
                     android:textSize="24sp" />
             </RelativeLayout>

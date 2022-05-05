@@ -50,7 +50,9 @@ public class DirectionActivity extends AppCompatActivity {
                 String dest = graphNodes.get(i + 1).id;
 
                 SymmetricPair key = new SymmetricPair(source, dest);
-                edges.add(viewModel.getGraph().edges.get(key));
+                GraphEdge existingEdge = viewModel.getGraph().edges.get(key);
+                GraphEdge edge = new GraphEdge(existingEdge.id, existingEdge.weight, source, dest);
+                edges.add(edge);
             }
 
             adapter.setDirections(edges);
