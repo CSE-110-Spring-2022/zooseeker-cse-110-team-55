@@ -1,5 +1,7 @@
 package com.example.zooseeker.viewmodels;
 
+import static com.example.zooseeker.util.Helper.getLast;
+
 import android.app.Application;
 import android.content.Context;
 
@@ -60,7 +62,7 @@ public class PlanViewModel extends AndroidViewModel {
 
     private void updateObservables() {
         List<GraphNode> directions = getDirections().getValue();
-        String curExhibitId = directions.get(directions.size() - 1).id;
+        String curExhibitId = getLast(directions).id;
 
         curExhibitName.set(routeGraph.nodeInfo.get(curExhibitId).name);
         curExhibitDist.set(_distances[curExhibit]);
@@ -69,7 +71,7 @@ public class PlanViewModel extends AndroidViewModel {
             // TODO: Display "End"
         } else {
             List<GraphNode> nextDirections = _plan.get(curExhibit + 1);
-            String nextExhibitId = nextDirections.get(nextDirections.size() - 1).id;
+            String nextExhibitId = getLast(nextDirections).id;
 
             nextExhibitName.set(routeGraph.nodeInfo.get(nextExhibitId).name);
             nextExhibitDist.set(_distances[curExhibit + 1]);
