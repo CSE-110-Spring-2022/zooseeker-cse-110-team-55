@@ -32,9 +32,11 @@
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_centerInParent="true"
-                    android:text="Directions: "
+                    android:text="Directions"
                     android:textColor="@color/black"
-                    android:textSize="24sp" />
+                    android:textSize="24sp"
+                    android:layout_marginEnd="10dp"
+                    />
 
                 <TextView
                     android:id="@+id/count"
@@ -45,36 +47,34 @@
                     android:gravity="center"
                     android:hint="@string/planned_count"
                     android:iconifiedByDefault="false"
-                    android:text=""
+                    android:text="@{`(` + vm.remainingExhibits.toString() + `)`}"
                     android:textColor="@color/black"
                     android:textSize="24sp" />
             </RelativeLayout>
 
-
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/next_button"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:onClick="onLaunchEndClicked"
+                android:text="NEXT"
+                app:cornerRadius="0dp" />
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/direction_rv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@id/next_button"
+                android:layout_below="@id/topbar"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="10dp"
-                android:onClick="onLaunchEndClicked"
-                android:text="NEXT" />
-
-            <TextView
-                android:id="@+id/direction_text"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="70dp"
-                android:layout_marginBottom="70dp"
-                android:textSize="20dp"
-                app:layout_constraintBottom_toTopOf="@+id/next_button"
-                app:layout_constraintEnd_toStartOf="parent"
-                app:layout_constraintStart_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/topbar" />
-
+                tools:listitem="@layout/direction_item" />
         </RelativeLayout>
 
 

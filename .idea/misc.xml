@@ -8,11 +8,12 @@
         <entry key="..\:/Users/chenz/AndroidStudioProjects/zooseeker-cse-110-team-55/app/src/main/res/layout/activity_home.xml" value="0.1" />
         <entry key="..\:/Users/chenz/AndroidStudioProjects/zooseeker-cse-110-team-55/app/src/main/res/layout/activity_plan.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_animal_list.xml" value="0.27677154541015625" />
-        <entry key="app/src/main/res/layout/activity_direction.xml" value="0.2453125" />
+        <entry key="app/src/main/res/layout/activity_direction.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_home.xml" value="0.24702301025390633" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.2593032836914063" />
         <entry key="app/src/main/res/layout/activity_plan.xml" value="0.2453125" />
-        <entry key="app/src/main/res/layout/animal_item.xml" value="0.2350484212239583" />
+        <entry key="app/src/main/res/layout/animal_item.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/direction_item.xml" value="0.36916300455729173" />
         <entry key="app/src/main/res/layout/user_item.xml" value="0.29427541097005216" />
       </map>
     </option>

@@ -22,9 +22,6 @@ public class PlanActivity extends AppCompatActivity {
         viewModel.setPlan(viewModel.getRoute(intent.getStringArrayListExtra("selected_animals")));
     }
 
-
-
-
     public void onLaunchDirectionClicked(View view) {
         Intent intent = new Intent(this, DirectionActivity.class);
         startActivity(intent);

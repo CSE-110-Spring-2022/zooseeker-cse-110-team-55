@@ -207,9 +207,16 @@ public class Graph {
 
         public static class GraphEdge {
             public String id;
-            public Double weight;
+            public double weight;
             public String source;
             public String target;
+
+            public GraphEdge(String id, double weight, String source, String target) {
+                this.id = id;
+                this.weight = weight;
+                this.source = source;
+                this.target = target;
+            }
         }
     }
 
