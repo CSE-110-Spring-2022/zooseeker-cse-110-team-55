@@ -6,13 +6,11 @@ import org.junit.runner.RunWith;
 
 import static org.junit.Assert.*;
 
-import android.app.Activity;
 import android.content.Context;
 
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import com.example.zooseeker.activities.HomeActivity;
 import com.example.zooseeker.models.Graph;
 import com.example.zooseeker.models.Graph.GraphData.GraphNode;
 import com.example.zooseeker.models.Graph.SymmetricPair;
@@ -40,7 +38,7 @@ public class PathTest {
         graph.loadGraph(context, "sample_zoo_graph.json");
 
         assertEquals(7, graph.nodes.size());
-        assertEquals(7, graph.edgeWeights.size());
+        assertEquals(7, graph.edges.size());
     }
 
     @Test
@@ -66,7 +64,7 @@ public class PathTest {
         double totalWeight = 0;
         List<GraphNode> path = plan.get(0);
         for (int i = 0; i < path.size() - 1; i++) {
-            totalWeight += graph.edgeWeights.get(new SymmetricPair(path.get(i).id, path.get(i + 1).id));
+            totalWeight += graph.edges.get(new SymmetricPair(path.get(i).id, path.get(i + 1).id)).weight;
         }
         assertEquals(310, (int) totalWeight);
     }

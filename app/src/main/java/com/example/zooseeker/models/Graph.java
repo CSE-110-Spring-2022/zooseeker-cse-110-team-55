@@ -5,11 +5,15 @@ import android.content.Context;
 import com.example.zooseeker.models.Graph.GraphData.GraphEdge;
 import com.example.zooseeker.models.Graph.GraphData.GraphNode;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.w3c.dom.Node;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -21,14 +25,17 @@ import java.util.stream.Collectors;
 public class Graph {
     public Map<String, List<GraphNode>> adjacencyList;
     public Map<String, GraphNode> nodes;
-    public Map<SymmetricPair, Double> edgeWeights;
+    public Map<SymmetricPair, GraphEdge> edges;
+    public Map<String, NodeInfo> nodeInfo;
+    public Map<String, EdgeInfo> edgeInfo;
 
     public Graph() {
         adjacencyList = new HashMap<>();
-        edgeWeights = new HashMap<>();
+        edges = new HashMap<>();
         nodes = new HashMap<>();
     }
 
+    // Graph Loading
     public void loadGraph(Context context, String path) {
         GraphData graphData = loadGraphJSON(context, path);
 
@@ -42,10 +49,61 @@ public class Graph {
             adjacencyList.get(e.source).add(nodes.get(e.target));
             adjacencyList.get(e.target).add(nodes.get(e.source));
 
-            edgeWeights.put(new SymmetricPair(e.source, e.target), e.weight);
+            edges.put(new SymmetricPair(e.source, e.target), e);
         }
     }
 
+    public static GraphData loadGraphJSON(Context context, String path) {
+        InputStream inputStream = null;
+        try {
+            inputStream = context.getAssets().open(path);
+            Reader reader = new InputStreamReader(inputStream);
+            Gson gson = new Gson();
+            return gson.fromJson(reader, GraphData.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public void loadEdgeInfo(Context context, String path) {
+        InputStream inputStream;
+        try {
+            inputStream = context.getAssets().open(path);
+            Reader reader = new InputStreamReader(inputStream);
+            Gson gson = new Gson();
+
+            Type type = new TypeToken<List<EdgeInfo>>(){}.getType();
+            List<EdgeInfo> edgeInfo = gson.fromJson(reader, type);
+
+            this.edgeInfo = edgeInfo
+                    .stream()
+                    .collect(Collectors.toMap(edge -> edge.id, info -> info));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loadNodeInfo(Context context, String path) {
+        InputStream inputStream;
+        try {
+            inputStream = context.getAssets().open(path);
+            Reader reader = new InputStreamReader(inputStream);
+            Gson gson = new Gson();
+
+            Type type = new TypeToken<List<NodeInfo>>(){}.getType();
+            List<NodeInfo> nodeInfo = gson.fromJson(reader, type);
+
+            this.nodeInfo = nodeInfo
+                    .stream()
+                    .collect(Collectors.toMap(node -> node.id, info -> info));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    // End Graph Loading
+
+    // Algo
     public List<List<GraphNode>> createPlan(List<GraphNode> selected, GraphNode start) {
         List<List<GraphNode>> plan = new ArrayList<>();
         // exhibits to be planned
@@ -93,7 +151,7 @@ public class Graph {
             List<GraphNode> neighbors = adjacencyList.get(cur.id);
             for (GraphNode other : neighbors) {
                 SymmetricPair key = new SymmetricPair(cur.id, other.id);
-                double edgeWeight = edgeWeights.get(key);
+                double edgeWeight = edges.get(key).weight;
                 if (dist.getOrDefault(other.id, Double.MAX_VALUE) > dist.get(cur.id) + edgeWeight) {
                     dist.put(other.id, dist.get(cur.id) + edgeWeight);
                     queue.add(other);
@@ -115,20 +173,7 @@ public class Graph {
 
         return result;
     }
-
-
-    public static GraphData loadGraphJSON(Context context, String path) {
-        InputStream inputStream = null;
-        try {
-            inputStream = context.getAssets().open(path);
-            Reader reader = new InputStreamReader(inputStream);
-            Gson gson = new Gson();
-            return gson.fromJson(reader, GraphData.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
+    // End Algo
 
     public static class SymmetricPair {
         public String k1;
@@ -166,5 +211,17 @@ public class Graph {
             public String source;
             public String target;
         }
+    }
+
+    public static class NodeInfo {
+        public String id;
+        public String kind;
+        public String name;
+        public List<String> tags;
+    }
+
+    public static class EdgeInfo {
+        public String id;
+        public String street;
     }
 }
