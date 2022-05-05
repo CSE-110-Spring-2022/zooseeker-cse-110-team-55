@@ -119,4 +119,8 @@ public class PlanViewModel extends AndroidViewModel {
     public LiveData<List<GraphNode>> getDirections() {
         return directions;
     }
+
+    public Graph getGraph() {
+        return routeGraph;
+    }
 }
