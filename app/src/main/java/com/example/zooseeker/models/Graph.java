@@ -207,7 +207,7 @@ public class Graph {
 
         public static class GraphEdge {
             public String id;
-            public Double weight;
+            public double weight;
             public String source;
             public String target;
         }
