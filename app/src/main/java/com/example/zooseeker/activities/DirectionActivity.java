@@ -32,7 +32,6 @@ public class DirectionActivity extends AppCompatActivity {
         viewModel.initRoute(intent.getStringArrayListExtra("selected_animals"));
 
         //new
-        viewModel.getNextDirections();
         List<Graph.GraphData.GraphNode> directions = viewModel.getDirections().getValue();
         StringBuilder stringBuilder = new StringBuilder();
         int size = directions.size();
