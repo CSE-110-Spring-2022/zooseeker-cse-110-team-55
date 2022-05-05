@@ -25,6 +25,7 @@ public class PlanViewModel extends AndroidViewModel {
 
     private int curExhibit = -1;
     private List<List<GraphNode>> _plan;
+    private int[] _distances;
 
     public MutableLiveData<List<GraphNode>> directions;
     public ObservableField<String> curExhibitName = new ObservableField<>("");
@@ -49,51 +50,53 @@ public class PlanViewModel extends AndroidViewModel {
         this._plan = plan;
     }
 
-    // TODO: Encapsulate
     public void getNextDirections() {
         if (curExhibit >= _plan.size() - 1) return;
 
         curExhibit++;
         setDirections(_plan.get(curExhibit));
+        updateObservables();
+    }
 
+    private void updateObservables() {
         List<GraphNode> directions = getDirections().getValue();
         String curExhibitId = directions.get(directions.size() - 1).id;
+
         curExhibitName.set(routeGraph.nodeInfo.get(curExhibitId).name);
-
-        // TODO: Refactor to not duplicate exhibit distance calculation
-        int totalWeight = 0;
-        for (int i = 0; i < directions.size() - 1; i++) {
-            GraphNode source = directions.get(i);
-            GraphNode dest = directions.get(i + 1);
-
-            SymmetricPair edge = new SymmetricPair(source.id, dest.id);
-            totalWeight += routeGraph.edges.get(edge).weight;
-        }
-        curExhibitDist.set(totalWeight);
+        curExhibitDist.set(_distances[curExhibit]);
 
         if (curExhibit == _plan.size() - 1) {
-            // Do not display next exhibit
+            // TODO: Display "End"
         } else {
             List<GraphNode> nextDirections = _plan.get(curExhibit + 1);
             String nextExhibitId = nextDirections.get(nextDirections.size() - 1).id;
+
             nextExhibitName.set(routeGraph.nodeInfo.get(nextExhibitId).name);
-
-            int weightToNext = 0;
-            for (int i = 0; i < nextDirections.size() - 1; i++) {
-                GraphNode source = nextDirections.get(i);
-                GraphNode dest = nextDirections.get(i + 1);
-
-                SymmetricPair edge = new SymmetricPair(source.id, dest.id);
-                weightToNext += routeGraph.edges.get(edge).weight;
-            }
-            nextExhibitDist.set(weightToNext);
+            nextExhibitDist.set(_distances[curExhibit + 1]);
         }
     }
 
     public void initRoute(List<String> selectedAnimals) {
         List<List<GraphNode>> route = getRoute(selectedAnimals);
         setPlan(route);
+        setDistances(route);
         getNextDirections();
+    }
+
+    public void setDistances(List<List<GraphNode>> route) {
+        this._distances = new int[route.size()];
+        for (int i = 0; i < route.size(); i++) {
+            List<GraphNode> exhibitDirections = route.get(i);
+            int totalWeight = 0;
+            for (int j = 0; j < exhibitDirections.size() - 1; j++) {
+                GraphNode source = exhibitDirections.get(j);
+                GraphNode dest = exhibitDirections.get(j + 1);
+
+                SymmetricPair edge = new SymmetricPair(source.id, dest.id);
+                totalWeight += routeGraph.edges.get(edge).weight;
+            }
+            _distances[i] = totalWeight;
+        }
     }
 
     public List<List<GraphNode>> getRoute(List<String> selectedAnimals){
