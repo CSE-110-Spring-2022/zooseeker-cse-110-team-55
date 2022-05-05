@@ -2,16 +2,15 @@ package com.example.zooseeker.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 import com.example.zooseeker.R;
 import com.example.zooseeker.databinding.ActivityDirectionBinding;
-import com.example.zooseeker.databinding.ActivityHomeBinding;
 import com.example.zooseeker.models.Graph;
 import com.example.zooseeker.viewmodels.PlanViewModel;
 
@@ -31,7 +30,27 @@ public class DirectionActivity extends AppCompatActivity {
         binding.setVm(viewModel);
 
         viewModel.initRoute(intent.getStringArrayListExtra("selected_animals"));
+
+        //new
+        viewModel.getNextDirections();
+        List<Graph.GraphData.GraphNode> directions = viewModel.getDirections().getValue();
+        StringBuilder stringBuilder = new StringBuilder();
+        int size = directions.size();
+        for(int i =0; i<size ; i++){
+            if(i==0 || i==size-1){
+                stringBuilder.append("Proceed ");
+            }else{
+                stringBuilder.append("Continue to ");
+            }
+            stringBuilder.append(directions.get(i).id);
+            stringBuilder.append("\n");
+        }
+
+        TextView textView = findViewById(R.id.direction_text);
+        textView.setText(stringBuilder);
     }
 
-    public void onLaunchEndClicked(View view) { finish(); }
+    public void onLaunchEndClicked(View view) {
+        viewModel.getNextDirections();
+    }
 }
