@@ -2,7 +2,6 @@ package com.example.zooseeker.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
@@ -12,12 +11,10 @@ import android.widget.TextView;
 
 import com.example.zooseeker.R;
 import com.example.zooseeker.databinding.ActivityDirectionBinding;
-import com.example.zooseeker.databinding.ActivityHomeBinding;
 import com.example.zooseeker.models.Graph;
 import com.example.zooseeker.viewmodels.PlanViewModel;
 
 import java.util.List;
-import java.util.StringJoiner;
 
 public class DirectionActivity extends AppCompatActivity {
     private PlanViewModel viewModel;
@@ -32,11 +29,9 @@ public class DirectionActivity extends AppCompatActivity {
         viewModel = new ViewModelProvider(this).get(PlanViewModel.class);
         binding.setVm(viewModel);
 
-        viewModel.setPlan(viewModel.getRoute(intent.getStringArrayListExtra("selected_animals")));
-
+        viewModel.initRoute(intent.getStringArrayListExtra("selected_animals"));
 
         //new
-        viewModel.getNextDirections();
         List<Graph.GraphData.GraphNode> directions = viewModel.getDirections().getValue();
         StringBuilder stringBuilder = new StringBuilder();
         int size = directions.size();
