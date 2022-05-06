@@ -59,8 +59,8 @@
                 android:layout_alignParentBottom="true"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
-                android:onClick="onLaunchEndClicked"
-                android:text="NEXT"
+                android:onClick="onLaunchNextClicked"
+                android:text="@{`Next (` + vm.nextExhibitName.toString() + `, ` + vm.nextExhibitDist.toString() + `ft)`}"
                 app:cornerRadius="0dp" />
 
 
