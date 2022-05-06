@@ -32,11 +32,10 @@
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_centerInParent="true"
+                    android:layout_marginEnd="10dp"
                     android:text="Directions"
                     android:textColor="@color/black"
-                    android:textSize="24sp"
-                    android:layout_marginEnd="10dp"
-                    />
+                    android:textSize="24sp" />
 
                 <TextView
                     android:id="@+id/count"
@@ -63,13 +62,47 @@
                 android:text="@{`Next (` + vm.nextExhibitName.toString() + `, ` + vm.nextExhibitDist.toString() + `ft)`}"
                 app:cornerRadius="0dp" />
 
+            <RelativeLayout
+                android:id="@+id/header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/topbar"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp">
+
+                <TextView
+                    android:id="@+id/animal_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerInParent="true"
+                    android:hint="Animal"
+                    android:text="@{ vm.curExhibitName.toString() + ` `}"
+                    android:textColor="@color/black"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/animal_distance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_toRightOf="@id/animal_name"
+                    android:hint="Distance"
+                    android:text="@{ vm.curExhibitDist.toString() + ` FT`}"
+                    android:textColor="@color/black"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+            </RelativeLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/direction_rv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_above="@id/next_button"
-                android:layout_below="@id/topbar"
+                android:layout_below="@id/header"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
