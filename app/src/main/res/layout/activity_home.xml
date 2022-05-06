@@ -73,7 +73,7 @@
                 app:cornerRadius="0dp"
                 android:layout_alignParentBottom="true"
                 android:onClick="onLaunchDirectionClicked"
-                android:text="Direction" />
+                android:text="Directions" />
         </RelativeLayout>
 
 
