@@ -2,13 +2,16 @@ package com.example.zooseeker.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ObservableField;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -20,6 +23,8 @@ import com.example.zooseeker.models.Graph.GraphData.GraphEdge;
 import com.example.zooseeker.models.Graph.GraphData.GraphNode;
 import com.example.zooseeker.models.Graph.SymmetricPair;
 import com.example.zooseeker.viewmodels.PlanViewModel;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +66,16 @@ public class DirectionActivity extends AppCompatActivity {
         viewModel.initRoute(intent.getStringArrayListExtra("selected_animals"));
     }
 
-    public void onLaunchEndClicked(View view) {
-        viewModel.getNextDirections();
+    public void onLaunchNextClicked(View view) {
+        if (viewModel.remainingExhibits.get() == 2) {
+            TextView text = findViewById(R.id.next_button);
+            text.setText("END");
+        }
+
+        if(viewModel.remainingExhibits.get() == 1) {
+            finish();
+        } else {
+            viewModel.getNextDirections();
+        }
     }
 }

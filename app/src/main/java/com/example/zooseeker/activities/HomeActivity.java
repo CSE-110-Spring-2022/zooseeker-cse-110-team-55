@@ -25,6 +25,9 @@ import com.example.zooseeker.viewmodels.HomeActivityViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.appcompat.app.AppCompatActivity;
+import com.example.zooseeker.util.Alert;
+
 public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnAnimalClickListener, SearchView.OnQueryTextListener {
     private ActivityHomeBinding binding;
     private HomeActivityViewModel viewModel;
@@ -63,13 +66,17 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
         intent.putStringArrayListExtra("selected_animals",selectedAnimals);
     }
     public void onLaunchDirectionClicked(View view) {
-        Intent intent = new Intent(this, DirectionActivity.class);
-        ArrayList<String> selectedAnimals = new ArrayList<>();
-        for(Animal a : viewModel.getSelectedAnimals().getValue()){
-            selectedAnimals.add(a.id);
+        if (viewModel.numSelectedAnimals.get() == 0){
+            Alert.emptyListAlert(this, "Please select some exhibits.");
+        } else {
+            Intent intent = new Intent(this, DirectionActivity.class);
+            ArrayList<String> selectedAnimals = new ArrayList<>();
+            for (Animal a : viewModel.getSelectedAnimals().getValue()) {
+                selectedAnimals.add(a.id);
+            }
+            intent.putStringArrayListExtra("selected_animals", selectedAnimals);
+            startActivity(intent);
         }
-        intent.putStringArrayListExtra("selected_animals",selectedAnimals);
-        startActivity(intent);
     }
 
     @Override

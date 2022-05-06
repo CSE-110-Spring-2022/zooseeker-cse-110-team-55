@@ -4,6 +4,7 @@ import static com.example.zooseeker.util.Helper.getLast;
 
 import android.app.Application;
 import android.content.Context;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.ObservableField;
@@ -11,6 +12,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.zooseeker.R;
 import com.example.zooseeker.models.AnimalItemDao;
 import com.example.zooseeker.models.Graph;
 import com.example.zooseeker.models.Graph.GraphData.GraphNode;
@@ -70,6 +72,7 @@ public class PlanViewModel extends AndroidViewModel {
 
         if (curExhibit == _plan.size() - 1) {
             // TODO: Display "End"
+
         } else {
             List<GraphNode> nextDirections = _plan.get(curExhibit + 1);
             String nextExhibitId = getLast(nextDirections).id;
