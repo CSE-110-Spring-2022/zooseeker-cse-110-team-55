@@ -15,12 +15,15 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
             <RelativeLayout
                 android:id="@+id/topbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp">
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                >
 
                 <ImageView
                     android:id="@+id/heart_icon"
@@ -32,13 +35,13 @@
 
                 <TextView
                     android:id="@+id/count"
-                    android:layout_width="64dp"
+                    android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:layout_centerInParent="true"
                     android:layout_toRightOf="@id/heart_icon"
                     android:gravity="center"
-                    android:text="@{String.valueOf(vm.numSelectedAnimals)}"
                     android:hint="@string/planned_count"
+                    android:text="@{String.valueOf(vm.numSelectedAnimals)}"
                     android:textColor="@color/black"
                     android:textSize="26sp" />
 
@@ -52,7 +55,6 @@
                     android:iconifiedByDefault="false" />
             </RelativeLayout>
 
-
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
@@ -62,15 +64,14 @@
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/animal_item" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/direction_button"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
+                android:insetBottom="0dp"
+                android:insetTop="0dp"
+                app:cornerRadius="0dp"
                 android:layout_alignParentBottom="true"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="10dp"
                 android:onClick="onLaunchDirectionClicked"
                 android:text="Direction" />
         </RelativeLayout>
