@@ -75,7 +75,7 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
                 selectedAnimals.add(a.id);
             }
             intent.putStringArrayListExtra("selected_animals", selectedAnimals);
-            SearchView searchBar = findViewById(R.id.search);
+            SearchView searchBar = binding.search;
             searchBar.setQuery("", false);
             searchBar.clearFocus();
             startActivity(intent);
