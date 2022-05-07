@@ -56,7 +56,6 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
         binding.search.setOnQueryTextListener(this);
     }
 
-
     public void onLaunchPlanClicked(View view) {
         Intent intent = new Intent(this, PlanActivity.class);
         ArrayList<String> selectedAnimals = new ArrayList<>();
@@ -65,6 +64,7 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
         }
         intent.putStringArrayListExtra("selected_animals",selectedAnimals);
     }
+
     public void onLaunchDirectionClicked(View view) {
         if (viewModel.numSelectedAnimals.get() == 0){
             Alert.emptyListAlert(this, "Please select some exhibits.");
@@ -75,6 +75,9 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
                 selectedAnimals.add(a.id);
             }
             intent.putStringArrayListExtra("selected_animals", selectedAnimals);
+            SearchView searchBar = findViewById(R.id.search);
+            searchBar.setQuery("", false);
+            searchBar.clearFocus();
             startActivity(intent);
         }
     }
@@ -103,5 +106,4 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
     public ActivityHomeBinding getBinding() {
         return this.binding;
     }
-
 }

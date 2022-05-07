@@ -68,10 +68,9 @@ public class DirectionActivity extends AppCompatActivity {
 
     public void onLaunchNextClicked(View view) {
         if (viewModel.remainingExhibits.get() == 2) {
-            TextView text = findViewById(R.id.next_button);
-            text.setText("END");
+            TextView button = findViewById(R.id.next_button);
+            button.setText("END");
         }
-
         if(viewModel.remainingExhibits.get() == 1) {
             finish();
         } else {
