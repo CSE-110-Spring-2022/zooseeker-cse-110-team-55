@@ -1,20 +1,12 @@
 package com.example.zooseeker;
 
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
-import android.view.View;
-import android.widget.CheckBox;
 import android.widget.SearchView;
-import android.widget.TextView;
 
 import androidx.lifecycle.Lifecycle;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 import androidx.test.core.app.ActivityScenario;
@@ -37,11 +29,6 @@ import java.util.List;
 public class AnimalActivityTest {
     AnimalDatabase testDb;
     AnimalItemDao animalItemDao;
-
-    private static void forceLayout(RecyclerView recyclerView) {
-        recyclerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        recyclerView.layout(0, 0, 1080, 2280);
-    }
 
     @Before
     public void resetDatabase() {

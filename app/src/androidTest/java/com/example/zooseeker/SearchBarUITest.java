@@ -1,4 +1,4 @@
-package com.example.zooseeker.activities;
+package com.example.zooseeker;
 
 
 import static androidx.test.espresso.Espresso.onView;
@@ -26,6 +26,7 @@ import androidx.test.rule.ActivityTestRule;
 import androidx.test.runner.AndroidJUnit4;
 
 import com.example.zooseeker.R;
+import com.example.zooseeker.activities.HomeActivity;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
