@@ -1,6 +1,7 @@
 package com.example.zooseeker.models;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.example.zooseeker.models.Graph.GraphData.GraphEdge;
 import com.example.zooseeker.models.Graph.GraphData.GraphNode;
@@ -116,11 +117,16 @@ public class Graph {
             // Find nearest selected neighbor of u
             // Set u to nearest neighbor
             partialPath = pathToNearestNeighbor(u, unplanned_exhibits);
+            Log.d("Partial Path Size ", String.valueOf(partialPath.size()));
+
             // mark u as planned
             u = partialPath.get(partialPath.size() - 1);
             unplanned_exhibits.remove(u);
+
             // Add u to navigation list
             plan.add(partialPath);
+            Log.d("Plan Size", String.valueOf(plan.size()));
+            Log.d("Added element", String.valueOf(u.id));
         }
 
         plan.add(shortestPathToNode(u, start));
@@ -153,9 +159,11 @@ public class Graph {
                 SymmetricPair key = new SymmetricPair(cur.id, other.id);
                 double edgeWeight = edges.get(key).weight;
                 if (dist.getOrDefault(other.id, Double.MAX_VALUE) > dist.get(cur.id) + edgeWeight) {
+                    Log.d("New Weight: ", String.valueOf((dist.get(cur.id))));
                     dist.put(other.id, dist.get(cur.id) + edgeWeight);
                     queue.add(other);
                     parent.put(other.id, cur);
+                    Log.d("Update Weight of Node ", String.valueOf(other.id));
                 }
             }
         }
@@ -168,6 +176,7 @@ public class Graph {
         GraphNode cur = end;
         while (cur != null) {
             result.add(0, cur);
+            Log.d("Added to result ", String.valueOf(result.get(0)));
             cur = parent.get(cur.id);
         }
 
