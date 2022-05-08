@@ -85,7 +85,7 @@ public class PlanViewModelTest {
 
     @Test
     public void testNextExhibitName() {
-        // starting from alligators to lions
+        // starting from alligators
         assertEquals(new String("Lions"), vm.nextExhibitName.get());
         vm.getNextDirections();
         assertEquals(new String("Entrance and Exit Gate"), vm.nextExhibitName.get());
@@ -93,7 +93,7 @@ public class PlanViewModelTest {
 
     @Test
     public void testNextExhibitDist() {
-        // starting from alligators to lions
+        // starting from alligators
         assertEquals(new Integer(200), vm.nextExhibitDist.get());
         vm.getNextDirections();
         assertEquals(new Integer(310), vm.nextExhibitDist.get());
