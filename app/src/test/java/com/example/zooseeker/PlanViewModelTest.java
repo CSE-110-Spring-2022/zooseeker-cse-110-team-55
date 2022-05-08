@@ -73,7 +73,6 @@ public class PlanViewModelTest {
         assertEquals(new String("Entrance and Exit Gate"), vm.curExhibitName.get());
     }
 
-
     @Test
     public void testCurExhibitDist() {
         assertEquals(new Integer(110), vm.curExhibitDist.get());
