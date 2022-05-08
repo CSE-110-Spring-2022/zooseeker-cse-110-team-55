@@ -45,55 +45,55 @@ public class SearchBarUITest {
     @Test
     public void searchBarUITest2() {
         ViewInteraction textView = onView(
-allOf(withId(R.id.count), withText("0"),
-withParent(allOf(withId(R.id.topbar),
-withParent(IsInstanceOf.<View>instanceOf(android.widget.RelativeLayout.class)))),
-isDisplayed()));
+                allOf(withId(R.id.count), withText("0"),
+                        withParent(allOf(withId(R.id.topbar),
+                                withParent(IsInstanceOf.<View>instanceOf(android.widget.RelativeLayout.class)))),
+                        isDisplayed()));
         textView.check(matches(withText("0")));
-        
+
         ViewInteraction searchAutoComplete = onView(
-allOf(withClassName(is("android.widget.SearchView$SearchAutoComplete")),
-childAtPosition(
-allOf(withClassName(is("android.widget.LinearLayout")),
-childAtPosition(
-withClassName(is("android.widget.LinearLayout")),
-1)),
-0),
-isDisplayed()));
+                allOf(withClassName(is("android.widget.SearchView$SearchAutoComplete")),
+                        childAtPosition(
+                                allOf(withClassName(is("android.widget.LinearLayout")),
+                                        childAtPosition(
+                                                withClassName(is("android.widget.LinearLayout")),
+                                                1)),
+                                0),
+                        isDisplayed()));
         searchAutoComplete.perform(replaceText("lion"), closeSoftKeyboard());
-        
+
         ViewInteraction searchAutoComplete2 = onView(
-allOf(withClassName(is("android.widget.SearchView$SearchAutoComplete")), withText("lion"),
-childAtPosition(
-allOf(withClassName(is("android.widget.LinearLayout")),
-childAtPosition(
-withClassName(is("android.widget.LinearLayout")),
-1)),
-0),
-isDisplayed()));
+                allOf(withClassName(is("android.widget.SearchView$SearchAutoComplete")), withText("lion"),
+                        childAtPosition(
+                                allOf(withClassName(is("android.widget.LinearLayout")),
+                                        childAtPosition(
+                                                withClassName(is("android.widget.LinearLayout")),
+                                                1)),
+                                0),
+                        isDisplayed()));
         searchAutoComplete2.perform(pressImeActionButton());
-        
+
         ViewInteraction textView2 = onView(
-allOf(withId(R.id.animal_name), withText("Lions"),
-withParent(withParent(IsInstanceOf.<View>instanceOf(android.widget.FrameLayout.class))),
-isDisplayed()));
+                allOf(withId(R.id.animal_name), withText("Lions"),
+                        withParent(withParent(IsInstanceOf.<View>instanceOf(android.widget.FrameLayout.class))),
+                        isDisplayed()));
         textView2.check(matches(withText("Lions")));
-        
+
         ViewInteraction recyclerView = onView(
-allOf(withId(R.id.recyclerView),
-childAtPosition(
-withClassName(is("android.widget.RelativeLayout")),
-1)));
+                allOf(withId(R.id.recyclerView),
+                        childAtPosition(
+                                withClassName(is("android.widget.RelativeLayout")),
+                                1)));
         recyclerView.perform(actionOnItemAtPosition(0, click()));
-        
+
         ViewInteraction textView3 = onView(
-allOf(withId(R.id.count), withText("1"),
-withParent(allOf(withId(R.id.topbar),
-withParent(IsInstanceOf.<View>instanceOf(android.widget.RelativeLayout.class)))),
-isDisplayed()));
+                allOf(withId(R.id.count), withText("1"),
+                        withParent(allOf(withId(R.id.topbar),
+                                withParent(IsInstanceOf.<View>instanceOf(android.widget.RelativeLayout.class)))),
+                        isDisplayed()));
         textView3.check(matches(withText("1")));
-        }
-    
+    }
+
     private static Matcher<View> childAtPosition(
             final Matcher<View> parentMatcher, final int position) {
 
@@ -108,8 +108,8 @@ isDisplayed()));
             public boolean matchesSafely(View view) {
                 ViewParent parent = view.getParent();
                 return parent instanceof ViewGroup && parentMatcher.matches(parent)
-                        && view.equals(((ViewGroup)parent).getChildAt(position));
+                        && view.equals(((ViewGroup) parent).getChildAt(position));
             }
         };
     }
-    }
+}
