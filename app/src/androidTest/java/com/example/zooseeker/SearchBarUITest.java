@@ -43,7 +43,7 @@ public class SearchBarUITest {
     public ActivityTestRule<HomeActivity> mActivityTestRule = new ActivityTestRule<>(HomeActivity.class);
 
     @Test
-    public void searchBarUITest2() {
+    public void searchBarUITest() {
         ViewInteraction textView = onView(
                 allOf(withId(R.id.count), withText("0"),
                         withParent(allOf(withId(R.id.topbar),
