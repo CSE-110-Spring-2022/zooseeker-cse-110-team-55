@@ -11,19 +11,21 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.example.zooseeker.models.Animal;
 import com.example.zooseeker.models.AnimalItemDao;
-import com.example.zooseeker.models.ZooData;
+import com.example.zooseeker.models.AnimalTag;
+import com.example.zooseeker.models.Graph;
+import com.example.zooseeker.models.Graph.NodeInfo;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Animal.class}, version = 1)
+@Database(entities = {Animal.class, AnimalTag.class}, version = 2)
 public abstract class AnimalDatabase extends RoomDatabase {
     private static AnimalDatabase singleton = null;
 
     public abstract AnimalItemDao animalItemDao();
+    public abstract AnimalTagDao animalTagDao();
 
     public synchronized static AnimalDatabase getSingleton(Context context) {
         if (singleton == null) {
@@ -40,21 +42,24 @@ public abstract class AnimalDatabase extends RoomDatabase {
                     public void onCreate(@NonNull SupportSQLiteDatabase db) {
                         super.onCreate(db);
                         Executors.newSingleThreadExecutor().execute(() -> {
-                            List<Animal> animals = new ArrayList<>();
-                            Map<String, ZooData.VertexInfo> map = null;
-                            try {
-                                map = ZooData.loadVertexInfoJSON(context, "sample_node_info.json");
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                            for (Map.Entry<String, ZooData.VertexInfo> entry : map.entrySet()) {
-                                if (entry.getValue().kind == ZooData.VertexInfo.Kind.EXHIBIT) {
-                                    Animal animal = new Animal(entry.getValue().name, entry.getKey());
-                                    animals.add(animal);
+                            Map<String, NodeInfo> map;
+                            map = Graph.loadNodeInfo(context, "sample_node_info.json");
+
+                            for (Map.Entry<String, NodeInfo> entry : map.entrySet()) {
+                                // Add exhibits
+                                NodeInfo node = entry.getValue();
+                                if (node.kind == NodeInfo.Kind.EXHIBIT) {
+                                    Animal animal = new Animal(node.name, entry.getKey());
+                                    getSingleton(context).animalItemDao().insert(animal);
+
+                                    // Insert tags into db:
+                                    for (String tag : node.tags) {
+                                        AnimalTag animalTag = new AnimalTag(animal.id, tag);
+                                        getSingleton(context).animalTagDao().insert(animalTag);
+                                    }
                                 }
                             }
 
-                            getSingleton(context).animalItemDao().insertAll(animals);
                         });
 
                     }

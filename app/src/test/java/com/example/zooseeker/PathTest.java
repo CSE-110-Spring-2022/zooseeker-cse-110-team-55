@@ -35,7 +35,7 @@ public class PathTest {
     @Test
     public void testGraphLoad() {
         Graph graph = new Graph();
-        graph.loadGraph(context, "sample_zoo_graph.json");
+        graph.loadGraph(context, "sample_zoo_graph.json", "sample_node_info.json", "sample_edge_info.json");
 
         assertEquals(7, graph.nodes.size());
         assertEquals(7, graph.edges.size());
@@ -44,7 +44,7 @@ public class PathTest {
     @Test
     public void testObviousPath() {
         Graph graph = new Graph();
-        graph.loadGraph(context, "sample_zoo_graph.json");
+        graph.loadGraph(context, "sample_zoo_graph.json", "sample_node_info.json", "sample_edge_info.json");
 
         List<GraphNode> selected = new ArrayList<>();
         selected.add(graph.nodes.get("gorillas"));
@@ -56,7 +56,7 @@ public class PathTest {
     @Test
     public void testShortestPath() {
         Graph graph = new Graph();
-        graph.loadGraph(context, "sample_zoo_graph.json");
+        graph.loadGraph(context, "sample_zoo_graph.json", "sample_node_info.json", "sample_edge_info.json");
 
         List<GraphNode> selected = new ArrayList<>();
         selected.add(graph.nodes.get("lions"));
@@ -73,7 +73,7 @@ public class PathTest {
     @Test
     public void testNearestNeighbor() {
         Graph graph = new Graph();
-        graph.loadGraph(context, "sample_zoo_graph.json");
+        graph.loadGraph(context, "sample_zoo_graph.json", "sample_node_info.json", "sample_edge_info.json");
 
         List<GraphNode> selected = new ArrayList<>();
         selected.add(graph.nodes.get("lions"));

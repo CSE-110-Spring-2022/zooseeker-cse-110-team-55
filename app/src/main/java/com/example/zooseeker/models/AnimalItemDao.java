@@ -16,7 +16,11 @@ public interface AnimalItemDao {
     @Insert
     long insert(Animal animal);
 
-    @Query("SELECT * FROM `animal_items` WHERE `name` LIKE '%' || :query || '%'")
+    @Query("SELECT id, name FROM (SELECT a.id, a.name FROM animal_items AS a WHERE a.name LIKE '%' || :query || '%'" +
+            " UNION " +
+            "SELECT a.id, a.name FROM animal_items AS a, animal_tags AS t JOIN animal_tags ON t.animalId = a.id WHERE t.tag = :query) " +
+            "ORDER BY CASE WHEN name LIKE :query || '%' THEN 1 " +
+            "ELSE 2 END, name ASC")
     List<Animal> get(String query);
 
     @Update

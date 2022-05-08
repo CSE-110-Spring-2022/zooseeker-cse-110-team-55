@@ -46,9 +46,7 @@ public class PlanViewModel extends AndroidViewModel {
 
         // Init graph
         routeGraph = new Graph();
-        routeGraph.loadGraph(context, "sample_zoo_graph.json");
-        routeGraph.loadNodeInfo(context, "sample_node_info.json");
-        routeGraph.loadEdgeInfo(context, "sample_edge_info.json");
+        routeGraph.loadGraph(context, "sample_zoo_graph.json", "sample_node_info.json", "sample_edge_info.json");
     }
 
     public void setPlan(List<List<GraphNode>> plan) {
