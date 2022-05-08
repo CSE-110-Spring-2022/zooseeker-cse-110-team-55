@@ -25,7 +25,6 @@ import androidx.test.filters.LargeTest;
 import androidx.test.rule.ActivityTestRule;
 import androidx.test.runner.AndroidJUnit4;
 
-import com.example.zooseeker.R;
 import com.example.zooseeker.activities.HomeActivity;
 
 import org.hamcrest.Description;
@@ -44,7 +43,14 @@ public class SearchBarUITest {
     public ActivityTestRule<HomeActivity> mActivityTestRule = new ActivityTestRule<>(HomeActivity.class);
 
     @Test
-    public void searchBarUITest() {
+    public void searchBarUITest2() {
+        ViewInteraction textView = onView(
+                allOf(withId(R.id.count), withText("0"),
+                        withParent(allOf(withId(R.id.topbar),
+                                withParent(IsInstanceOf.<View>instanceOf(android.widget.RelativeLayout.class)))),
+                        isDisplayed()));
+        textView.check(matches(withText("0")));
+
         ViewInteraction searchAutoComplete = onView(
                 allOf(withClassName(is("android.widget.SearchView$SearchAutoComplete")),
                         childAtPosition(
@@ -67,18 +73,11 @@ public class SearchBarUITest {
                         isDisplayed()));
         searchAutoComplete2.perform(pressImeActionButton());
 
-        ViewInteraction textView = onView(
+        ViewInteraction textView2 = onView(
                 allOf(withId(R.id.animal_name), withText("Lions"),
                         withParent(withParent(IsInstanceOf.<View>instanceOf(android.widget.FrameLayout.class))),
                         isDisplayed()));
-        textView.check(matches(withText("Lions")));
-
-        ViewInteraction textView2 = onView(
-                allOf(withId(R.id.count), withText("0"),
-                        withParent(allOf(withId(R.id.topbar),
-                                withParent(IsInstanceOf.<View>instanceOf(android.widget.RelativeLayout.class)))),
-                        isDisplayed()));
-        textView2.check(matches(withText("0")));
+        textView2.check(matches(withText("Lions")));
 
         ViewInteraction recyclerView = onView(
                 allOf(withId(R.id.recyclerView),
