@@ -6,6 +6,7 @@ import android.util.Log;
 import com.example.zooseeker.models.Graph.GraphData.GraphEdge;
 import com.example.zooseeker.models.Graph.GraphData.GraphNode;
 import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
 
 import org.w3c.dom.Node;
@@ -37,8 +38,8 @@ public class Graph {
     }
 
     // Graph Loading
-    public void loadGraph(Context context, String path) {
-        GraphData graphData = loadGraphJSON(context, path);
+    public void loadGraph(Context context, String graphPath, String nodesPath, String edgesPath) {
+        GraphData graphData = loadGraphJSON(context, graphPath);
 
         nodes = graphData.nodes.stream()
                 .collect(Collectors.toMap(v -> v.id, datum -> datum));
@@ -52,6 +53,9 @@ public class Graph {
 
             edges.put(new SymmetricPair(e.source, e.target), e);
         }
+
+        this.nodeInfo = loadNodeInfo(context, nodesPath);
+        this.edgeInfo = loadEdgeInfo(context, edgesPath);
     }
 
     public static GraphData loadGraphJSON(Context context, String path) {
@@ -67,7 +71,7 @@ public class Graph {
         }
     }
 
-    public void loadEdgeInfo(Context context, String path) {
+    public static Map<String, EdgeInfo> loadEdgeInfo(Context context, String path) {
         InputStream inputStream;
         try {
             inputStream = context.getAssets().open(path);
@@ -77,15 +81,16 @@ public class Graph {
             Type type = new TypeToken<List<EdgeInfo>>(){}.getType();
             List<EdgeInfo> edgeInfo = gson.fromJson(reader, type);
 
-            this.edgeInfo = edgeInfo
+            return edgeInfo
                     .stream()
                     .collect(Collectors.toMap(edge -> edge.id, info -> info));
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
     }
 
-    public void loadNodeInfo(Context context, String path) {
+    public static Map<String, NodeInfo> loadNodeInfo(Context context, String path) {
         InputStream inputStream;
         try {
             inputStream = context.getAssets().open(path);
@@ -95,11 +100,12 @@ public class Graph {
             Type type = new TypeToken<List<NodeInfo>>(){}.getType();
             List<NodeInfo> nodeInfo = gson.fromJson(reader, type);
 
-            this.nodeInfo = nodeInfo
+            return nodeInfo
                     .stream()
                     .collect(Collectors.toMap(node -> node.id, info -> info));
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
     }
     // End Graph Loading
@@ -230,8 +236,16 @@ public class Graph {
     }
 
     public static class NodeInfo {
+        public static enum Kind {
+            // The SerializedName annotation tells GSON how to convert
+            // from the strings in our JSON to this Enum.
+            @SerializedName("gate") GATE,
+            @SerializedName("exhibit") EXHIBIT,
+            @SerializedName("intersection") INTERSECTION
+        }
+
         public String id;
-        public String kind;
+        public Kind kind;
         public String name;
         public List<String> tags;
     }
