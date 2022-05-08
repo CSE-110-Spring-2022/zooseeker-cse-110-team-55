@@ -90,19 +90,14 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        SearchView searchBar = binding.search;
-        searchBar.clearFocus();
-        List<Animal> results = viewModel.searchInDatabase(this, query);
-        viewModel.setAnimals(results);
-        return true;
+        viewModel.submitSearch(this, query);
+        return false;
     }
 
     @Override
     public boolean onQueryTextChange(String query) {
-        List<Animal> results = viewModel.searchInDatabase(this, query);
         // TODO: Implement autocomplete
-        Log.d("[HomeActivity]", String.valueOf(results.size()));
-        return true;
+        return false;
     }
 
     public ActivityHomeBinding getBinding() {
