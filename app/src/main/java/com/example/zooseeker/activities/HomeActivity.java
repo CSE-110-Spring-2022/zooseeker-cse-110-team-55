@@ -37,7 +37,6 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
         // Inject viewmodel instance
         binding.setVm(viewModel);
 
-        // TODO: Observe changes of LiveData objects
         // Sets RecyclerView
         RecyclerView rv = binding.recyclerView;
         rv.setLayoutManager(new LinearLayoutManager(this));
@@ -45,6 +44,7 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
         AnimalAdapter adapter = new AnimalAdapter(this, viewModel);
         rv.setAdapter(adapter);
 
+        // Observe changes
         viewModel.getAnimals().observe(this, adapter::setAnimals);
 
         binding.search.setOnQueryTextListener(this);
@@ -59,6 +59,10 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
         intent.putStringArrayListExtra("selected_animals",selectedAnimals);
     }
 
+    /**
+     * Called when user presses directions button
+     * @param view
+     */
     public void onLaunchDirectionClicked(View view) {
         if (viewModel.numSelectedAnimals.get() == 0){
             Alert.emptyListAlert(this, "Please select some exhibits.");
@@ -84,6 +88,7 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
 
     @Override
     public void onAnimalClick(int position) {
+        // Add or remove animal from list
         Animal selectedAnimal = viewModel.getAnimals().getValue().get(position);
         viewModel.toggleSelectedAnimal(selectedAnimal);
     }

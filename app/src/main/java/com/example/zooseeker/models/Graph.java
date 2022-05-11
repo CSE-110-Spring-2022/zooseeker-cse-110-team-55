@@ -144,26 +144,37 @@ public class Graph {
         return pathToNearestNeighbor(start, new ArrayList<>(Collections.singleton(end)));
     }
 
+    /**
+     * Finds path to nearest neighbor of unplanned nodes starting from node u
+     * @param u
+     * @param unplanned
+     * @return
+     */
     private ArrayList<GraphNode> pathToNearestNeighbor(GraphNode u, List<GraphNode> unplanned) {
         Map<String, GraphNode> parent = new HashMap<>();
         Map<String, Double> dist = new HashMap<>();
         PriorityQueue<GraphNode> queue = new PriorityQueue<>(10,
                 (o1, o2) -> (int) (dist.get(o1.id) - dist.get(o2.id)));
 
+        // Init dijkstra's
         queue.add(u);
         dist.put(u.id, (double) 0);
 
+        // Continue while there are more nodes
         while (!queue.isEmpty()) {
             GraphNode cur = queue.poll();
+            // If unplanned node is found, return path to that node
             if (unplanned
                     .stream()
                     .anyMatch(n -> n.id.equals(cur.id))
             ) return backtrace(cur, parent);
 
+            // Get neighboring nodes
             List<GraphNode> neighbors = adjacencyList.get(cur.id);
             for (GraphNode other : neighbors) {
                 SymmetricPair key = new SymmetricPair(cur.id, other.id);
                 double edgeWeight = edges.get(key).weight;
+                // If distance to neighbor is closer, update distance and re-insert into priority queue
                 if (dist.getOrDefault(other.id, Double.MAX_VALUE) > dist.get(cur.id) + edgeWeight) {
                     Log.d("New Weight: ", String.valueOf((dist.get(cur.id))));
                     dist.put(other.id, dist.get(cur.id) + edgeWeight);
@@ -180,6 +191,7 @@ public class Graph {
     private static ArrayList<GraphNode> backtrace(GraphNode end, Map<String, GraphNode> parent) {
         ArrayList<GraphNode> result = new ArrayList<GraphNode>();
         GraphNode cur = end;
+        // Traverse parent pointers and add to list of nodes
         while (cur != null) {
             result.add(0, cur);
             Log.d("Added to result ", String.valueOf(result.get(0)));
@@ -190,6 +202,9 @@ public class Graph {
     }
     // End Algo
 
+    /**
+     * Helper class for symmetric hashing
+     */
     public static class SymmetricPair {
         public String k1;
         public String k2;
