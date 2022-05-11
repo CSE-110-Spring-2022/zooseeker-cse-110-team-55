@@ -10,13 +10,10 @@ import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.example.zooseeker.models.Animal;
-import com.example.zooseeker.models.AnimalItemDao;
 import com.example.zooseeker.models.AnimalTag;
 import com.example.zooseeker.models.Graph;
 import com.example.zooseeker.models.Graph.NodeInfo;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
 

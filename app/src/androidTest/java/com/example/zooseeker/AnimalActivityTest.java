@@ -16,7 +16,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import com.example.zooseeker.activities.HomeActivity;
 import com.example.zooseeker.databinding.ActivityHomeBinding;
 import com.example.zooseeker.models.Animal;
-import com.example.zooseeker.models.AnimalItemDao;
+import com.example.zooseeker.repositories.AnimalItemDao;
 import com.example.zooseeker.repositories.AnimalDatabase;
 
 import org.junit.Before;

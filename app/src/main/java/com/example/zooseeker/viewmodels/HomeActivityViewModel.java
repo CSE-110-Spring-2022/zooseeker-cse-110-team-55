@@ -1,17 +1,14 @@
 package com.example.zooseeker.viewmodels;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.databinding.ObservableInt;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-import androidx.test.core.app.ApplicationProvider;
 
 import com.example.zooseeker.models.Animal;
-import com.example.zooseeker.models.AnimalItemDao;
-import com.example.zooseeker.models.Graph;
+import com.example.zooseeker.repositories.AnimalItemDao;
 import com.example.zooseeker.repositories.AnimalDatabase;
 
 import java.util.ArrayList;

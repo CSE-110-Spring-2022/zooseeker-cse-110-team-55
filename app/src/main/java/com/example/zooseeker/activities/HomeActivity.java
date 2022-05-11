@@ -2,15 +2,12 @@ package com.example.zooseeker.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.util.Log;
 import android.view.View;
 import android.widget.SearchView;
 
@@ -18,14 +15,11 @@ import com.example.zooseeker.R;
 import com.example.zooseeker.adapters.AnimalAdapter;
 import com.example.zooseeker.databinding.ActivityHomeBinding;
 import com.example.zooseeker.models.Animal;
-import com.example.zooseeker.models.AnimalItemDao;
-import com.example.zooseeker.repositories.AnimalDatabase;
 import com.example.zooseeker.viewmodels.HomeActivityViewModel;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.stream.Collectors;
 
-import androidx.appcompat.app.AppCompatActivity;
 import com.example.zooseeker.util.Alert;
 
 public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnAnimalClickListener, SearchView.OnQueryTextListener {
@@ -70,14 +64,20 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
             Alert.emptyListAlert(this, "Please select some exhibits.");
         } else {
             Intent intent = new Intent(this, DirectionActivity.class);
-            ArrayList<String> selectedAnimals = new ArrayList<>();
-            for (Animal a : viewModel.getSelectedAnimals().getValue()) {
-                selectedAnimals.add(a.id);
-            }
+            // Convert list of selected animals to list of their id strings
+            ArrayList<String> selectedAnimals = new ArrayList<>(
+                    viewModel.getSelectedAnimals().getValue()
+                    .stream()
+                    .map(a -> a.id)
+                    .collect(Collectors.toList()));
+            // Add to intent
             intent.putStringArrayListExtra("selected_animals", selectedAnimals);
+
+            // Clear searchbar and close keyboard
             SearchView searchBar = binding.search;
             searchBar.setQuery("", false);
             searchBar.clearFocus();
+
             startActivity(intent);
         }
     }
