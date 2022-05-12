@@ -1,4 +1,4 @@
-package com.example.zooseeker.models;
+package com.example.zooseeker.repositories;
 
 import androidx.room.Dao;
 import androidx.room.Delete;
@@ -18,7 +18,7 @@ public interface AnimalItemDao {
 
     @Query("SELECT id, name FROM (SELECT a.id, a.name FROM animal_items AS a WHERE a.name LIKE '%' || :query || '%'" +
             " UNION " +
-            "SELECT a.id, a.name FROM animal_items AS a, animal_tags AS t JOIN animal_tags ON t.animalId = a.id WHERE t.tag = :query) " +
+            "SELECT a.id, a.name FROM animal_items AS a, animal_tags AS t JOIN animal_tags ON t.animalId = a.id WHERE t.tag LIKE '%' || :query || '%') " +
             "ORDER BY CASE WHEN name LIKE :query || '%' THEN 1 " +
             "ELSE 2 END, name ASC")
     List<Animal> get(String query);

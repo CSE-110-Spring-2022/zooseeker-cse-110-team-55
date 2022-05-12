@@ -18,6 +18,8 @@ public class PlanActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plan);
         Intent intent = getIntent();
+
+        // Get viewmodel and create initial plan
         viewModel = new ViewModelProvider(this).get(PlanViewModel.class);
         viewModel.setPlan(viewModel.getRoute(intent.getStringArrayListExtra("selected_animals")));
     }

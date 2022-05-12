@@ -10,13 +10,10 @@ import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.example.zooseeker.models.Animal;
-import com.example.zooseeker.models.AnimalItemDao;
 import com.example.zooseeker.models.AnimalTag;
 import com.example.zooseeker.models.Graph;
 import com.example.zooseeker.models.Graph.NodeInfo;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
 
@@ -46,13 +43,13 @@ public abstract class AnimalDatabase extends RoomDatabase {
                             map = Graph.loadNodeInfo(context, "sample_node_info.json");
 
                             for (Map.Entry<String, NodeInfo> entry : map.entrySet()) {
-                                // Add exhibits
+                                // Insert exhibits into db
                                 NodeInfo node = entry.getValue();
                                 if (node.kind == NodeInfo.Kind.EXHIBIT) {
                                     Animal animal = new Animal(node.name, entry.getKey());
                                     getSingleton(context).animalItemDao().insert(animal);
 
-                                    // Insert tags into db:
+                                    // Insert tags into db
                                     for (String tag : node.tags) {
                                         AnimalTag animalTag = new AnimalTag(animal.id, tag);
                                         getSingleton(context).animalTagDao().insert(animalTag);
