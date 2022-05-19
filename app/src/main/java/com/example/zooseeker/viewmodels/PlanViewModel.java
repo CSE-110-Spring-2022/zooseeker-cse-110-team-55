@@ -134,4 +134,8 @@ public class PlanViewModel extends AndroidViewModel {
     public Graph getGraph() {
         return routeGraph;
     }
+
+    public List<List<GraphNode>> getPlan() {
+        return _plan;
+    }
 }

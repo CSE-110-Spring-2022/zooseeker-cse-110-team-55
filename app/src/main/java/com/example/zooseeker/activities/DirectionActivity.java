@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.zooseeker.R;
@@ -23,6 +24,7 @@ import com.example.zooseeker.models.Graph.GraphData.GraphEdge;
 import com.example.zooseeker.models.Graph.GraphData.GraphNode;
 import com.example.zooseeker.models.Graph.SymmetricPair;
 import com.example.zooseeker.viewmodels.PlanViewModel;
+import com.example.zooseeker.viewmodels.RouteSummaryFragment;
 
 import org.w3c.dom.Text;
 
@@ -32,6 +34,7 @@ import java.util.List;
 public class DirectionActivity extends AppCompatActivity {
     private PlanViewModel viewModel;
     private ActivityDirectionBinding binding;
+    private Button buttonDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +76,16 @@ public class DirectionActivity extends AppCompatActivity {
 
         // Initialize the route
         viewModel.initRoute(intent.getStringArrayListExtra("selected_animals"));
+
+        buttonDialog = findViewById(R.id.routeSummaryButton);
+
+        buttonDialog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                RouteSummaryFragment routeSummaryFragment = new RouteSummaryFragment();
+                routeSummaryFragment.show(getSupportFragmentManager(), "TAG");
+            }
+        });
     }
 
     /**
