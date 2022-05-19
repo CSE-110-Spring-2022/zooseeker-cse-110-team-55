@@ -63,6 +63,9 @@ public class PlanViewModel extends AndroidViewModel {
         updateObservables();
     }
 
+    /**
+     * Updates the subjects being observed to match current pathing data
+     */
     private void updateObservables() {
         List<GraphNode> directions = getDirections().getValue();
         String curExhibitId = getLast(directions).id;
@@ -70,11 +73,9 @@ public class PlanViewModel extends AndroidViewModel {
         curExhibitName.set(routeGraph.nodeInfo.get(curExhibitId).name);
         curExhibitDist.set(_distances[curExhibit]);
 
-        if (curExhibit == _plan.size() - 1) {
-            // TODO: Display "End"
-
-        } else {
-            // If there are more exhibits to visit, update the current and next exhibit display names
+        // If there are more exhibits to visit, update the current and next exhibit display names
+        if (curExhibit != _plan.size() - 1) {
+            // Next set of directions
             List<GraphNode> nextDirections = _plan.get(curExhibit + 1);
             String nextExhibitId = getLast(nextDirections).id;
 
@@ -89,13 +90,18 @@ public class PlanViewModel extends AndroidViewModel {
     public void initRoute(List<String> selectedAnimals) {
         List<List<GraphNode>> route = getRoute(selectedAnimals);
         setPlan(route);
-        setDistances(route);
+        this._distances = calculateDistances(route, routeGraph);
         getNextDirections();
     }
 
-    public void setDistances(List<List<GraphNode>> route) {
+    /**
+     * Calculates distances to and from each exhibit in the route
+     * @param route Route to calculate
+     * @param graph Graph that contains nodes and edges of route
+     */
+    private static int[] calculateDistances(List<List<GraphNode>> route, Graph graph) {
         // Calculate distances to each exhibit
-        this._distances = new int[route.size()];
+        int[] distances = new int[route.size()];
         for (int i = 0; i < route.size(); i++) {
             List<GraphNode> exhibitDirections = route.get(i);
             int totalWeight = 0;
@@ -104,10 +110,12 @@ public class PlanViewModel extends AndroidViewModel {
                 GraphNode dest = exhibitDirections.get(j + 1);
 
                 SymmetricPair edge = new SymmetricPair(source.id, dest.id);
-                totalWeight += routeGraph.edges.get(edge).weight;
+                totalWeight += graph.edges.get(edge).weight;
             }
-            _distances[i] = totalWeight;
+            distances[i] = totalWeight;
         }
+
+        return distances;
     }
 
     public List<List<GraphNode>> getRoute(List<String> selectedAnimals){
