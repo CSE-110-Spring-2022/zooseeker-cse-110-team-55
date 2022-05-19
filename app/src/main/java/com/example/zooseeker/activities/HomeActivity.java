@@ -2,12 +2,14 @@ package com.example.zooseeker.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.SearchView;
 
@@ -18,6 +20,7 @@ import com.example.zooseeker.models.Animal;
 import com.example.zooseeker.viewmodels.HomeActivityViewModel;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import com.example.zooseeker.util.Alert;
@@ -53,7 +56,7 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
     public void onLaunchPlanClicked(View view) {
         Intent intent = new Intent(this, PlanActivity.class);
         ArrayList<String> selectedAnimals = new ArrayList<>();
-        for(Animal a : viewModel.getSelectedAnimals().getValue()){
+        for(Animal a : viewModel.getSelectedAnimals()){
             selectedAnimals.add(a.id);
         }
         intent.putStringArrayListExtra("selected_animals",selectedAnimals);
@@ -70,7 +73,7 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
             Intent intent = new Intent(this, DirectionActivity.class);
             // Convert list of selected animals to list of their id strings
             ArrayList<String> selectedAnimals = new ArrayList<>(
-                    viewModel.getSelectedAnimals().getValue()
+                    viewModel.getSelectedAnimals()
                     .stream()
                     .map(a -> a.id)
                     .collect(Collectors.toList()));
@@ -101,7 +104,11 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
 
     @Override
     public boolean onQueryTextChange(String query) {
-        // TODO: Implement autocomplete
+        Log.d("[HOME SEARCH]", "" + viewModel.getSelectedAnimals().size());
+        if (query.equals("")) {
+            List<Animal> selectedAnimals = new ArrayList<>(viewModel.getSelectedAnimals());
+            viewModel.setAnimals(selectedAnimals);
+        }
         return false;
     }
 
