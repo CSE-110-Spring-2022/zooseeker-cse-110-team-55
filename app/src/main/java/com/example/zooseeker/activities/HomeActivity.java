@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +18,8 @@ import com.example.zooseeker.R;
 import com.example.zooseeker.adapters.AnimalAdapter;
 import com.example.zooseeker.databinding.ActivityHomeBinding;
 import com.example.zooseeker.models.Animal;
+import com.example.zooseeker.models.SearchCommandParams;
+import com.example.zooseeker.models.SelectedAnimalParams;
 import com.example.zooseeker.viewmodels.HomeActivityViewModel;
 
 import java.util.ArrayList;
@@ -92,22 +95,21 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
     @Override
     public void onAnimalClick(int position) {
         // Add or remove animal from list
-        Animal selectedAnimal = viewModel.getAnimals().getValue().get(position);
-        viewModel.toggleSelectedAnimal(selectedAnimal);
+        viewModel.selectAnimalCommand.execute(new SelectedAnimalParams(position));
     }
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        viewModel.submitSearch(this, query);
+        SearchCommandParams params = new SearchCommandParams(this, query);
+        viewModel.searchCommand.execute(params);
         return false;
     }
 
     @Override
     public boolean onQueryTextChange(String query) {
-        Log.d("[HOME SEARCH]", "" + viewModel.getSelectedAnimals().size());
         if (query.equals("")) {
-            List<Animal> selectedAnimals = new ArrayList<>(viewModel.getSelectedAnimals());
-            viewModel.setAnimals(selectedAnimals);
+            SearchCommandParams params = new SearchCommandParams(this, query);
+            viewModel.searchCommand.execute(params);
         }
         return false;
     }

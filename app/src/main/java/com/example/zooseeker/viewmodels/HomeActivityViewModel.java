@@ -7,7 +7,10 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.zooseeker.contracts.ICommand;
 import com.example.zooseeker.models.Animal;
+import com.example.zooseeker.models.SearchCommandParams;
+import com.example.zooseeker.models.SelectedAnimalParams;
 import com.example.zooseeker.repositories.AnimalItemDao;
 import com.example.zooseeker.repositories.AnimalDatabase;
 
@@ -22,13 +25,19 @@ public class HomeActivityViewModel extends ViewModel {
     private List<Animal> _selectedAnimals = new ArrayList<>();
     public ObservableInt numSelectedAnimals = new ObservableInt(0);
 
+    public ICommand<SearchCommandParams> searchCommand = params -> performSearch(params.context, params.query);
+    public ICommand<SelectedAnimalParams> selectAnimalCommand = params -> {
+        Animal animal = getAnimals().getValue().get(params.position);
+        toggleSelectedAnimal(animal);
+    };
+
     // Constructor
     public HomeActivityViewModel() {
         // TODO: Instantiate repository instance
         setAnimals(new ArrayList<>());
     }
 
-    public void toggleSelectedAnimal(Animal animal) {
+    private void toggleSelectedAnimal(Animal animal) {
         Optional<Animal> potentialMatch = _selectedAnimals
                 .stream()
                 .filter(a -> a.name.equals(animal.name))
@@ -54,10 +63,13 @@ public class HomeActivityViewModel extends ViewModel {
         this.animals.setValue(animals);
     }
 
-    public void submitSearch(Context context, String query) {
-        List<Animal> results;
-        results = searchInDatabase(context, query);
-        setAnimals(results);
+    private void performSearch(Context context, String query) {
+        // Show selected exhibits if empty
+        List<Animal> animalsToDisplay = query.equals("") ?
+                new ArrayList<>(_selectedAnimals) :
+                searchInDatabase(context, query);
+
+        setAnimals(animalsToDisplay);
     }
 
     private List<Animal> searchInDatabase(Context context, String query) {
