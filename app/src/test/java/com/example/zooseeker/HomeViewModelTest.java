@@ -33,11 +33,11 @@ public class HomeViewModelTest {
 
         // Add animal
         vm.toggleSelectedAnimal(animal);
-        assertTrue(vm.getSelectedAnimals().getValue().contains(animal));
+        assertTrue(vm.getSelectedAnimals().contains(animal));
 
         // Remove animal
         vm.toggleSelectedAnimal(animal);
-        assertFalse(vm.getSelectedAnimals().getValue().contains(animal));
-        assertEquals(0, vm.getSelectedAnimals().getValue().size());
+        assertFalse(vm.getSelectedAnimals().contains(animal));
+        assertEquals(0, vm.getSelectedAnimals().size());
     }
 }

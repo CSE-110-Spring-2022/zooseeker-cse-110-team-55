@@ -16,19 +16,16 @@ import java.util.*;
 
 public class HomeActivityViewModel extends ViewModel {
     // List of animals to be displayed
-    private List<Animal> _animals = new ArrayList<>();
     private MutableLiveData<List<Animal>> animals = new MutableLiveData<>();
 
     // List of selected animals
     private List<Animal> _selectedAnimals = new ArrayList<>();
-    private MutableLiveData<List<Animal>> selectedAnimals = new MutableLiveData<>();
     public ObservableInt numSelectedAnimals = new ObservableInt(0);
 
     // Constructor
     public HomeActivityViewModel() {
         // TODO: Instantiate repository instance
         setAnimals(new ArrayList<>());
-        selectedAnimals.setValue(_selectedAnimals);
     }
 
     public void toggleSelectedAnimal(Animal animal) {
@@ -45,10 +42,9 @@ public class HomeActivityViewModel extends ViewModel {
         }
 
         numSelectedAnimals.set(_selectedAnimals.size());
-        selectedAnimals.setValue(_selectedAnimals);
     }
 
-    public LiveData<List<Animal>> getSelectedAnimals() { return selectedAnimals; }
+    public List<Animal> getSelectedAnimals() { return _selectedAnimals; }
 
     public LiveData<List<Animal>> getAnimals() {
         return animals;
@@ -59,8 +55,9 @@ public class HomeActivityViewModel extends ViewModel {
     }
 
     public void submitSearch(Context context, String query) {
-        List<Animal> searchResults = searchInDatabase(context, query);
-        setAnimals(searchResults);
+        List<Animal> results;
+        results = searchInDatabase(context, query);
+        setAnimals(results);
     }
 
     private List<Animal> searchInDatabase(Context context, String query) {

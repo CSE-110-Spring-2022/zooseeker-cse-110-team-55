@@ -42,7 +42,7 @@ public class AnimalAdapter extends RecyclerView.Adapter<AnimalAdapter.AnimalHold
     public void onBindViewHolder(@NonNull AnimalHolder holder, int position) {
         Animal curAnimal = animals.get(position);
         holder.animalName.setText(curAnimal.name);
-        List<Animal> selectedAnimals = vm.getSelectedAnimals().getValue();
+        List<Animal> selectedAnimals = vm.getSelectedAnimals();
         holder.checkBox.setChecked(selectedAnimals
                 .stream()
                 .anyMatch(a -> a.name.equals(curAnimal.name))
