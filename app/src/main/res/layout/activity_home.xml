@@ -68,12 +68,12 @@
                 android:id="@+id/direction_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:insetBottom="0dp"
-                android:insetTop="0dp"
-                app:cornerRadius="0dp"
                 android:layout_alignParentBottom="true"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
                 android:onClick="onLaunchDirectionClicked"
-                android:text="Directions" />
+                android:text="Directions"
+                app:cornerRadius="0dp" />
         </RelativeLayout>
 
 

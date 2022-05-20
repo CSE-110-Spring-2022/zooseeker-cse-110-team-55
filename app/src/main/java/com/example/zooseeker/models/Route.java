@@ -2,6 +2,7 @@ package com.example.zooseeker.models;
 
 import android.util.Log;
 
+import com.example.zooseeker.models.Graph.GraphData.GraphEdge;
 import com.example.zooseeker.models.Graph.GraphData.GraphNode;
 
 import java.util.ArrayList;
@@ -41,9 +42,9 @@ public class Route {
         return route;
     }
 
-    public int[] getDistancesToEachExhibit() {
-        return _distances;
-    }
+    public int[] getDistancesToEachExhibit() { return _distances; }
+
+    public Graph getGraph() { return graph; }
 
     /**
      * Calculates distances to and from each exhibit in the route

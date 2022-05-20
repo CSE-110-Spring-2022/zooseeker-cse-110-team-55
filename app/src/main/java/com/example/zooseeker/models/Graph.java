@@ -110,6 +110,24 @@ public class Graph {
     }
     // End Graph Loading
 
+    public List<GraphEdge> getEdgesFromNodes(List<GraphNode> nodes) {
+        List<GraphEdge> edges = new ArrayList<>();
+        // Loop through each edge in new directions
+        for (int i = 0; i < nodes.size() - 1; i++) {
+            String source = nodes.get(i).id;
+            String dest = nodes.get(i + 1).id;
+
+            // Get graph edge
+            SymmetricPair key = new SymmetricPair(source, dest);
+            GraphEdge existingEdge = this.edges.get(key);
+            // Create duplicate edge to ensure source and destination nodes are not swapped
+            GraphEdge edge = new GraphEdge(existingEdge.id, existingEdge.weight, source, dest);
+            // Add graph edge to list of directions
+            edges.add(edge);
+        }
+
+        return edges;
+    }
 
     /**
      * Helper class for symmetric hashing
