@@ -39,18 +39,20 @@ public class RouteSummaryAdapter extends RecyclerView.Adapter<RouteSummaryAdapte
 
     @Override
     public void onBindViewHolder(@NonNull RouteSummaryAdapter.RouteSummaryHolder holder, int position) {
-       // RouteSummaryHolder routeSummaryHolder = (RouteSummaryHolder) holder;
-
         String node = graph.nodeInfo.get(nodes.get(position).id).name;
 
-        holder.directions.setText(graph.nodeInfo.get(nodes.get(position).id).name);
+        StringBuilder count = new StringBuilder();
+        count.append(position + 1);
+        count.append(". ");
+        count.append(graph.nodeInfo.get(nodes.get(position).id).name);
 
-        holder.distance.setText(String.valueOf(planViewModel.getShortestDistance(position)));
+        holder.directions.setText(count);
 
-       // TextView name = findViewById(R.id.path_tv);
-        //sb.append(graph.nodeInfo.get(nodes.get(position)).name;
+        StringBuilder dist = new StringBuilder();
+        dist.append(planViewModel.getShortestDistance(position));
+        dist.append(" ft");
 
-
+        holder.distance.setText(dist);
     }
 
     @Override
