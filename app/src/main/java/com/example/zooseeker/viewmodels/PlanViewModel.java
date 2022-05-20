@@ -110,6 +110,10 @@ public class PlanViewModel extends AndroidViewModel {
         }
     }
 
+    public int getShortestDistance(int position) {
+        return _distances[position];
+    }
+
     public List<List<GraphNode>> getRoute(List<String> selectedAnimals){
         // Convert exhibit IDs to graph nodes
         List<GraphNode> selectedAnimalNodes = new ArrayList<>(

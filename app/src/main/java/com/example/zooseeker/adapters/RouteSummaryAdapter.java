@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.zooseeker.R;
 import com.example.zooseeker.models.Graph;
+import com.example.zooseeker.viewmodels.PlanViewModel;
 
 import org.w3c.dom.Node;
 
@@ -19,9 +20,12 @@ import java.util.List;
 public class RouteSummaryAdapter extends RecyclerView.Adapter<RouteSummaryAdapter.RouteSummaryHolder> {
     private Graph graph;
     private List<Graph.GraphData.GraphNode> nodes = new ArrayList<>();
+    private PlanViewModel planViewModel;
 
-    public RouteSummaryAdapter(Graph graph) {
+    public RouteSummaryAdapter(Graph graph, PlanViewModel planViewModel) {
         this.graph = graph;
+        this.planViewModel = planViewModel;
+
 
     }
 
@@ -35,12 +39,18 @@ public class RouteSummaryAdapter extends RecyclerView.Adapter<RouteSummaryAdapte
 
     @Override
     public void onBindViewHolder(@NonNull RouteSummaryAdapter.RouteSummaryHolder holder, int position) {
-        RouteSummaryHolder routeSummaryHolder = (RouteSummaryHolder) holder;
-        //super.onCreateViewHolder(routeSummaryHolder);
-        routeSummaryHolder.itemView.
-        setContentView(R.layout.activity_plan);
-        TextView name = findViewById(R.id.path_tv);
+       // RouteSummaryHolder routeSummaryHolder = (RouteSummaryHolder) holder;
+
+        String node = graph.nodeInfo.get(nodes.get(position).id).name;
+
+        holder.directions.setText(graph.nodeInfo.get(nodes.get(position).id).name);
+
+        holder.distance.setText(String.valueOf(planViewModel.getShortestDistance(position)));
+
+       // TextView name = findViewById(R.id.path_tv);
         //sb.append(graph.nodeInfo.get(nodes.get(position)).name;
+
+
     }
 
     @Override

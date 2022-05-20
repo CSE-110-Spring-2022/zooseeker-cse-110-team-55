@@ -38,23 +38,11 @@
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:layout_alignParentTop="true"
-                    android:layout_toLeftOf="@id/count"
                     android:text="Planned:"
                     android:textColor="@color/black"
                     android:textSize="24sp" />
 
-                <TextView
-                    android:id="@+id/count"
-                    android:layout_width="40dp"
-                    android:layout_height="46dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerHorizontal="true"
-                    android:gravity="center"
-                    android:hint="@string/planned_count"
-                    android:iconifiedByDefault="false"
-                    android:text="0"
-                    android:textColor="@color/black"
-                    android:textSize="24sp" />
+
             </RelativeLayout>
 
             <androidx.recyclerview.widget.RecyclerView

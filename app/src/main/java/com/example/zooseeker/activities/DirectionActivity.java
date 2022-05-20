@@ -17,7 +17,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.zooseeker.R;
+import com.example.zooseeker.adapters.AnimalAdapter;
 import com.example.zooseeker.adapters.DirectionAdapter;
+import com.example.zooseeker.adapters.RouteSummaryAdapter;
 import com.example.zooseeker.databinding.ActivityDirectionBinding;
 import com.example.zooseeker.models.Graph;
 import com.example.zooseeker.models.Graph.GraphData.GraphEdge;
@@ -53,6 +55,8 @@ public class DirectionActivity extends AppCompatActivity {
         DirectionAdapter adapter = new DirectionAdapter(viewModel.getGraph());
         rv.setAdapter(adapter);
 
+
+
         // Observe changes to list of current directions
         viewModel.getDirections().observe(this, graphNodes -> {
             List<GraphEdge> edges = new ArrayList<>();
@@ -72,6 +76,7 @@ public class DirectionActivity extends AppCompatActivity {
 
             // Update adapter with new directions
             adapter.setDirections(edges);
+
         });
 
         // Initialize the route
