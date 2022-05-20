@@ -3,12 +3,7 @@ package com.example.zooseeker;
 import static org.junit.Assert.assertEquals;
 
 import android.app.Application;
-import android.content.Context;
 
-import androidx.databinding.ObservableField;
-import androidx.test.core.app.ApplicationProvider;
-
-import com.example.zooseeker.models.Graph;
 import com.example.zooseeker.viewmodels.PlanViewModel;
 
 import org.junit.After;
@@ -45,10 +40,10 @@ public class PlanViewModelTest {
         assertEquals("entrance_exit_gate", vm.getDirections().getValue().get(0).id);
         assertEquals("entrance_plaza", vm.getDirections().getValue().get(1).id);
         assertEquals("gators", vm.getDirections().getValue().get(2).id);
-        vm.getNextDirections();
+        vm.getDirectionsToNextExhibit();
         assertEquals("gators", vm.getDirections().getValue().get(0).id);
         assertEquals("lions", vm.getDirections().getValue().get(1).id);
-        vm.getNextDirections();
+        vm.getDirectionsToNextExhibit();
         assertEquals("lions", vm.getDirections().getValue().get(0).id);
         assertEquals("gators", vm.getDirections().getValue().get(1).id);
         assertEquals("entrance_plaza", vm.getDirections().getValue().get(2).id);
@@ -58,27 +53,27 @@ public class PlanViewModelTest {
     @Test
     public void testRemainingExhibits() {
         assertEquals(new Integer(3), vm.remainingExhibits.get());
-        vm.getNextDirections();
+        vm.getDirectionsToNextExhibit();
         assertEquals(new Integer(2), vm.remainingExhibits.get());
-        vm.getNextDirections();
+        vm.getDirectionsToNextExhibit();
         assertEquals(new Integer(1), vm.remainingExhibits.get());
     }
 
     @Test
     public void testCurExhibitName() {
         assertEquals(new String("Alligators"), vm.curExhibitName.get());
-        vm.getNextDirections();
+        vm.getDirectionsToNextExhibit();
         assertEquals(new String("Lions"), vm.curExhibitName.get());
-        vm.getNextDirections();
+        vm.getDirectionsToNextExhibit();
         assertEquals(new String("Entrance and Exit Gate"), vm.curExhibitName.get());
     }
 
     @Test
     public void testCurExhibitDist() {
         assertEquals(new Integer(110), vm.curExhibitDist.get());
-        vm.getNextDirections();
+        vm.getDirectionsToNextExhibit();
         assertEquals(new Integer(200), vm.curExhibitDist.get());
-        vm.getNextDirections();
+        vm.getDirectionsToNextExhibit();
         assertEquals(new Integer(310), vm.curExhibitDist.get());
     }
 
@@ -86,7 +81,7 @@ public class PlanViewModelTest {
     public void testNextExhibitName() {
         // starting from alligators
         assertEquals(new String("Lions"), vm.nextExhibitName.get());
-        vm.getNextDirections();
+        vm.getDirectionsToNextExhibit();
         assertEquals(new String("Entrance and Exit Gate"), vm.nextExhibitName.get());
     }
 
@@ -94,7 +89,7 @@ public class PlanViewModelTest {
     public void testNextExhibitDist() {
         // starting from alligators
         assertEquals(new Integer(200), vm.nextExhibitDist.get());
-        vm.getNextDirections();
+        vm.getDirectionsToNextExhibit();
         assertEquals(new Integer(310), vm.nextExhibitDist.get());
     }
 

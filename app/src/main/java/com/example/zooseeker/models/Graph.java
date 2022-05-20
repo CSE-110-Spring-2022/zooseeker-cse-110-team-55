@@ -110,97 +110,24 @@ public class Graph {
     }
     // End Graph Loading
 
-    // Algo
-    public List<List<GraphNode>> createPlan(List<GraphNode> selected, GraphNode start) {
-        List<List<GraphNode>> plan = new ArrayList<>();
-        // exhibits to be planned
-        List<GraphNode> unplanned_exhibits = new ArrayList<>(selected);
-        // u = entrance
-        GraphNode u = start;
-        List<GraphNode> partialPath;
-        // Run dijkstra's on u
-        while (unplanned_exhibits.size() > 0) {
-            // Find nearest selected neighbor of u
-            // Set u to nearest neighbor
-            partialPath = pathToNearestNeighbor(u, unplanned_exhibits);
-            Log.d("Partial Path Size ", String.valueOf(partialPath.size()));
+    public List<GraphEdge> getEdgesFromNodes(List<GraphNode> nodes) {
+        List<GraphEdge> edges = new ArrayList<>();
+        // Loop through each edge in new directions
+        for (int i = 0; i < nodes.size() - 1; i++) {
+            String source = nodes.get(i).id;
+            String dest = nodes.get(i + 1).id;
 
-            // mark u as planned
-            u = partialPath.get(partialPath.size() - 1);
-            unplanned_exhibits.remove(u);
-
-            // Add u to navigation list
-            plan.add(partialPath);
-            Log.d("Plan Size", String.valueOf(plan.size()));
-            Log.d("Added element", String.valueOf(u.id));
+            // Get graph edge
+            SymmetricPair key = new SymmetricPair(source, dest);
+            GraphEdge existingEdge = this.edges.get(key);
+            // Create duplicate edge to ensure source and destination nodes are not swapped
+            GraphEdge edge = new GraphEdge(existingEdge.id, existingEdge.weight, source, dest);
+            // Add graph edge to list of directions
+            edges.add(edge);
         }
 
-        plan.add(shortestPathToNode(u, start));
-
-        return plan;
+        return edges;
     }
-
-    private ArrayList<GraphNode> shortestPathToNode(GraphNode start, GraphNode end) {
-        return pathToNearestNeighbor(start, new ArrayList<>(Collections.singleton(end)));
-    }
-
-    /**
-     * Finds path to nearest neighbor of unplanned nodes starting from node u
-     * @param u
-     * @param unplanned
-     * @return
-     */
-    private ArrayList<GraphNode> pathToNearestNeighbor(GraphNode u, List<GraphNode> unplanned) {
-        Map<String, GraphNode> parent = new HashMap<>();
-        Map<String, Double> dist = new HashMap<>();
-        PriorityQueue<GraphNode> queue = new PriorityQueue<>(10,
-                (o1, o2) -> (int) (dist.get(o1.id) - dist.get(o2.id)));
-
-        // Init dijkstra's
-        queue.add(u);
-        dist.put(u.id, (double) 0);
-
-        // Continue while there are more nodes
-        while (!queue.isEmpty()) {
-            GraphNode cur = queue.poll();
-            // If unplanned node is found, return path to that node
-            if (unplanned
-                    .stream()
-                    .anyMatch(n -> n.id.equals(cur.id))
-            ) return backtrace(cur, parent);
-
-            // Get neighboring nodes
-            List<GraphNode> neighbors = adjacencyList.get(cur.id);
-            for (GraphNode other : neighbors) {
-                SymmetricPair key = new SymmetricPair(cur.id, other.id);
-                double edgeWeight = edges.get(key).weight;
-                // If distance to neighbor is closer, update distance and re-insert into priority queue
-                if (dist.getOrDefault(other.id, Double.MAX_VALUE) > dist.get(cur.id) + edgeWeight) {
-                    Log.d("New Weight: ", String.valueOf((dist.get(cur.id))));
-                    dist.put(other.id, dist.get(cur.id) + edgeWeight);
-                    queue.add(other);
-                    parent.put(other.id, cur);
-                    Log.d("Update Weight of Node ", String.valueOf(other.id));
-                }
-            }
-        }
-
-        return null;
-    }
-
-    private static ArrayList<GraphNode> backtrace(GraphNode end, Map<String, GraphNode> parent) {
-        ArrayList<GraphNode> result = new ArrayList<GraphNode>();
-        GraphNode cur = end;
-        // Traverse parent pointers and add to list of nodes
-        while (cur != null) {
-            result.add(0, cur);
-            Log.d("Added to result ", String.valueOf(result.get(0)));
-            cur = parent.get(cur.id);
-        }
-
-        return result;
-    }
-    // End Algo
 
     /**
      * Helper class for symmetric hashing

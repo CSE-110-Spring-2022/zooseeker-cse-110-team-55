@@ -21,7 +21,7 @@ public class PlanActivity extends AppCompatActivity {
 
         // Get viewmodel and create initial plan
         viewModel = new ViewModelProvider(this).get(PlanViewModel.class);
-        viewModel.setPlan(viewModel.getRoute(intent.getStringArrayListExtra("selected_animals")));
+        viewModel.initRoute(intent.getStringArrayListExtra("selected_animals"));
     }
 
     public void onLaunchDirectionClicked(View view) {

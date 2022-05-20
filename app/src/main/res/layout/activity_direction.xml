@@ -59,7 +59,7 @@
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
                 android:onClick="onLaunchNextClicked"
-                android:text="@{`Next (` + vm.nextExhibitName.toString() + `, ` + vm.nextExhibitDist.toString() + `ft)`}"
+                android:text="@{vm.buttonText}"
                 app:cornerRadius="0dp" />
 
             <RelativeLayout
