@@ -14,6 +14,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import com.example.zooseeker.models.Graph;
 import com.example.zooseeker.models.Graph.GraphData.GraphNode;
 import com.example.zooseeker.models.Graph.SymmetricPair;
+import com.example.zooseeker.models.Route;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,9 +47,10 @@ public class PathTest {
         Graph graph = new Graph();
         graph.loadGraph(context, "sample_zoo_graph.json", "sample_node_info.json", "sample_edge_info.json");
 
-        List<GraphNode> selected = new ArrayList<>();
-        selected.add(graph.nodes.get("gorillas"));
-        List<List<GraphNode>> plan = graph.createPlan(selected, graph.nodes.get("entrance_exit_gate"));
+        List<String> selected = new ArrayList<>();
+        selected.add("gorillas");
+        Route route = new Route(graph, selected, "entrance_exit_gate");
+        List<List<GraphNode>> plan = route.getRoute();
         assertEquals(2, plan.size());
         assertEquals(3, plan.get(0).size());
     }
@@ -58,9 +60,10 @@ public class PathTest {
         Graph graph = new Graph();
         graph.loadGraph(context, "sample_zoo_graph.json", "sample_node_info.json", "sample_edge_info.json");
 
-        List<GraphNode> selected = new ArrayList<>();
-        selected.add(graph.nodes.get("lions"));
-        List<List<GraphNode>> plan = graph.createPlan(selected, graph.nodes.get("entrance_exit_gate"));
+        List<String> selected = new ArrayList<>();
+        selected.add("lions");
+        Route route = new Route(graph, selected, "entrance_exit_gate");
+        List<List<GraphNode>> plan = route.getRoute();
         double totalWeight = 0;
         List<GraphNode> path = plan.get(0);
         for (int i = 0; i < path.size() - 1; i++) {
@@ -75,11 +78,12 @@ public class PathTest {
         Graph graph = new Graph();
         graph.loadGraph(context, "sample_zoo_graph.json", "sample_node_info.json", "sample_edge_info.json");
 
-        List<GraphNode> selected = new ArrayList<>();
-        selected.add(graph.nodes.get("lions"));
-        selected.add(graph.nodes.get("gators"));
-        selected.add(graph.nodes.get("arctic_foxes"));
-        List<List<GraphNode>> plan = graph.createPlan(selected, graph.nodes.get("entrance_exit_gate"));
+        List<String> selected = new ArrayList<>();
+        selected.add("lions");
+        selected.add("gators");
+        selected.add("arctic_foxes");
+        Route route = new Route(graph, selected, "entrance_exit_gate");
+        List<List<GraphNode>> plan = route.getRoute();
 
         assertEquals("entrance_exit_gate", plan.get(0).get(0).id);
         assertEquals("gators", plan.get(1).get(0).id);

@@ -11,24 +11,22 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.zooseeker.models.Route;
 import com.example.zooseeker.repositories.AnimalItemDao;
 import com.example.zooseeker.models.Graph;
 import com.example.zooseeker.models.Graph.GraphData.GraphNode;
-import com.example.zooseeker.models.Graph.SymmetricPair;
 import com.example.zooseeker.repositories.AnimalDatabase;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class PlanViewModel extends AndroidViewModel {
     private Context context;
-    private Graph routeGraph;
+    private Graph graph;
+    private Route route;
     private AnimalItemDao repository;
 
     private int curExhibit = -1;
     private List<List<GraphNode>> _plan;
-    private int[] _distances;
 
     // Observables
     public MutableLiveData<List<GraphNode>> directions;
@@ -45,15 +43,15 @@ public class PlanViewModel extends AndroidViewModel {
         directions = new MutableLiveData<>();
 
         // Create graph
-        routeGraph = new Graph();
-        routeGraph.loadGraph(context, "sample_zoo_graph.json", "sample_node_info.json", "sample_edge_info.json");
+        graph = new Graph();
+        graph.loadGraph(context, "sample_zoo_graph.json", "sample_node_info.json", "sample_edge_info.json");
     }
 
     public void setPlan(List<List<GraphNode>> plan) {
         this._plan = plan;
     }
 
-    public void getNextDirections() {
+    public void getDirectionsToNextExhibit() {
         // If there are no more exhibits to visit, do nothing
         if (curExhibit >= _plan.size() - 1) return;
 
@@ -70,8 +68,8 @@ public class PlanViewModel extends AndroidViewModel {
         List<GraphNode> directions = getDirections().getValue();
         String curExhibitId = getLast(directions).id;
 
-        curExhibitName.set(routeGraph.nodeInfo.get(curExhibitId).name);
-        curExhibitDist.set(_distances[curExhibit]);
+        curExhibitName.set(graph.nodeInfo.get(curExhibitId).name);
+        curExhibitDist.set(route.getDistancesToEachExhibit()[curExhibit]);
 
         // If there are more exhibits to visit, update the current and next exhibit display names
         if (curExhibit != _plan.size() - 1) {
@@ -79,8 +77,8 @@ public class PlanViewModel extends AndroidViewModel {
             List<GraphNode> nextDirections = _plan.get(curExhibit + 1);
             String nextExhibitId = getLast(nextDirections).id;
 
-            nextExhibitName.set(routeGraph.nodeInfo.get(nextExhibitId).name);
-            nextExhibitDist.set(_distances[curExhibit + 1]);
+            nextExhibitName.set(graph.nodeInfo.get(nextExhibitId).name);
+            nextExhibitDist.set(route.getDistancesToEachExhibit()[curExhibit + 1]);
         }
 
         // Decrease amount of remaining exhibits
@@ -88,48 +86,10 @@ public class PlanViewModel extends AndroidViewModel {
     }
 
     public void initRoute(List<String> selectedAnimals) {
-        List<List<GraphNode>> route = getRoute(selectedAnimals);
-        setPlan(route);
-        this._distances = calculateDistances(route, routeGraph);
-        getNextDirections();
+        this.route = new Route(graph, selectedAnimals, "entrance_exit_gate");
+        setPlan(route.getRoute());
+        getDirectionsToNextExhibit();
     }
-
-    /**
-     * Calculates distances to and from each exhibit in the route
-     * @param route Route to calculate
-     * @param graph Graph that contains nodes and edges of route
-     */
-    private static int[] calculateDistances(List<List<GraphNode>> route, Graph graph) {
-        // Calculate distances to each exhibit
-        int[] distances = new int[route.size()];
-        for (int i = 0; i < route.size(); i++) {
-            List<GraphNode> exhibitDirections = route.get(i);
-            int totalWeight = 0;
-            for (int j = 0; j < exhibitDirections.size() - 1; j++) {
-                GraphNode source = exhibitDirections.get(j);
-                GraphNode dest = exhibitDirections.get(j + 1);
-
-                SymmetricPair edge = new SymmetricPair(source.id, dest.id);
-                totalWeight += graph.edges.get(edge).weight;
-            }
-            distances[i] = totalWeight;
-        }
-
-        return distances;
-    }
-
-    public List<List<GraphNode>> getRoute(List<String> selectedAnimals){
-        // Convert exhibit IDs to graph nodes
-        List<GraphNode> selectedAnimalNodes = new ArrayList<>(
-                selectedAnimals
-                        .stream()
-                        .map(a -> routeGraph.nodes.get(a))
-                        .collect(Collectors.toList())
-        );
-        GraphNode start = routeGraph.nodes.get("entrance_exit_gate");
-        return routeGraph.createPlan(selectedAnimalNodes, start);
-    }
-
 
     private void setDirections(List<GraphNode> directions) {
         this.directions.setValue(directions);
@@ -140,6 +100,6 @@ public class PlanViewModel extends AndroidViewModel {
     }
 
     public Graph getGraph() {
-        return routeGraph;
+        return graph;
     }
 }

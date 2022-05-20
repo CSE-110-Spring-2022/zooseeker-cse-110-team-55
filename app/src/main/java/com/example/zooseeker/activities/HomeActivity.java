@@ -56,15 +56,6 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
         binding.search.setOnQueryTextListener(this);
     }
 
-    public void onLaunchPlanClicked(View view) {
-        Intent intent = new Intent(this, PlanActivity.class);
-        ArrayList<String> selectedAnimals = new ArrayList<>();
-        for(Animal a : viewModel.getSelectedAnimals()){
-            selectedAnimals.add(a.id);
-        }
-        intent.putStringArrayListExtra("selected_animals",selectedAnimals);
-    }
-
     /**
      * Called when user presses directions button
      * @param view
