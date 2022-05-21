@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".activities.PlanActivity">
+    android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -23,53 +22,37 @@
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="16dp">
 
-                <Button
-                    android:id="@+id/back_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
-
-                    android:onClick="onBackClicked"
-                    android:text="Back" />
-
                 <TextView
                     android:id="@+id/textView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
                     android:layout_centerInParent="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_toLeftOf="@id/count"
-                    android:text="Planned:"
+                    android:text="Planned Exhibits"
                     android:textColor="@color/black"
                     android:textSize="24sp" />
 
-                <TextView
-                    android:id="@+id/count"
-                    android:layout_width="40dp"
-                    android:layout_height="46dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerHorizontal="true"
-                    android:gravity="center"
-                    android:hint="@string/planned_count"
-                    android:iconifiedByDefault="false"
-                    android:text="0"
-                    android:textColor="@color/black"
-                    android:textSize="24sp" />
+                <Button
+                    android:id="@+id/hide_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:onClick="onHideClicked"
+                    android:text="Hide" />
+
             </RelativeLayout>
 
-
-            <Button
-                android:id="@+id/direction_button"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/plansummary_rv"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_alignParentBottom="true"
+                android:layout_height="match_parent"
+                android:layout_below="@id/topbar"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
-                android:layout_marginBottom="10dp"
-                android:onClick="onLaunchDirectionClicked"
-                android:text="DIRECTION" />
+                android:layout_marginBottom="18dp"
+                tools:listitem="@layout/direction_item" />
+
         </RelativeLayout>
 
 

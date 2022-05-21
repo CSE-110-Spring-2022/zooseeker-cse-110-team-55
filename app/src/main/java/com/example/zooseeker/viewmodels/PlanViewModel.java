@@ -114,4 +114,12 @@ public class PlanViewModel extends AndroidViewModel {
         setPlan(route.getRoute());
         getDirectionsToNextExhibit();
     }
+
+    public Graph getGraph() {
+        return graph;
+    }
+
+    public List<List<GraphNode>> getPlan() {
+        return _plan;
+    }
 }

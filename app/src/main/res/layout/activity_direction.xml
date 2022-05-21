@@ -30,7 +30,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
-                    android:layout_alignParentTop="true"
                     android:layout_centerInParent="true"
                     android:layout_marginEnd="10dp"
                     android:text="Directions"
@@ -41,14 +40,22 @@
                     android:id="@+id/count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
                     android:layout_toRightOf="@id/textView"
+                    android:layout_centerVertical="true"
                     android:gravity="center"
                     android:hint="@string/planned_count"
                     android:iconifiedByDefault="false"
                     android:text="@{`(` + vm.remainingExhibits.toString() + `)`}"
                     android:textColor="@color/black"
                     android:textSize="24sp" />
+
+                <Button
+                    android:id="@+id/routeSummaryButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="Route Summary" />
+
             </RelativeLayout>
 
             <com.google.android.material.button.MaterialButton
