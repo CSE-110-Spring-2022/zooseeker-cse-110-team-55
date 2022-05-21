@@ -2,6 +2,7 @@ package com.example.zooseeker.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -9,10 +10,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 
 import com.example.zooseeker.R;
 import com.example.zooseeker.adapters.DirectionAdapter;
 import com.example.zooseeker.databinding.ActivityDirectionBinding;
+import com.example.zooseeker.fragments.RouteSummaryFragment;
 import com.example.zooseeker.models.Graph.GraphData.GraphEdge;
 import com.example.zooseeker.models.Graph.SymmetricPair;
 import com.example.zooseeker.viewmodels.PlanViewModel;
@@ -23,6 +26,8 @@ import java.util.List;
 public class DirectionActivity extends AppCompatActivity {
     private PlanViewModel vm;
     private ActivityDirectionBinding binding;
+    private Button buttonDialog;
+    private RouteSummaryFragment routeSummaryFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +54,21 @@ public class DirectionActivity extends AppCompatActivity {
             // Update adapter with new directions
             adapter.setDirections(edges);
         });
+
+        // Show route summary fragment
+        buttonDialog = findViewById(R.id.routeSummaryButton);
+        buttonDialog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                routeSummaryFragment = new RouteSummaryFragment();
+                routeSummaryFragment.show(getSupportFragmentManager(), "TAG");
+            }
+        });
+    }
+
+    // Hide route summary fragment
+    public void onHideClicked(View view){
+        routeSummaryFragment.dismiss();
     }
 
     /**
