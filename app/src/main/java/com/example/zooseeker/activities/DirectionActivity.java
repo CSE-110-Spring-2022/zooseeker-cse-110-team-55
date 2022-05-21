@@ -2,13 +2,14 @@ package com.example.zooseeker.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
@@ -17,10 +18,8 @@ import com.example.zooseeker.adapters.DirectionAdapter;
 import com.example.zooseeker.databinding.ActivityDirectionBinding;
 import com.example.zooseeker.fragments.RouteSummaryFragment;
 import com.example.zooseeker.models.Graph.GraphData.GraphEdge;
-import com.example.zooseeker.models.Graph.SymmetricPair;
 import com.example.zooseeker.viewmodels.PlanViewModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class DirectionActivity extends AppCompatActivity {
@@ -77,5 +76,24 @@ public class DirectionActivity extends AppCompatActivity {
      */
     public void onLaunchNextClicked(View view) {
         vm.nextExhibitCommand.execute(this);
+    }
+
+    // create an action bar button
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.direction_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    // handle button activities
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.eraseRoutePlanButton) {
+            vm.clearPlan();
+            Button button = findViewById(R.id.eraseSelectedExhibitsButton);
+            button.performClick();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

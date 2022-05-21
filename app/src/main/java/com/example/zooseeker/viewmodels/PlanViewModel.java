@@ -122,4 +122,8 @@ public class PlanViewModel extends AndroidViewModel {
     public List<List<GraphNode>> getPlan() {
         return _plan;
     }
+
+    public void clearPlan() {
+        _plan.clear();
+    }
 }

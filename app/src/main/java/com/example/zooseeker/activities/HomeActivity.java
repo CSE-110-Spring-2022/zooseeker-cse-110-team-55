@@ -2,28 +2,25 @@ package com.example.zooseeker.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.SearchView;
 
 import com.example.zooseeker.R;
 import com.example.zooseeker.adapters.AnimalAdapter;
 import com.example.zooseeker.databinding.ActivityHomeBinding;
-import com.example.zooseeker.models.Animal;
 import com.example.zooseeker.models.SearchCommandParams;
 import com.example.zooseeker.models.SelectedAnimalParams;
 import com.example.zooseeker.viewmodels.HomeActivityViewModel;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import com.example.zooseeker.util.Alert;
@@ -107,5 +104,23 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
 
     public ActivityHomeBinding getBinding() {
         return this.binding;
+    }
+
+    // create an action bar button
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.home_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    // handle button activities
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.eraseSelectedExhibitsButton) {
+            viewModel.clear();
+            this.recreate();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
