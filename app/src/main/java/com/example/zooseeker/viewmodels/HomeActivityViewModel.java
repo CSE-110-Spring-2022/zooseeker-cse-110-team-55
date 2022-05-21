@@ -78,4 +78,8 @@ public class HomeActivityViewModel extends ViewModel {
         this.animals.setValue(animals);
     }
 
+    public void clear() {
+        _selectedAnimals.clear();
+        numSelectedAnimals.set(0);
+    }
 }
