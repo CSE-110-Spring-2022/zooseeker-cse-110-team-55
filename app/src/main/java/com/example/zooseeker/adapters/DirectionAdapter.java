@@ -35,6 +35,7 @@ public class DirectionAdapter extends RecyclerView.Adapter<DirectionAdapter.Dire
 
     @Override
     public void onBindViewHolder(@NonNull DirectionHolder holder, int position) {
+        // TODO: Add logic to determine if the Detailed toggle is active and handle accordingly
         StringBuilder sb = new StringBuilder();
         if (position == 0 || position == directions.size() - 1) {
             sb.append("Proceed on ");

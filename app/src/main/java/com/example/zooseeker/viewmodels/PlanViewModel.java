@@ -19,6 +19,7 @@ import com.example.zooseeker.models.Graph;
 import com.example.zooseeker.models.Graph.GraphData.GraphNode;
 import com.example.zooseeker.repositories.AnimalDatabase;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PlanViewModel extends AndroidViewModel {
@@ -29,6 +30,8 @@ public class PlanViewModel extends AndroidViewModel {
 
     private int curExhibit = -1;
     private List<List<GraphNode>> _plan;
+    private List<List<GraphNode>> _detailedPlan;
+    private List<List<GraphNode>> _simplePlan;
 
     // Observables
     public MutableLiveData<List<GraphNode>> directions;
@@ -59,7 +62,50 @@ public class PlanViewModel extends AndroidViewModel {
         graph.loadGraph(context, "sample_zoo_graph.json", "sample_node_info.json", "sample_edge_info.json");
     }
 
-    public void setPlan(List<List<GraphNode>> plan) { this._plan = plan; }
+    public void setPlan(List<List<GraphNode>> plan) {
+        this._detailedPlan = plan;
+        this._simplePlan = computeSimplePlan(plan);
+    }
+
+    private List<List<GraphNode>> computeSimplePlan(List<List<GraphNode>> plan) {
+        List<List<GraphNode>> simplePlan = new ArrayList<List<GraphNode>>();
+        for (int exhibitNum = 0; exhibitNum < plan.size(); exhibitNum++) {
+            // Add new set of directions to plan
+            ArrayList<GraphNode> newDir = new ArrayList<>();
+
+            // Add all nodes from current direction set to nodes
+            List<GraphNode> nodes = new ArrayList<>();
+            for (GraphNode node : plan.get(exhibitNum)) nodes.add(node);
+
+            // Get Edges
+            List<Graph.GraphData.GraphEdge> edges = graph.getEdgesFromNodes(nodes);
+            // Determine any non-unique contiguous ids
+            int currStartNode = 0;
+            for (int currEdgeNum = 0; currEdgeNum < edges.size(); currEdgeNum++) {
+                // Case 1:
+                // [a, b, c, d] ... [1, 1, 1, 2]
+                // we want [a, c, d]... i.e last thing should be newDir.add(d)
+
+                // Case 2:
+                // [a, b, c, d] ... [2, 1, 1, 1]
+                // we want [a, b, d] ... i.e last thing(s) should be newDir.add(a) and newDir.add(d)
+
+                // If we are not at the end
+                if (currEdgeNum != edges.size() - 1) {
+                    // And we find the next id isn't the same
+                    if (!edges.get(currEdgeNum).id.equals(edges.get(currEdgeNum + 1).id) ) {
+                        newDir.add(nodes.get(currStartNode));
+                        newDir.add(nodes.get(currEdgeNum));
+                        currStartNode = currEdgeNum + 1;
+                    }
+                }  else {
+                    newDir.add(nodes.get(currStartNode));
+                }
+            }
+            newDir.add(nodes.get(nodes.size() - 1));
+        }
+        return simplePlan;
+    }
 
     public void getDirectionsToNextExhibit() {
         // If there are no more exhibits to visit, do nothing
@@ -125,5 +171,9 @@ public class PlanViewModel extends AndroidViewModel {
 
     public void clearPlan() {
         _plan.clear();
+    }
+
+    public void setPlanType(boolean simple) {
+        this._plan = simple ? this._simplePlan : this._detailedPlan;
     }
 }
