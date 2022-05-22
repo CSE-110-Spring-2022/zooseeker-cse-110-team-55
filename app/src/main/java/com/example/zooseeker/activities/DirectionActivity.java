@@ -27,6 +27,7 @@ public class DirectionActivity extends AppCompatActivity {
     private ActivityDirectionBinding binding;
     private Button buttonDialog;
     private RouteSummaryFragment routeSummaryFragment;
+    private boolean Detailed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,11 +90,18 @@ public class DirectionActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.eraseRoutePlanButton) {
-            vm.clearPlan();
-            Button button = findViewById(R.id.eraseSelectedExhibitsButton);
-            button.performClick();
+        switch(id) {
+            case R.id.eraseRoutePlanButton:
+                vm.clearPlan();
+                Button button = findViewById(R.id.eraseSelectedExhibitsButton);
+                button.performClick();
+                return true;
+            case R.id.toggleDetailed:
+                Detailed = !item.isChecked();
+                item.setChecked(Detailed);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
 }
