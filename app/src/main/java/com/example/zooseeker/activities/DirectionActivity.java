@@ -19,6 +19,7 @@ import com.example.zooseeker.databinding.ActivityDirectionBinding;
 import com.example.zooseeker.fragments.RouteSummaryFragment;
 import com.example.zooseeker.models.DirectionItem;
 import com.example.zooseeker.models.Graph.GraphData.GraphEdge;
+import com.example.zooseeker.viewmodels.HomeActivityViewModel;
 import com.example.zooseeker.viewmodels.PlanViewModel;
 
 import java.util.List;
@@ -90,6 +91,12 @@ public class DirectionActivity extends AppCompatActivity {
         switch(id) {
             case R.id.eraseRoutePlanButton:
                 vm.clearPlan();
+            // If it doesn't break we'll delete this
+//              this.finish();
+//              this.finish();
+//              // possible stack overflow
+//              Intent intent = new Intent(this, HomeActivity.class);
+//              startActivity(intent);
                 Button button = findViewById(R.id.eraseSelectedExhibitsButton);
                 button.performClick();
                 return true;
