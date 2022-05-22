@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.zooseeker.R;
+import com.example.zooseeker.models.DirectionItem;
 import com.example.zooseeker.models.Graph;
 import com.example.zooseeker.models.Graph.GraphData.GraphEdge;
 import com.example.zooseeker.models.Graph.GraphData.GraphNode;
@@ -19,7 +20,7 @@ import java.util.List;
 
 public class DirectionAdapter extends RecyclerView.Adapter<DirectionAdapter.DirectionHolder> {
     private Graph graph;
-    private List<GraphEdge> directions = new ArrayList<>();
+    private List<DirectionItem> directions = new ArrayList<>();
 
     public DirectionAdapter(Graph graph) {
         this.graph = graph;
@@ -35,6 +36,7 @@ public class DirectionAdapter extends RecyclerView.Adapter<DirectionAdapter.Dire
 
     @Override
     public void onBindViewHolder(@NonNull DirectionHolder holder, int position) {
+        // TODO: Add logic to determine if the Detailed toggle is active and handle accordingly
         StringBuilder sb = new StringBuilder();
         if (position == 0 || position == directions.size() - 1) {
             sb.append("Proceed on ");
@@ -42,13 +44,13 @@ public class DirectionAdapter extends RecyclerView.Adapter<DirectionAdapter.Dire
             sb.append("Continue to ");
         }
 
-        GraphEdge edge = directions.get(position);
-        sb.append(graph.edgeInfo.get(edge.id).street);
+        DirectionItem edge = directions.get(position);
+        sb.append(edge.streetName);
         sb.append(" towards ");
-        sb.append(graph.nodeInfo.get(edge.target).name);
+        sb.append(edge.target);
 
         holder.directions.setText(sb);
-        holder.distance.setText(String.format("%d feet", (int) directions.get(position).weight));
+        holder.distance.setText(String.format("%d ft", (int) directions.get(position).weight));
     }
 
     @Override
@@ -56,7 +58,7 @@ public class DirectionAdapter extends RecyclerView.Adapter<DirectionAdapter.Dire
         return directions.size();
     }
 
-    public void setDirections(List<GraphEdge> directions) {
+    public void setDirections(List<DirectionItem> directions) {
         this.directions.clear();
         this.directions = directions;
         notifyDataSetChanged();

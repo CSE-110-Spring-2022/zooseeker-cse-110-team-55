@@ -37,17 +37,12 @@ public class PlanViewModelTest {
 
     @Test
     public void testDirections() {
-        assertEquals("entrance_exit_gate", vm.getDirections().getValue().get(0).id);
-        assertEquals("entrance_plaza", vm.getDirections().getValue().get(1).id);
-        assertEquals("gators", vm.getDirections().getValue().get(2).id);
+        assertEquals("Entrance Plaza", vm.getDirections().getValue().get(0).target);
         vm.getDirectionsToNextExhibit();
-        assertEquals("gators", vm.getDirections().getValue().get(0).id);
-        assertEquals("lions", vm.getDirections().getValue().get(1).id);
+        assertEquals("Lions", vm.getDirections().getValue().get(0).target);
         vm.getDirectionsToNextExhibit();
-        assertEquals("lions", vm.getDirections().getValue().get(0).id);
-        assertEquals("gators", vm.getDirections().getValue().get(1).id);
-        assertEquals("entrance_plaza", vm.getDirections().getValue().get(2).id);
-        assertEquals("entrance_exit_gate", vm.getDirections().getValue().get(3).id);
+        assertEquals("Alligators", vm.getDirections().getValue().get(0).target);
+        assertEquals("Entrance Plaza", vm.getDirections().getValue().get(1).target);
     }
 
     @Test
@@ -92,6 +87,9 @@ public class PlanViewModelTest {
         vm.getDirectionsToNextExhibit();
         assertEquals(new Integer(310), vm.nextExhibitDist.get());
     }
+
+
+
 
     @After
     public void finalize() {

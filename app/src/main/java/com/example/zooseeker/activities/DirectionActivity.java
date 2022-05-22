@@ -17,6 +17,7 @@ import com.example.zooseeker.R;
 import com.example.zooseeker.adapters.DirectionAdapter;
 import com.example.zooseeker.databinding.ActivityDirectionBinding;
 import com.example.zooseeker.fragments.RouteSummaryFragment;
+import com.example.zooseeker.models.DirectionItem;
 import com.example.zooseeker.models.Graph.GraphData.GraphEdge;
 import com.example.zooseeker.viewmodels.HomeActivityViewModel;
 import com.example.zooseeker.viewmodels.PlanViewModel;
@@ -28,6 +29,7 @@ public class DirectionActivity extends AppCompatActivity {
     private ActivityDirectionBinding binding;
     private Button buttonDialog;
     private RouteSummaryFragment routeSummaryFragment;
+    private boolean Detailed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,11 +51,7 @@ public class DirectionActivity extends AppCompatActivity {
         rv.setAdapter(adapter);
 
         // Observe changes to list of current directions
-        vm.getDirections().observe(this, graphNodes -> {
-            List<GraphEdge> edges = vm.getRoute().getGraph().getEdgesFromNodes(graphNodes);
-            // Update adapter with new directions
-            adapter.setDirections(edges);
-        });
+        vm.getDirections().observe(this, adapter::setDirections);
 
         // Show route summary fragment
         buttonDialog = findViewById(R.id.routeSummaryButton);
@@ -90,13 +88,26 @@ public class DirectionActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.eraseRoutePlanButton) {
-            vm.clearPlan();
-            this.finish();
-            // possible stack overflow
-            Intent intent = new Intent(this, HomeActivity.class);
-            startActivity(intent);
+        switch(id) {
+            case R.id.eraseRoutePlanButton:
+                vm.clearPlan();
+            // If it doesn't break we'll delete this
+//              this.finish();
+//              this.finish();
+//              // possible stack overflow
+//              Intent intent = new Intent(this, HomeActivity.class);
+//              startActivity(intent);
+                Button button = findViewById(R.id.eraseSelectedExhibitsButton);
+                button.performClick();
+                return true;
+            case R.id.toggleDetailed:
+                Detailed = !item.isChecked();
+                item.setChecked(Detailed);
+                vm.detailedDirectionToggle.setValue(Detailed);
+                vm.updateCurrentDirections();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
 }
