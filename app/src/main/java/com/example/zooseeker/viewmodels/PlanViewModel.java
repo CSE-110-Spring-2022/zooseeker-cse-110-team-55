@@ -34,11 +34,10 @@ public class PlanViewModel extends AndroidViewModel {
 
     private int curExhibit = -1;
     private List<List<GraphNode>> _plan;
-   // private List<List<DirectionItem>> _detailedPlan;
-   // private List<List<DirectionItem>> _simplePlan;
+
 
     // Observables
-    public MutableLiveData<Boolean> detailedDirectionToggle = new MutableLiveData<>(true);
+    public MutableLiveData<Boolean> detailedDirectionToggle = new MutableLiveData<>(false);
     public MutableLiveData<List<DirectionItem>> directions;
     public ObservableField<Integer> remainingExhibits = new ObservableField<>(0);
     public ObservableField<String> curExhibitName = new ObservableField<>("");
@@ -67,12 +66,20 @@ public class PlanViewModel extends AndroidViewModel {
         graph.loadGraph(context, "sample_zoo_graph.json", "sample_node_info.json", "sample_edge_info.json");
     }
 
+    /**
+     * Initializes _plan field.
+     * @param plan list of list of nodes.
+     */
     public void setPlan(List<List<GraphNode>> plan) {
         this._plan = plan;
-    //    this._detailedPlan = plan;
-      //  this._simplePlan = computeSimplePlan(plan);
     }
 
+    /**
+     *
+     * @param plan each list of selected graph nodes and paths to them
+     * @param exhibitNum the specific exhibit that you compute the path for
+     * @return a list of detailed DirectionItem objects
+     */
     private List<DirectionItem> computeDetailedPlan(List<List<GraphNode>> plan, int exhibitNum) {
 
 
@@ -88,56 +95,41 @@ public class PlanViewModel extends AndroidViewModel {
 
         double currWeight = 0;
 
-
+        //Iterate through all edges
         for (int currEdgeNum = 0; currEdgeNum < edges.size(); currEdgeNum++) {
 
             EdgeInfo currEdge = graph.edgeInfo.get(edges.get(currEdgeNum).id);
 
-            currWeight = edges.get(currEdgeNum).weight;
-            newDir.add(new DirectionItem(graph.nodeInfo.get(nodes.get(currEdgeNum).id).name, currEdge.street, currWeight));
+            //Update weight based on first edge (entrance_exit to entrance_plaza)
+            if (currEdgeNum == 0) {
+                currWeight += edges.get(currEdgeNum).weight;
+                continue;
+            }
 
+            //
+            EdgeInfo previousEdge = graph.edgeInfo.get(edges.get(currEdgeNum - 1).id);
+
+            //Add a new direction item with target node's name, edge's street name, and curr weight.
+            newDir.add(new DirectionItem(graph.nodeInfo.get(nodes.get(currEdgeNum).id).name, previousEdge.street, currWeight));
+            currWeight = edges.get(currEdgeNum).weight;
         }
+
+        //Add the final edge
+        EdgeInfo finalEdge = graph.edgeInfo.get(getLast(edges).id);
+        newDir.add(new DirectionItem(graph.nodeInfo.get(getLast(nodes).id).name, finalEdge.street, currWeight));
 
         return newDir;
 
-
-
-       /* ArrayList<DirectionItem> newDir = new ArrayList<>();
-
-        // Add all nodes from current direction set to nodes
-        List<GraphNode> nodes = new ArrayList<>();
-        for (GraphNode node : plan.get(exhibitNum)) nodes.add(node);
-
-        // Get Edges
-        List<Graph.GraphData.GraphEdge> edges = graph.getEdgesFromNodes(nodes);
-
-        for (int currEdgeNum = 1; currEdgeNum < edges.size(); currEdgeNum++) {
-
-
-            EdgeInfo currEdge = graph.edgeInfo.get(edges.get(currEdgeNum).id);
-            EdgeInfo previousEdge = graph.edgeInfo.get(edges.get(currEdgeNum - 1).id);
-
-
-            newDir.add(new DirectionItem(graph.nodeInfo.get(nodes.get(currEdgeNum + 1).id).name, currEdge.street, edges.get(currEdgeNum).weight));
-
-        }
-
-        Graph.GraphData.GraphEdge lastEdge = getLast(edges);
-        EdgeInfo finalEdge = graph.edgeInfo.get(lastEdge.id);
-        newDir.add(new DirectionItem(graph.nodeInfo.get(getLast(nodes).id).name, finalEdge.street, lastEdge.weight));
-        return newDir;*/
-
-
-
-
     }
 
+    /**
+     *
+     * @param plan each list of selected graph nodes and paths to them
+     * @param exhibitNum the specific exhibit that you compute the path for
+     * @return a simple list of DirectionItem objects
+     */
     private List<DirectionItem> computeSimplePlan(List<List<GraphNode>> plan, int exhibitNum) {
 
-
-    //    List<List<DirectionItem>> simplePlan = new ArrayList<List<DirectionItem>>();
-
-      //  for (int exhibitNum = 0; exhibitNum < plan.size(); exhibitNum++) {
             // Add new set of directions to plan
             ArrayList<DirectionItem> newDir = new ArrayList<>();
 
@@ -149,23 +141,13 @@ public class PlanViewModel extends AndroidViewModel {
             List<Graph.GraphData.GraphEdge> edges = graph.getEdgesFromNodes(nodes);
 
             double currWeight = 0;
-              //      edges.get(0).weight;
 
-           /* newDir.add(new DirectionItem(graph.nodeInfo.get(nodes.get(1).id).name, graph.edgeInfo.get(edges.get(0).id).street, edges.get(0).weight));
-
-            if ((graph.edgeInfo.get(getLast(edges).id).street.equals(graph.edgeInfo.get(getSecondToLast(edges).id).street)) ) {
-
-                newDir.add(new DirectionItem(graph.nodeInfo.get(nodes.get(1).id).name, graph.edgeInfo.get(edges.get(0).id).street, edges.get(0).weight));
-
-            }*/
 
             for (int currEdgeNum = 0; currEdgeNum < edges.size(); currEdgeNum++) {
 
-               // currWeight += edges.get(currEdgeNum).weight;
-
-
                 EdgeInfo currEdge = graph.edgeInfo.get(edges.get(currEdgeNum).id);
 
+                //Update weight based on first edge (entrance_exit to entrance_plaza)
                 if (currEdgeNum == 0) {
                     currWeight += edges.get(currEdgeNum).weight;
                     continue;
@@ -174,55 +156,45 @@ public class PlanViewModel extends AndroidViewModel {
                 EdgeInfo previousEdge = graph.edgeInfo.get(edges.get(currEdgeNum - 1).id);
 
 
+                //If two edges have the same street name, do not add new DirectionItem, but update weight.
                 if ((currEdge.street).equals(previousEdge.street)) {
                     currWeight += edges.get(currEdgeNum).weight;
-
-
-              //      newDir.add(new DirectionItem(graph.nodeInfo.get(nodes.get(currEdgeNum + 1).id).name, currEdge.street, currWeight));
-
-
                 }
+
+                //Two edges do not have the same street name, so create a new DirectionItem.
                 else {
 
                     newDir.add(new DirectionItem(graph.nodeInfo.get(nodes.get(currEdgeNum).id).name, previousEdge.street, currWeight));
                     currWeight = edges.get(currEdgeNum).weight;
 
-
-                    //   currWeight += edges.get(currEdgeNum).weight;
-                  //  getLast(newDir).weight += edges.get(currEdgeNum).weight;
                 }
-
-
-                // Case 1:
-                // [a, b, c, d] ... [1, 1, 1, 2]
-                // we want [a, c, d]... i.e last thing should be newDir.add(d)
-
-                // Case 2:
-                // [a, b, c, d] ... [2, 1, 1, 1]
-                // we want [a, b, d] ... i.e last thing(s) should be newDir.add(a) and newDir.add(d)
-
-                // If we are not at the end
-
-                    // And we find the next id isn't the same
-                /*    if (!edges.get(currEdgeNum).id.equals(edges.get(currEdgeNum + 1).id) ) {
-                        newDir.add(nodes.get(currStartNode));
-                        newDir.add(nodes.get(currEdgeNum));
-                        currStartNode = currEdgeNum + 1;
-                    }
-                }  else {
-                    newDir.add(nodes.get(currStartNode));*/
 
             }
 
             EdgeInfo finalEdge = graph.edgeInfo.get(getLast(edges).id);
             newDir.add(new DirectionItem(graph.nodeInfo.get(getLast(nodes).id).name, finalEdge.street, currWeight));
             return newDir;
-         //   simplePlan.add(newDir);
 
-
-      //  return simplePlan;
     }
 
+    /**
+     * Changes state of MutableLivaData boolean based on toggle.
+     */
+    public void updateCurrentDirections() {
+        if (!detailedDirectionToggle.getValue()) {
+            setDirections(computeSimplePlan(_plan, curExhibit));
+        }
+        else {
+            setDirections(computeDetailedPlan(_plan, curExhibit));
+        }
+
+        updateObservables();
+
+    }
+
+    /**
+     * Proceeds to next exhibit and changes state based on toggle.
+     */
     public void getDirectionsToNextExhibit() {
         // If there are no more exhibits to visit, do nothing
         if (curExhibit >= _plan.size() - 1) return;
@@ -238,7 +210,6 @@ public class PlanViewModel extends AndroidViewModel {
         }
 
         updateObservables();
-      //  setDirections(_plan.get(++curExhibit));
 
     }
 

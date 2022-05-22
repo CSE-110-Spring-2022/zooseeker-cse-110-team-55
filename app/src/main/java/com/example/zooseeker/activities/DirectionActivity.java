@@ -96,6 +96,8 @@ public class DirectionActivity extends AppCompatActivity {
             case R.id.toggleDetailed:
                 Detailed = !item.isChecked();
                 item.setChecked(Detailed);
+                vm.detailedDirectionToggle.setValue(Detailed);
+                vm.updateCurrentDirections();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
