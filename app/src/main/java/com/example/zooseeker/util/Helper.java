@@ -12,4 +12,5 @@ public class Helper {
     public static <T> T getLast(List<T> list) {
         return list.get(list.size() - 1);
     }
+    public static <T> T getSecondToLast(List<T> list) {return list.get(list.size() - 2); }
 }

@@ -17,6 +17,7 @@ import com.example.zooseeker.R;
 import com.example.zooseeker.adapters.DirectionAdapter;
 import com.example.zooseeker.databinding.ActivityDirectionBinding;
 import com.example.zooseeker.fragments.RouteSummaryFragment;
+import com.example.zooseeker.models.DirectionItem;
 import com.example.zooseeker.models.Graph.GraphData.GraphEdge;
 import com.example.zooseeker.viewmodels.PlanViewModel;
 
@@ -49,11 +50,7 @@ public class DirectionActivity extends AppCompatActivity {
         rv.setAdapter(adapter);
 
         // Observe changes to list of current directions
-        vm.getDirections().observe(this, graphNodes -> {
-            List<GraphEdge> edges = vm.getRoute().getGraph().getEdgesFromNodes(graphNodes);
-            // Update adapter with new directions
-            adapter.setDirections(edges);
-        });
+        vm.getDirections().observe(this, adapter::setDirections);
 
         // Show route summary fragment
         buttonDialog = findViewById(R.id.routeSummaryButton);
