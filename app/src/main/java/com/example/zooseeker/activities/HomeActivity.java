@@ -31,11 +31,8 @@ import com.example.zooseeker.util.Alert;
 public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnAnimalClickListener, SearchView.OnQueryTextListener {
     private ActivityHomeBinding binding;
     private HomeActivityViewModel viewModel;
-    private SharedPreferences sharedPreferences;
-    private final String SHARRED_PREF = "SHARED_PREF";
+    private final String SHARED_PREF = "SHARED_PREF";
     private final String ANIMALS_ID = "ANIMALS";
-    private String id = "NULL";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +55,19 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
         // Observe changes
         viewModel.getAnimals().observe(this, adapter::setAnimals);
 
+        // Load shared preferences and update view model
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
+        String id = sharedPreferences.getString(ANIMALS_ID, null);
+        if (id != null) {
+            String[] saved_id = id.split("[\\s@&.?$+-]+");
+            List<Animal> animalList = new ArrayList<>();
+            for (String s : saved_id) {
+                animalList.add(viewModel.searchInDatabaseById(this, s));
+            }
+            viewModel.setSelectedAnimals(animalList);
+            List<Animal> tempList = new ArrayList<>(animalList);
+            viewModel.setAnimals(tempList);
+        }
         binding.search.setOnQueryTextListener(this);
     }
 
@@ -93,13 +103,11 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
     public void onAnimalClick(int position) {
         // Add or remove animal from list
         viewModel.selectAnimalCommand.execute(new SelectedAnimalParams(position));
-
-        sharedPreferences = getSharedPreferences(SHARRED_PREF, MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        // editor.putInt(COUNT, viewModel.getCount());
         StringBuilder sb = new StringBuilder();
         List<Animal> list = viewModel.getSelectedAnimals();
-        for (int i = 0; i < list.size(); i ++){
+        for (int i = 0; i < list.size(); i++) {
             sb.append(list.get(i).id);
             sb.append("@");
         }
@@ -140,7 +148,7 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
         int id = item.getItemId();
         if (id == R.id.eraseSelectedExhibitsButton) {
             viewModel.clear();
-            SharedPreferences sharedPreferences = getSharedPreferences(SHARRED_PREF, MODE_PRIVATE);
+            SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.remove(ANIMALS_ID);
             editor.apply();
@@ -148,38 +156,6 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
         }
         return super.onOptionsItemSelected(item);
     }
-
-    /*@Override
-    protected void onPause() {
-        super.onPause();
-        sharedPreferences = getSharedPreferences(SHARRED_PREF, MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-       // editor.putInt(COUNT, viewModel.getCount());
-        StringBuilder sb = new StringBuilder();
-        List<Animal> list = viewModel.getSelectedAnimals();
-        for (int i = 0; i < list.size(); i ++){
-            sb.append(list.get(i).id);
-            sb.append("@");
-        }
-        editor.putString(ANIMALS_ID, sb.toString());
-        editor.apply();
-    }*/
-
-    /*@Override
-    protected void onResume() {
-        super.onResume();
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARRED_PREF, MODE_PRIVATE);
-        id = sharedPreferences.getString(ANIMALS_ID,null);
-
-        String[] saved_id = id.split("[\\s@&.?$+-]+");
-        List<Animal> animalList = new ArrayList<>();
-
-        for(String s :saved_id){
-            animalList.add(viewModel.searchInDatabaseById(this, s));
-        }
-
-        viewModel.setSelectedAnimals(animalList);
-    }*/
 }
 
 

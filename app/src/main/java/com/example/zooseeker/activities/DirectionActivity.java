@@ -2,12 +2,12 @@ package com.example.zooseeker.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,12 +18,7 @@ import com.example.zooseeker.R;
 import com.example.zooseeker.adapters.DirectionAdapter;
 import com.example.zooseeker.databinding.ActivityDirectionBinding;
 import com.example.zooseeker.fragments.RouteSummaryFragment;
-import com.example.zooseeker.models.DirectionItem;
-import com.example.zooseeker.models.Graph.GraphData.GraphEdge;
-import com.example.zooseeker.viewmodels.HomeActivityViewModel;
 import com.example.zooseeker.viewmodels.PlanViewModel;
-
-import java.util.List;
 
 public class DirectionActivity extends AppCompatActivity {
     private PlanViewModel vm;
@@ -91,9 +86,13 @@ public class DirectionActivity extends AppCompatActivity {
         int id = item.getItemId();
         switch(id) {
             case R.id.eraseRoutePlanButton:
+                SharedPreferences sharedPreferences = getSharedPreferences("SHARED_PREF", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.clear();
+                editor.apply();
                 vm.clearPlan();
 
-                // If it doesn't break we'll delete this
+                // TODO Change to update activity from another activity
                 super.finish();
                 this.finish();
                 Intent intent = new Intent(this, HomeActivity.class);

@@ -1,7 +1,6 @@
 package com.example.zooseeker.viewmodels;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 
 import androidx.databinding.ObservableInt;
 import androidx.lifecycle.LiveData;
@@ -85,13 +84,13 @@ public class HomeActivityViewModel extends ViewModel {
         this.animals.setValue(animals);
     }
 
+    public void setSelectedAnimals(List<Animal> animalList){
+        _selectedAnimals = animalList;
+        numSelectedAnimals.set(animalList.size());
+    }
+
     public void clear() {
         _selectedAnimals.clear();
         numSelectedAnimals.set(0);
-    }
-
-    public void setSelectedAnimals(List<Animal> animalList){
-        numSelectedAnimals.set(animalList.size());
-        _selectedAnimals = animalList;
     }
 }
