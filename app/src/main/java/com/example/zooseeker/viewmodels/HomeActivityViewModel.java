@@ -1,6 +1,7 @@
 package com.example.zooseeker.viewmodels;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import androidx.databinding.ObservableInt;
 import androidx.lifecycle.LiveData;
@@ -24,6 +25,7 @@ public class HomeActivityViewModel extends ViewModel {
     // List of selected animals
     private List<Animal> _selectedAnimals = new ArrayList<>();
     public ObservableInt numSelectedAnimals = new ObservableInt(0);
+
 
     // Commands for Activity to call
     public ICommand<SearchCommandParams> searchCommand = params -> performSearch(params.context, params.query);
@@ -68,6 +70,11 @@ public class HomeActivityViewModel extends ViewModel {
         return animalItemDao.get(query);
     }
 
+    public Animal searchInDatabaseById(Context context, String query) {
+        AnimalItemDao animalItemDao = AnimalDatabase.getSingleton(context).animalItemDao();
+        return animalItemDao.getById(query);
+    }
+
     public List<Animal> getSelectedAnimals() { return _selectedAnimals; }
 
     public LiveData<List<Animal>> getAnimals() {
@@ -81,5 +88,10 @@ public class HomeActivityViewModel extends ViewModel {
     public void clear() {
         _selectedAnimals.clear();
         numSelectedAnimals.set(0);
+    }
+
+    public void setSelectedAnimals(List<Animal> animalList){
+        numSelectedAnimals.set(animalList.size());
+        _selectedAnimals = animalList;
     }
 }

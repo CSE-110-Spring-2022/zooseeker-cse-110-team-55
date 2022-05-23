@@ -53,6 +53,13 @@
                     android:layout_centerInParent="true"
                     android:layout_toEndOf="@id/count"
                     android:iconifiedByDefault="false" />
+
+                <TextView
+                    android:id="@+id/testtest"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TextView" />
+
             </RelativeLayout>
 
             <androidx.recyclerview.widget.RecyclerView

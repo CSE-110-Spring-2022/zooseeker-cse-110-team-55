@@ -2,6 +2,7 @@ package com.example.zooseeker.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -91,14 +92,12 @@ public class DirectionActivity extends AppCompatActivity {
         switch(id) {
             case R.id.eraseRoutePlanButton:
                 vm.clearPlan();
-            // If it doesn't break we'll delete this
-//              this.finish();
-//              this.finish();
-//              // possible stack overflow
-//              Intent intent = new Intent(this, HomeActivity.class);
-//              startActivity(intent);
-                Button button = findViewById(R.id.eraseSelectedExhibitsButton);
-                button.performClick();
+
+                // If it doesn't break we'll delete this
+                super.finish();
+                this.finish();
+                Intent intent = new Intent(this, HomeActivity.class);
+                startActivity(intent);
                 return true;
             case R.id.toggleDetailed:
                 Detailed = !item.isChecked();
