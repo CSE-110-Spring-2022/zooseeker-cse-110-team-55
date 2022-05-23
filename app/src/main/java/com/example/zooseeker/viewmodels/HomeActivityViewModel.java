@@ -25,6 +25,7 @@ public class HomeActivityViewModel extends ViewModel {
     private List<Animal> _selectedAnimals = new ArrayList<>();
     public ObservableInt numSelectedAnimals = new ObservableInt(0);
 
+
     // Commands for Activity to call
     public ICommand<SearchCommandParams> searchCommand = params -> performSearch(params.context, params.query);
     public ICommand<SelectedAnimalParams> selectAnimalCommand = params -> {
@@ -68,6 +69,11 @@ public class HomeActivityViewModel extends ViewModel {
         return animalItemDao.get(query);
     }
 
+    public Animal searchInDatabaseById(Context context, String query) {
+        AnimalItemDao animalItemDao = AnimalDatabase.getSingleton(context).animalItemDao();
+        return animalItemDao.getById(query);
+    }
+
     public List<Animal> getSelectedAnimals() { return _selectedAnimals; }
 
     public LiveData<List<Animal>> getAnimals() {
@@ -76,6 +82,11 @@ public class HomeActivityViewModel extends ViewModel {
 
     public void setAnimals(List<Animal> animals) {
         this.animals.setValue(animals);
+    }
+
+    public void setSelectedAnimals(List<Animal> animalList){
+        _selectedAnimals = animalList;
+        numSelectedAnimals.set(animalList.size());
     }
 
     public void clear() {

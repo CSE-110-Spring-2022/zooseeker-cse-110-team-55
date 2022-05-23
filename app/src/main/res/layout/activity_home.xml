@@ -53,6 +53,7 @@
                     android:layout_centerInParent="true"
                     android:layout_toEndOf="@id/count"
                     android:iconifiedByDefault="false" />
+
             </RelativeLayout>
 
             <androidx.recyclerview.widget.RecyclerView

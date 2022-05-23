@@ -23,6 +23,9 @@ public interface AnimalItemDao {
             "ELSE 2 END, name ASC")
     List<Animal> get(String query);
 
+    @Query("SELECT * FROM animal_items WHERE id = :id")
+    Animal getById(String id);
+
     @Update
     int update(Animal animal);
 
