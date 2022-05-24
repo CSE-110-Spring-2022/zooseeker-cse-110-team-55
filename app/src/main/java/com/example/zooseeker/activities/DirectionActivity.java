@@ -85,7 +85,6 @@ public class DirectionActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         int temp = sharedPreferences.getInt("CURR_INDEX", 0);
-        temp += 1;
         editor.putInt("CURR_INDEX", temp + 1);
         if(vm.isLastExhibit()){
             editor.putInt("CURR_INDEX", -1);
