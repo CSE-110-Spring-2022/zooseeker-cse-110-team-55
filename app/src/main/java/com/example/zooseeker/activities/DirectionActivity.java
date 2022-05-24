@@ -1,7 +1,7 @@
 package com.example.zooseeker.activities;
 
 import static com.example.zooseeker.util.Constant.SHARED_PREF;
-
+import static com.example.zooseeker.util.Constant.CURR_INDEX;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
