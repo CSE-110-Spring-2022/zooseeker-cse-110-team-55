@@ -117,7 +117,7 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
             // Todo comment here
             SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putInt("CURR_INDEX", 0);
+            editor.putInt(CURR_INDEX, 0);
             editor.apply();
 
             startActivity(intent);
