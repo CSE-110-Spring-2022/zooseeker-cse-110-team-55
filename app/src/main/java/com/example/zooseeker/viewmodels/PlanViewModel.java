@@ -275,5 +275,7 @@ public class PlanViewModel extends AndroidViewModel {
         _plan.clear();
     }
 
-
+    public boolean isLastExhibit(){
+        return curExhibit >= _plan.size();
+    }
 }

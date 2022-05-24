@@ -1,5 +1,9 @@
 package com.example.zooseeker.activities;
 
+import static com.example.zooseeker.util.Constant.ANIMALS_ID;
+import static com.example.zooseeker.util.Constant.CURR_INDEX;
+import static com.example.zooseeker.util.Constant.SHARED_PREF;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
@@ -13,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 import com.example.zooseeker.R;
 import com.example.zooseeker.adapters.AnimalAdapter;
@@ -31,8 +36,6 @@ import com.example.zooseeker.util.Alert;
 public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnAnimalClickListener, SearchView.OnQueryTextListener {
     private ActivityHomeBinding binding;
     private HomeActivityViewModel viewModel;
-    private final String SHARED_PREF = "SHARED_PREF";
-    private final String ANIMALS_ID = "ANIMALS";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +58,7 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
         // Observe changes
         viewModel.getAnimals().observe(this, adapter::setAnimals);
 
-        // Load shared preferences and update view model
+        // Load saved animals and update view model
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
         String id = sharedPreferences.getString(ANIMALS_ID, null);
         if (id != null) {
@@ -68,6 +71,22 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
             List<Animal> tempList = new ArrayList<>(animalList);
             viewModel.setAnimals(tempList);
         }
+
+        // Load direction index if exists
+        int curr_index = sharedPreferences.getInt(CURR_INDEX, -1);
+        if (curr_index != -1) {
+            Intent intent = new Intent(this, DirectionActivity.class);
+            // Convert list of selected animals to list of their id strings
+            ArrayList<String> selectedAnimals = new ArrayList<>(
+                    viewModel.getSelectedAnimals()
+                            .stream()
+                            .map(a -> a.id)
+                            .collect(Collectors.toList()));
+            // Add to intent
+            intent.putStringArrayListExtra("selected_animals", selectedAnimals);
+            startActivity(intent);
+        }
+
         binding.search.setOnQueryTextListener(this);
     }
 
@@ -95,6 +114,12 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
             searchBar.setQuery("", false);
             searchBar.clearFocus();
 
+            // Todo comment here
+            SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putInt("CURR_INDEX", 0);
+            editor.apply();
+
             startActivity(intent);
         }
     }
@@ -103,6 +128,7 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
     public void onAnimalClick(int position) {
         // Add or remove animal from list
         viewModel.selectAnimalCommand.execute(new SelectedAnimalParams(position));
+
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         StringBuilder sb = new StringBuilder();
@@ -151,6 +177,7 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
             SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.remove(ANIMALS_ID);
+            editor.remove(CURR_INDEX);
             editor.apply();
             this.recreate();
         }
