@@ -41,11 +41,11 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Create viewmodel instance
+        // Create view model instance
         viewModel = new ViewModelProvider(this).get(HomeActivityViewModel.class);
         // Set view binding
         binding = DataBindingUtil.setContentView(this, R.layout.activity_home);
-        // Inject viewmodel instance
+        // Inject view model instance
         binding.setVm(viewModel);
 
         // Sets RecyclerView
@@ -58,7 +58,7 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
         // Observe changes
         viewModel.getAnimals().observe(this, adapter::setAnimals);
 
-        // Load saved animals and update view model
+        // Load shared preferences and update home activity view model
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
         String id = sharedPreferences.getString(ANIMALS_ID, null);
         if (id != null) {
@@ -72,7 +72,7 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
             viewModel.setAnimals(tempList);
         }
 
-        // Load direction index if exists
+        // Load shared preferences and launch direction activity if direction index != -1
         int curr_index = sharedPreferences.getInt(CURR_INDEX, -1);
         if (curr_index != -1) {
             Intent intent = new Intent(this, DirectionActivity.class);
@@ -86,7 +86,6 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
             intent.putStringArrayListExtra("selected_animals", selectedAnimals);
             startActivity(intent);
         }
-
         binding.search.setOnQueryTextListener(this);
     }
 
@@ -114,7 +113,7 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
             searchBar.setQuery("", false);
             searchBar.clearFocus();
 
-            // Todo comment here
+            // Update direction index in shared preferences to 0 when direction activity is launched
             SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putInt(CURR_INDEX, 0);
@@ -129,6 +128,7 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
         // Add or remove animal from list
         viewModel.selectAnimalCommand.execute(new SelectedAnimalParams(position));
 
+        // Reconstruct and update animal id string in shared preferences
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         StringBuilder sb = new StringBuilder();
@@ -161,14 +161,14 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
         return this.binding;
     }
 
-    // create an action bar button
+    // Create an action bar button
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.home_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
-    // handle button activities
+    // Handle button activities
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
