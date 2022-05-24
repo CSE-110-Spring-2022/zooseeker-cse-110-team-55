@@ -63,7 +63,7 @@ public class DirectionActivity extends AppCompatActivity {
 
         // Change app state
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
-        int curr_index = sharedPreferences.getInt("CURR_INDEX", 0);
+        int curr_index = sharedPreferences.getInt(CURR_INDEX, 0);
         for (int i = 0; i < curr_index; i++){
             vm.nextExhibitCommand.execute(this);
         }
