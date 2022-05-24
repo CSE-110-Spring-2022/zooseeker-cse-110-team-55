@@ -9,5 +9,5 @@ public class Constant {
     // <color name="purple_200">#D58CB8</color>
     // <color name="purple_500">#6667AB</color>
     // <color name="purple_700">#223A5E</color>
-    // How do you guys think?
+    // This purple is the color of the year lol. How do you guys think? The orignal one or this looks better?
 }
