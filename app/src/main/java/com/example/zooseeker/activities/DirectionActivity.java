@@ -1,5 +1,7 @@
 package com.example.zooseeker.activities;
 
+import static com.example.zooseeker.util.Constant.SHARED_PREF;
+import static com.example.zooseeker.util.Constant.CURR_INDEX;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
@@ -58,6 +60,13 @@ public class DirectionActivity extends AppCompatActivity {
                 routeSummaryFragment.show(getSupportFragmentManager(), "TAG");
             }
         });
+
+        // Change app state
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
+        int curr_index = sharedPreferences.getInt(CURR_INDEX, 0);
+        for (int i = 0; i < curr_index; i++){
+            vm.nextExhibitCommand.execute(this);
+        }
     }
 
     // Hide route summary fragment
@@ -71,6 +80,16 @@ public class DirectionActivity extends AppCompatActivity {
      */
     public void onLaunchNextClicked(View view) {
         vm.nextExhibitCommand.execute(this);
+
+        // Change app state
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        int temp = sharedPreferences.getInt(CURR_INDEX, 0);
+        editor.putInt(CURR_INDEX, temp + 1);
+        if(vm.isLastExhibit()){
+            editor.putInt(CURR_INDEX, -1);
+        }
+        editor.apply();
     }
 
     // create an action bar button
@@ -109,3 +128,12 @@ public class DirectionActivity extends AppCompatActivity {
         }
     }
 }
+
+
+
+
+
+
+
+
+
