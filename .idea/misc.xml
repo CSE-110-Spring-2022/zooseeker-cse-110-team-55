@@ -4,18 +4,23 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../../../layout/custom_preview.xml" value="0.19166666666666668" />
+        <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.326" />
         <entry key="app/src/main/res/drawable/heart_checkbox.xml" value="0.1475" />
+        <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.326" />
         <entry key="app/src/main/res/drawable/three_dots.xml" value="0.225" />
         <entry key="app/src/main/res/layout/activity_animal_list.xml" value="0.27677154541015625" />
         <entry key="app/src/main/res/layout/activity_direction.xml" value="0.2453125" />
-        <entry key="app/src/main/res/layout/activity_home.xml" value="0.24702301025390633" />
+        <entry key="app/src/main/res/layout/activity_home.xml" value="0.5" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.2593032836914063" />
         <entry key="app/src/main/res/layout/activity_plan.xml" value="0.2453125" />
         <entry key="app/src/main/res/layout/animal_item.xml" value="0.2350484212239583" />
+        <entry key="app/src/main/res/layout/direction_item.xml" value="0.46822916666666664" />
         <entry key="app/src/main/res/layout/user_item.xml" value="0.29427541097005216" />
         <entry key="app/src/main/res/menu/detailed_menu.xml" value="0.8961146036783855" />
         <entry key="app/src/main/res/menu/direction_menu.xml" value="0.6008890787760417" />
         <entry key="app/src/main/res/menu/home_menu.xml" value="0.2557291666666667" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.326" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.326" />
       </map>
     </option>
   </component>

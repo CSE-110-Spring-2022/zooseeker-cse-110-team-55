@@ -46,7 +46,7 @@ public class RouteSummaryAdapter extends RecyclerView.Adapter<RouteSummaryAdapte
 
         StringBuilder dist = new StringBuilder();
         dist.append(planViewModel.getRoute().getDistancesToEachExhibit()[position]);
-        dist.append(" ft");
+        dist.append(" feet");
 
         holder.distance.setText(dist);
     }

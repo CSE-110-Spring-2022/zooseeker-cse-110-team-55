@@ -6,13 +6,11 @@ import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.pressImeActionButton;
 import static androidx.test.espresso.action.ViewActions.replaceText;
-import static androidx.test.espresso.action.ViewActions.scrollTo;
-import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
+import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withParent;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.is;
@@ -22,9 +20,9 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 
 import androidx.test.espresso.ViewInteraction;
+import androidx.test.ext.junit.rules.ActivityScenarioRule;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
-import androidx.test.rule.ActivityTestRule;
-import androidx.test.runner.AndroidJUnit4;
 
 import com.example.zooseeker.R;
 import com.example.zooseeker.activities.HomeActivity;
@@ -32,7 +30,6 @@ import com.example.zooseeker.activities.HomeActivity;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
-import org.hamcrest.core.IsInstanceOf;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,16 +39,20 @@ import org.junit.runner.RunWith;
 public class CompleteUITest {
 
     @Rule
-    public ActivityTestRule<HomeActivity> mActivityTestRule = new ActivityTestRule<>(HomeActivity.class);
+    public ActivityScenarioRule<HomeActivity> mActivityScenarioRule =
+            new ActivityScenarioRule<>(HomeActivity.class);
 
     @Test
     public void completeUITest() {
-        ViewInteraction textView = onView(
-                allOf(withId(R.id.count), withText("0"),
-                        withParent(allOf(withId(R.id.topbar),
-                                withParent(IsInstanceOf.<View>instanceOf(android.widget.RelativeLayout.class)))),
+        ViewInteraction actionMenuItemView = onView(
+                allOf(withId(R.id.eraseSelectedExhibitsButton),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(androidx.appcompat.R.id.action_bar),
+                                        1),
+                                0),
                         isDisplayed()));
-        textView.check(matches(withText("0")));
+        actionMenuItemView.perform(click());
 
         ViewInteraction searchAutoComplete = onView(
                 allOf(withClassName(is("android.widget.SearchView$SearchAutoComplete")),
@@ -75,6 +76,39 @@ public class CompleteUITest {
                         isDisplayed()));
         searchAutoComplete2.perform(pressImeActionButton());
 
+        ViewInteraction appCompatImageView = onView(
+                allOf(withClassName(is("androidx.appcompat.widget.AppCompatImageView")), withContentDescription("Clear query"),
+                        childAtPosition(
+                                allOf(withClassName(is("android.widget.LinearLayout")),
+                                        childAtPosition(
+                                                withClassName(is("android.widget.LinearLayout")),
+                                                1)),
+                                1),
+                        isDisplayed()));
+        appCompatImageView.perform(click());
+
+        ViewInteraction searchAutoComplete3 = onView(
+                allOf(withClassName(is("android.widget.SearchView$SearchAutoComplete")),
+                        childAtPosition(
+                                allOf(withClassName(is("android.widget.LinearLayout")),
+                                        childAtPosition(
+                                                withClassName(is("android.widget.LinearLayout")),
+                                                1)),
+                                0),
+                        isDisplayed()));
+        searchAutoComplete3.perform(replaceText("l"), closeSoftKeyboard());
+
+        ViewInteraction searchAutoComplete4 = onView(
+                allOf(withClassName(is("android.widget.SearchView$SearchAutoComplete")), withText("l"),
+                        childAtPosition(
+                                allOf(withClassName(is("android.widget.LinearLayout")),
+                                        childAtPosition(
+                                                withClassName(is("android.widget.LinearLayout")),
+                                                1)),
+                                0),
+                        isDisplayed()));
+        searchAutoComplete4.perform(pressImeActionButton());
+
         ViewInteraction recyclerView = onView(
                 allOf(withId(R.id.recyclerView),
                         childAtPosition(
@@ -82,33 +116,12 @@ public class CompleteUITest {
                                 1)));
         recyclerView.perform(actionOnItemAtPosition(0, click()));
 
-        ViewInteraction textView2 = onView(
-                allOf(withId(R.id.count), withText("1"),
-                        withParent(allOf(withId(R.id.topbar),
-                                withParent(IsInstanceOf.<View>instanceOf(android.widget.RelativeLayout.class)))),
-                        isDisplayed()));
-        textView2.check(matches(withText("1")));
-
         ViewInteraction recyclerView2 = onView(
                 allOf(withId(R.id.recyclerView),
                         childAtPosition(
                                 withClassName(is("android.widget.RelativeLayout")),
                                 1)));
         recyclerView2.perform(actionOnItemAtPosition(1, click()));
-
-        ViewInteraction recyclerView3 = onView(
-                allOf(withId(R.id.recyclerView),
-                        childAtPosition(
-                                withClassName(is("android.widget.RelativeLayout")),
-                                1)));
-        recyclerView3.perform(actionOnItemAtPosition(2, click()));
-
-        ViewInteraction textView3 = onView(
-                allOf(withId(R.id.count), withText("3"),
-                        withParent(allOf(withId(R.id.topbar),
-                                withParent(IsInstanceOf.<View>instanceOf(android.widget.RelativeLayout.class)))),
-                        isDisplayed()));
-        textView3.check(matches(withText("3")));
 
         ViewInteraction materialButton = onView(
                 allOf(withId(R.id.direction_button), withText("Directions"),
@@ -120,13 +133,6 @@ public class CompleteUITest {
                         isDisplayed()));
         materialButton.perform(click());
 
-        ViewInteraction textView4 = onView(
-                allOf(withId(R.id.count), withText("(4)"),
-                        withParent(allOf(withId(R.id.topbar),
-                                withParent(IsInstanceOf.<View>instanceOf(android.widget.RelativeLayout.class)))),
-                        isDisplayed()));
-        textView4.check(matches(withText("(4)")));
-
         ViewInteraction materialButton2 = onView(
                 allOf(withId(R.id.next_button), withText("Next (Lions, 200ft)"),
                         childAtPosition(
@@ -137,15 +143,8 @@ public class CompleteUITest {
                         isDisplayed()));
         materialButton2.perform(click());
 
-        ViewInteraction textView5 = onView(
-                allOf(withId(R.id.count), withText("(3)"),
-                        withParent(allOf(withId(R.id.topbar),
-                                withParent(IsInstanceOf.<View>instanceOf(android.widget.RelativeLayout.class)))),
-                        isDisplayed()));
-        textView5.check(matches(withText("(3)")));
-
         ViewInteraction materialButton3 = onView(
-                allOf(withId(R.id.next_button), withText("Next (Elephant Odyssey, 200ft)"),
+                allOf(withId(R.id.next_button), withText("Next (Entrance and Exit Gate, 310ft)"),
                         childAtPosition(
                                 childAtPosition(
                                         withClassName(is("androidx.constraintlayout.widget.ConstraintLayout")),
@@ -154,15 +153,8 @@ public class CompleteUITest {
                         isDisplayed()));
         materialButton3.perform(click());
 
-        ViewInteraction textView6 = onView(
-                allOf(withId(R.id.count), withText("(2)"),
-                        withParent(allOf(withId(R.id.topbar),
-                                withParent(IsInstanceOf.<View>instanceOf(android.widget.RelativeLayout.class)))),
-                        isDisplayed()));
-        textView6.check(matches(withText("(2)")));
-
         ViewInteraction materialButton4 = onView(
-                allOf(withId(R.id.next_button), withText("Next (Entrance and Exit Gate, 510ft)"),
+                allOf(withId(R.id.next_button), withText("END"),
                         childAtPosition(
                                 childAtPosition(
                                         withClassName(is("androidx.constraintlayout.widget.ConstraintLayout")),
@@ -171,59 +163,60 @@ public class CompleteUITest {
                         isDisplayed()));
         materialButton4.perform(click());
 
-        ViewInteraction textView7 = onView(
-                allOf(withId(R.id.count), withText("(1)"),
-                        withParent(allOf(withId(R.id.topbar),
-                                withParent(IsInstanceOf.<View>instanceOf(android.widget.RelativeLayout.class)))),
-                        isDisplayed()));
-        textView7.check(matches(withText("(1)")));
-
-        ViewInteraction materialButton5 = onView(
-                allOf(withId(R.id.next_button), withText("END"),
+        ViewInteraction actionMenuItemView2 = onView(
+                allOf(withId(R.id.eraseSelectedExhibitsButton),
                         childAtPosition(
                                 childAtPosition(
-                                        withClassName(is("androidx.constraintlayout.widget.ConstraintLayout")),
-                                        0),
-                                1),
+                                        withId(androidx.appcompat.R.id.action_bar),
+                                        1),
+                                0),
                         isDisplayed()));
-        materialButton5.perform(click());
+        actionMenuItemView2.perform(click());
 
-        ViewInteraction textView8 = onView(
-                allOf(withId(R.id.count), withText("3"),
-                        withParent(allOf(withId(R.id.topbar),
-                                withParent(IsInstanceOf.<View>instanceOf(android.widget.RelativeLayout.class)))),
+        ViewInteraction searchAutoComplete5 = onView(
+                allOf(withClassName(is("android.widget.SearchView$SearchAutoComplete")),
+                        childAtPosition(
+                                allOf(withClassName(is("android.widget.LinearLayout")),
+                                        childAtPosition(
+                                                withClassName(is("android.widget.LinearLayout")),
+                                                1)),
+                                0),
                         isDisplayed()));
-        textView8.check(matches(withText("3")));
+        searchAutoComplete5.perform(replaceText("l"), closeSoftKeyboard());
+
+        ViewInteraction searchAutoComplete6 = onView(
+                allOf(withClassName(is("android.widget.SearchView$SearchAutoComplete")), withText("l"),
+                        childAtPosition(
+                                allOf(withClassName(is("android.widget.LinearLayout")),
+                                        childAtPosition(
+                                                withClassName(is("android.widget.LinearLayout")),
+                                                1)),
+                                0),
+                        isDisplayed()));
+        searchAutoComplete6.perform(pressImeActionButton());
+
+        ViewInteraction recyclerView3 = onView(
+                allOf(withId(R.id.recyclerView),
+                        childAtPosition(
+                                withClassName(is("android.widget.RelativeLayout")),
+                                1)));
+        recyclerView3.perform(actionOnItemAtPosition(0, click()));
 
         ViewInteraction recyclerView4 = onView(
                 allOf(withId(R.id.recyclerView),
                         childAtPosition(
                                 withClassName(is("android.widget.RelativeLayout")),
                                 1)));
-        recyclerView4.perform(actionOnItemAtPosition(2, click()));
+        recyclerView4.perform(actionOnItemAtPosition(1, click()));
 
         ViewInteraction recyclerView5 = onView(
                 allOf(withId(R.id.recyclerView),
                         childAtPosition(
                                 withClassName(is("android.widget.RelativeLayout")),
                                 1)));
-        recyclerView5.perform(actionOnItemAtPosition(1, click()));
+        recyclerView5.perform(actionOnItemAtPosition(2, click()));
 
-        ViewInteraction recyclerView6 = onView(
-                allOf(withId(R.id.recyclerView),
-                        childAtPosition(
-                                withClassName(is("android.widget.RelativeLayout")),
-                                1)));
-        recyclerView6.perform(actionOnItemAtPosition(0, click()));
-
-        ViewInteraction textView9 = onView(
-                allOf(withId(R.id.count), withText("0"),
-                        withParent(allOf(withId(R.id.topbar),
-                                withParent(IsInstanceOf.<View>instanceOf(android.widget.RelativeLayout.class)))),
-                        isDisplayed()));
-        textView9.check(matches(withText("0")));
-
-        ViewInteraction materialButton6 = onView(
+        ViewInteraction materialButton5 = onView(
                 allOf(withId(R.id.direction_button), withText("Directions"),
                         childAtPosition(
                                 childAtPosition(
@@ -231,29 +224,39 @@ public class CompleteUITest {
                                         0),
                                 2),
                         isDisplayed()));
+        materialButton5.perform(click());
+
+        ViewInteraction materialButton6 = onView(
+                allOf(withId(R.id.routeSummaryButton), withText("Route Summary"),
+                        childAtPosition(
+                                allOf(withId(R.id.topbar),
+                                        childAtPosition(
+                                                withClassName(is("android.widget.RelativeLayout")),
+                                                0)),
+                                2),
+                        isDisplayed()));
         materialButton6.perform(click());
 
-        ViewInteraction textView10 = onView(
-                allOf(IsInstanceOf.<View>instanceOf(android.widget.TextView.class), withText("Empty List"),
-                        withParent(allOf(IsInstanceOf.<View>instanceOf(android.widget.LinearLayout.class),
-                                withParent(IsInstanceOf.<View>instanceOf(android.widget.LinearLayout.class)))),
-                        isDisplayed()));
-        textView10.check(matches(withText("Empty List")));
-
-        ViewInteraction textView11 = onView(
-                allOf(withId(android.R.id.message), withText("Please select some exhibits."),
-                        withParent(withParent(IsInstanceOf.<View>instanceOf(android.widget.ScrollView.class))),
-                        isDisplayed()));
-        textView11.check(matches(withText("Please select some exhibits.")));
-
         ViewInteraction materialButton7 = onView(
-                allOf(withId(android.R.id.button1), withText("OK"),
+                allOf(withId(R.id.hide_button), withText("Hide"),
+                        childAtPosition(
+                                allOf(withId(R.id.topbar),
+                                        childAtPosition(
+                                                withClassName(is("android.widget.RelativeLayout")),
+                                                0)),
+                                1),
+                        isDisplayed()));
+        materialButton7.perform(click());
+
+        ViewInteraction actionMenuItemView3 = onView(
+                allOf(withId(R.id.eraseRoutePlanButton),
                         childAtPosition(
                                 childAtPosition(
-                                        withClassName(is("android.widget.ScrollView")),
-                                        0),
-                                3)));
-        materialButton7.perform(scrollTo(), click());
+                                        withId(androidx.appcompat.R.id.action_bar),
+                                        1),
+                                0),
+                        isDisplayed()));
+        actionMenuItemView3.perform(click());
     }
 
     private static Matcher<View> childAtPosition(

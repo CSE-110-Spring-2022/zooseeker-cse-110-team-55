@@ -34,7 +34,7 @@ public class DirectionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
         binding = DataBindingUtil.setContentView(this, R.layout.activity_direction);
-        // Set viewmodel
+        // Set view model
         vm = new ViewModelProvider(this).get(PlanViewModel.class);
         binding.setVm(vm);
 
@@ -61,7 +61,7 @@ public class DirectionActivity extends AppCompatActivity {
             }
         });
 
-        // Change app state
+        // Load direction index from shared preferences and configure plan view model
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
         int curr_index = sharedPreferences.getInt(CURR_INDEX, 0);
         for (int i = 0; i < curr_index; i++){
@@ -81,7 +81,7 @@ public class DirectionActivity extends AppCompatActivity {
     public void onLaunchNextClicked(View view) {
         vm.nextExhibitCommand.execute(this);
 
-        // Change app state
+        // Increment direction index from shared preferences or reset index when reaches final destination
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         int temp = sharedPreferences.getInt(CURR_INDEX, 0);
@@ -92,14 +92,14 @@ public class DirectionActivity extends AppCompatActivity {
         editor.apply();
     }
 
-    // create an action bar button
+    // Create an action bar button
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.direction_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
-    // handle button activities
+    // Handle button activities
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
