@@ -44,8 +44,8 @@ public class DatabaseTest {
 
     @Test
     public void testInsert() {
-        Animal animal1 = new Animal("Lion", "lion");
-        Animal animal2 = new Animal("Tiger", "tiger");
+        Animal animal1 = new Animal("Lion", "lion", Animal.Kind.EXHIBIT);
+        Animal animal2 = new Animal("Tiger", "tiger", Animal.Kind.EXHIBIT);
 
         long id1 = dao.insert(animal1);
         long id2 = dao.insert(animal2);
@@ -55,7 +55,7 @@ public class DatabaseTest {
 
     @Test
     public void testGet() {
-        Animal insertedItem = new Animal("Lion", "lion");
+        Animal insertedItem = new Animal("Lion", "lion", Animal.Kind.EXHIBIT);
 
         dao.insert(insertedItem);
         List<Animal> item = dao.get("lion");
@@ -65,23 +65,8 @@ public class DatabaseTest {
     }
 
     @Test
-    public void testUpdate() {
-        Animal insertedItem = new Animal("Lion", "lion");
-        dao.insert(insertedItem);
-
-        List<Animal> item = dao.get("lion");
-        item.get(0).name = "LionKing";
-        int itemsUpdated = dao.update(item.get(0));
-        assertEquals(1, itemsUpdated);
-
-        item = dao.get("lion");
-        assertNotNull(item);
-        assertEquals("LionKing", item.get(0).name);
-    }
-
-    @Test
     public void testDelete() {
-        Animal insertedItem = new Animal("Lion", "lion");
+        Animal insertedItem = new Animal("Lion", "lion", Animal.Kind.EXHIBIT);
         dao.insert(insertedItem);
 
         List<Animal> item = dao.get("lion");

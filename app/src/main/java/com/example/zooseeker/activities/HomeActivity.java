@@ -83,7 +83,7 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
             ArrayList<String> selectedAnimals = new ArrayList<>(
                     viewModel.getSelectedAnimals()
                             .stream()
-                            .map(a -> a.id)
+                            .map(a -> a.groupId == null ? a.id : a.groupId)
                             .collect(Collectors.toList()));
             // Add to intent
             intent.putStringArrayListExtra("selected_animals", selectedAnimals);

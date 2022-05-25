@@ -1,9 +1,14 @@
 package com.example.zooseeker;
 
 
+import static android.content.Context.MODE_PRIVATE;
+import static com.example.zooseeker.util.Constant.ANIMALS_ID;
+import static com.example.zooseeker.util.Constant.CURR_INDEX;
+import static com.example.zooseeker.util.Constant.SHARED_PREF;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.widget.SearchView;
 
 import androidx.lifecycle.Lifecycle;
@@ -12,6 +17,7 @@ import androidx.room.Room;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.example.zooseeker.activities.HomeActivity;
 import com.example.zooseeker.databinding.ActivityHomeBinding;
@@ -41,6 +47,12 @@ public class AnimalActivityTest {
         List<Animal> animals = Animal.loadJSON(context, "sample_node_info.json");
         animalItemDao = testDb.animalItemDao();
         animalItemDao.insertAll(animals);
+
+
+        var iContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        var editor = iContext.getSharedPreferences(SHARED_PREF, MODE_PRIVATE).edit();
+        editor.clear();
+        editor.apply();
     }
 
     @Test
@@ -54,11 +66,11 @@ public class AnimalActivityTest {
             ActivityHomeBinding binding = activity.getBinding();
 
             SearchView searchView = activity.getBinding().search;
-            searchView.setQuery("Lion", true);
+            searchView.setQuery("Bali Mynah", true);
 
             RecyclerView recyclerView = binding.recyclerView;
             recyclerView.getAdapter().getItemCount();
-            List<Animal> animals = binding.getVm().getAnimals().getValue();
+            var animals = binding.getVm().getAnimals().getValue();
 
             assertTrue(animals.get(0).name.contains(searchView.getQuery()));
         });

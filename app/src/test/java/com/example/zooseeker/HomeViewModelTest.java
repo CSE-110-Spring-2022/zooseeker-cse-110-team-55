@@ -34,11 +34,15 @@ public class HomeViewModelTest {
 
     @Test
     public void testToggleAnimal() {
-        List<Animal> animals = new ArrayList<>();
-        animals.add(new Animal("Animal One", "animal_one"));
+        List<Animal.AnimalDisplay> animals = new ArrayList<>();
+        var x = new Animal.AnimalDisplay();
+        x.groupId = "animal_group";
+        x.id = "animal";
+        x.name = "Animal";
+        animals.add(x);
         vm.setAnimals(animals);
 
-        Animal animal = animals.get(0);
+        Animal.AnimalDisplay animal = animals.get(0);
         SelectedAnimalParams p = new SelectedAnimalParams(0);
 
         // Add animal

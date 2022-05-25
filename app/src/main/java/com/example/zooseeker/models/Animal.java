@@ -4,6 +4,7 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
@@ -36,6 +37,7 @@ public class Animal {
         @SerializedName("intersection") INTERSECTION
     }
 
+    @Ignore
     public Animal(@NonNull String id,
                    @Nullable String groupId,
                    @NonNull Kind kind,
@@ -56,6 +58,19 @@ public class Animal {
         }
     }
 
+    @VisibleForTesting
+    public Animal(String id, String name, Kind kind) {
+        this.id = id;
+        this.name = name;
+
+        groupId = null;
+        this.kind = kind;
+        lat = 0d;
+        lng = 0d;
+        tags = new ArrayList<>();
+    }
+
+    @Ignore
     public Animal(@NonNull String id,
                   @Nullable String groupId,
                   @NonNull Kind kind,

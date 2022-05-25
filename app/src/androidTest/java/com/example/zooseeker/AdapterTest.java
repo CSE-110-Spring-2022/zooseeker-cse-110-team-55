@@ -1,8 +1,13 @@
 package com.example.zooseeker;
 
+import static android.content.Context.MODE_PRIVATE;
+import static com.example.zooseeker.util.Constant.ANIMALS_ID;
+import static com.example.zooseeker.util.Constant.CURR_INDEX;
+import static com.example.zooseeker.util.Constant.SHARED_PREF;
 import static org.junit.Assert.assertEquals;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import androidx.room.Room;
 import androidx.test.core.app.ApplicationProvider;
@@ -36,6 +41,16 @@ public class AdapterTest {
                 .build();
         AnimalDatabase.injectTestDatabase(testDb);
         animals = Animal.loadJSON(context, "sample_animals.json");
+    }
+
+    @Before
+    public void clearSharedPreferences() {
+        Context context = ApplicationProvider.getApplicationContext();
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove(ANIMALS_ID);
+        editor.remove(CURR_INDEX);
+        editor.apply();
     }
 
     @Test
