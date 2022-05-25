@@ -17,18 +17,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.SearchView;
-import android.widget.TextView;
 
 import com.example.zooseeker.R;
 import com.example.zooseeker.adapters.AnimalAdapter;
 import com.example.zooseeker.databinding.ActivityHomeBinding;
-import com.example.zooseeker.models.Animal;
+import com.example.zooseeker.models.Animal.AnimalDisplay;
 import com.example.zooseeker.models.SearchCommandParams;
 import com.example.zooseeker.models.SelectedAnimalParams;
 import com.example.zooseeker.viewmodels.HomeActivityViewModel;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import com.example.zooseeker.util.Alert;
@@ -63,12 +61,12 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
         String id = sharedPreferences.getString(ANIMALS_ID, null);
         if (id != null) {
             String[] saved_id = id.split("[\\s@&.?$+-]+");
-            List<Animal> animalList = new ArrayList<>();
+            var animalList = new ArrayList<AnimalDisplay>();
             for (String s : saved_id) {
                 animalList.add(viewModel.searchInDatabaseById(this, s));
             }
             viewModel.setSelectedAnimals(animalList);
-            List<Animal> tempList = new ArrayList<>(animalList);
+            var tempList = new ArrayList<>(animalList);
             viewModel.setAnimals(tempList);
         }
 
@@ -103,7 +101,7 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
             ArrayList<String> selectedAnimals = new ArrayList<>(
                     viewModel.getSelectedAnimals()
                             .stream()
-                            .map(a -> a.id)
+                            .map(a -> a.groupId == null ? a.id : a.groupId)
                             .collect(Collectors.toList()));
             // Add to intent
             intent.putStringArrayListExtra("selected_animals", selectedAnimals);
@@ -132,9 +130,9 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         StringBuilder sb = new StringBuilder();
-        List<Animal> list = viewModel.getSelectedAnimals();
-        for (int i = 0; i < list.size(); i++) {
-            sb.append(list.get(i).id);
+        var list = viewModel.getSelectedAnimals();
+        for (var animal : list) {
+            sb.append(animal.groupId == null ? animal.id : animal.groupId);
             sb.append("@");
         }
         editor.putString(ANIMALS_ID, sb.toString());

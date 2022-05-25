@@ -39,24 +39,15 @@ public abstract class AnimalDatabase extends RoomDatabase {
                     public void onCreate(@NonNull SupportSQLiteDatabase db) {
                         super.onCreate(db);
                         Executors.newSingleThreadExecutor().execute(() -> {
-                            Map<String, NodeInfo> map;
-                            map = Graph.loadNodeInfo(context, "sample_node_info.json");
+                            var animals = Animal.loadJSON(context, "sample_node_info.json");
 
-                            for (Map.Entry<String, NodeInfo> entry : map.entrySet()) {
-                                // Insert exhibits into db
-                                NodeInfo node = entry.getValue();
-                                if (node.kind == NodeInfo.Kind.EXHIBIT) {
-                                    Animal animal = new Animal(node.name, entry.getKey());
-                                    getSingleton(context).animalItemDao().insert(animal);
-
-                                    // Insert tags into db
-                                    for (String tag : node.tags) {
-                                        AnimalTag animalTag = new AnimalTag(animal.id, tag);
-                                        getSingleton(context).animalTagDao().insert(animalTag);
-                                    }
+                            singleton.animalItemDao().insert(animals);
+                            for (Animal animal : animals) {
+                                for (String tag : animal.tags) {
+                                    AnimalTag animalTag = new AnimalTag(animal.id, tag);
+                                    singleton.animalTagDao().insert(animalTag);
                                 }
                             }
-
                         });
 
                     }

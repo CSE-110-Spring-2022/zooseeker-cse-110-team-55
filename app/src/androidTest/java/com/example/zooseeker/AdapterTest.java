@@ -17,6 +17,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -40,7 +41,14 @@ public class AdapterTest {
     @Test
     public void testAnimalGetItemCount() {
         AnimalAdapter adapter = new AnimalAdapter(onAnimalClickListener, vm);
-        adapter.setAnimals(animals);
+        var x = new ArrayList<Animal.AnimalDisplay>();
+        for (var a : animals) {
+            var y = new Animal.AnimalDisplay();
+            y.id = a.id;
+            y.name = a.name;
+            x.add(y);
+        }
+        adapter.setAnimals(x);
         assertEquals(animals.size(), adapter.getItemCount());
     }
 }
