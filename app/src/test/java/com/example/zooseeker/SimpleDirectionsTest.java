@@ -1,5 +1,6 @@
 package com.example.zooseeker;
 
+import static com.example.zooseeker.util.Helper.getLast;
 import static org.junit.Assert.assertEquals;
 
 import android.app.Application;
@@ -29,9 +30,9 @@ public class SimpleDirectionsTest {
         app = RuntimeEnvironment.getApplication();
         vm = new PlanViewModel(app);
         List<String> selected = new ArrayList<>();
-        selected.add("elephant_odyssey");
-        selected.add("arctic_foxes");
-        selected.add("gorillas");
+        selected.add("flamingo");
+        selected.add("capuchin");
+        selected.add("scripps_aviary");
         vm.initRoute(selected);
     }
 
@@ -40,44 +41,41 @@ public class SimpleDirectionsTest {
     public void testDetailedDirections() {
         vm.detailedDirectionToggle.setValue(true);
 
-        assertEquals("Entrance Plaza", vm.getDirections().getValue().get(0).target);
-        assertEquals("Gorillas", vm.getDirections().getValue().get(1).target);
+        assertEquals("Front Street / Treetops Way", vm.getDirections().getValue().get(0).target);
+        assertEquals("Flamingos", getLast(vm.getDirections().getValue()).target);
         vm.getDirectionsToNextExhibit();
 
-        assertEquals("Lions", vm.getDirections().getValue().get(0).target);
-        assertEquals("Elephant Odyssey", vm.getDirections().getValue().get(1).target);
+        assertEquals("Capuchin Monkeys", vm.getDirections().getValue().get(0).target);
         vm.getDirectionsToNextExhibit();
 
-        assertEquals("Lions", vm.getDirections().getValue().get(0).target);
-        assertEquals("Alligators", vm.getDirections().getValue().get(1).target);
-        assertEquals("Entrance Plaza", vm.getDirections().getValue().get(2).target);
-        assertEquals("Arctic Foxes", vm.getDirections().getValue().get(3).target);
+        assertEquals("Scripps Aviary", vm.getDirections().getValue().get(1).target);
         vm.getDirectionsToNextExhibit();
 
-        assertEquals("Entrance Plaza", vm.getDirections().getValue().get(0).target);
-        assertEquals("Entrance and Exit Gate", vm.getDirections().getValue().get(1).target);
+        assertEquals("Monkey Trail / Hippo Trail", vm.getDirections().getValue().get(0).target);
+        assertEquals("Treetops Way / Hippo Trail", vm.getDirections().getValue().get(3).target);
+        assertEquals("Front Street / Treetops Way", vm.getDirections().getValue().get(6).target);
+        assertEquals("Entrance and Exit Gate", vm.getDirections().getValue().get(7).target);
     }
 
     @Test
     public void testSimpleDirections() {
         vm.detailedDirectionToggle.setValue(false);
 
-        assertEquals("Entrance Plaza", vm.getDirections().getValue().get(0).target);
-        assertEquals("Gorillas", vm.getDirections().getValue().get(1).target);
+        assertEquals("Front Street / Treetops Way", vm.getDirections().getValue().get(0).target);
+        assertEquals("Front Street / Monkey Trail", vm.getDirections().getValue().get(1).target);
+        assertEquals("Flamingos", getLast(vm.getDirections().getValue()).target);
         vm.getDirectionsToNextExhibit();
 
-        assertEquals("Elephant Odyssey", vm.getDirections().getValue().get(0).target);
+        assertEquals("Capuchin Monkeys", vm.getDirections().getValue().get(0).target);
         vm.getDirectionsToNextExhibit();
 
-        assertEquals("Lions", vm.getDirections().getValue().get(0).target);
-        assertEquals("Alligators", vm.getDirections().getValue().get(1).target);
-        assertEquals("Entrance Plaza", vm.getDirections().getValue().get(2).target);
-        assertEquals("Arctic Foxes", vm.getDirections().getValue().get(3).target);
+        assertEquals("Scripps Aviary", vm.getDirections().getValue().get(0).target);
         vm.getDirectionsToNextExhibit();
 
-        assertEquals("Entrance Plaza", vm.getDirections().getValue().get(0).target);
-        assertEquals("Entrance and Exit Gate", vm.getDirections().getValue().get(1).target);
-
+        assertEquals("Monkey Trail / Hippo Trail", vm.getDirections().getValue().get(0).target);
+        assertEquals("Treetops Way / Hippo Trail", vm.getDirections().getValue().get(1).target);
+        assertEquals("Front Street / Treetops Way", vm.getDirections().getValue().get(2).target);
+        assertEquals("Entrance and Exit Gate", vm.getDirections().getValue().get(3).target);
     }
 
 

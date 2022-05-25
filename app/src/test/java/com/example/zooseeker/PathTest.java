@@ -38,8 +38,8 @@ public class PathTest {
         Graph graph = new Graph();
         graph.loadGraph(context, "sample_zoo_graph.json", "sample_node_info.json", "sample_edge_info.json");
 
-        assertEquals(7, graph.nodes.size());
-        assertEquals(7, graph.edges.size());
+        assertEquals(22, graph.nodes.size());
+        assertEquals(26, graph.edges.size());
     }
 
     @Test
@@ -48,11 +48,11 @@ public class PathTest {
         graph.loadGraph(context, "sample_zoo_graph.json", "sample_node_info.json", "sample_edge_info.json");
 
         List<String> selected = new ArrayList<>();
-        selected.add("gorillas");
+        selected.add("flamingo");
         Route route = new Route(graph, selected, "entrance_exit_gate");
         List<List<GraphNode>> plan = route.getRoute();
         assertEquals(2, plan.size());
-        assertEquals(3, plan.get(0).size());
+        assertEquals(4, plan.get(1).size());
     }
 
     @Test
@@ -61,7 +61,7 @@ public class PathTest {
         graph.loadGraph(context, "sample_zoo_graph.json", "sample_node_info.json", "sample_edge_info.json");
 
         List<String> selected = new ArrayList<>();
-        selected.add("lions");
+        selected.add("flamingo");
         Route route = new Route(graph, selected, "entrance_exit_gate");
         List<List<GraphNode>> plan = route.getRoute();
         double totalWeight = 0;
@@ -69,7 +69,7 @@ public class PathTest {
         for (int i = 0; i < path.size() - 1; i++) {
             totalWeight += graph.edges.get(new SymmetricPair(path.get(i).id, path.get(i + 1).id)).weight;
         }
-        assertEquals(310, (int) totalWeight);
+        assertEquals(90, (int) totalWeight);
     }
 
 
@@ -79,15 +79,15 @@ public class PathTest {
         graph.loadGraph(context, "sample_zoo_graph.json", "sample_node_info.json", "sample_edge_info.json");
 
         List<String> selected = new ArrayList<>();
-        selected.add("lions");
-        selected.add("gators");
-        selected.add("arctic_foxes");
+        selected.add("siamang");
+        selected.add("hippo");
+        selected.add("orangutan");
         Route route = new Route(graph, selected, "entrance_exit_gate");
         List<List<GraphNode>> plan = route.getRoute();
 
         assertEquals("entrance_exit_gate", plan.get(0).get(0).id);
-        assertEquals("gators", plan.get(1).get(0).id);
-        assertEquals("lions", plan.get(2).get(0).id);
-        assertEquals("arctic_foxes", plan.get(3).get(0).id);
+        assertEquals("siamang", plan.get(1).get(0).id);
+        assertEquals("orangutan", plan.get(2).get(0).id);
+        assertEquals("hippo", plan.get(3).get(0).id);
     }
 }

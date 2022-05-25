@@ -55,7 +55,7 @@ public class DatabaseTest {
 
     @Test
     public void testGet() {
-        Animal insertedItem = new Animal("Lion", "lion", Animal.Kind.EXHIBIT);
+        Animal insertedItem = new Animal("lion", "Lion", Animal.Kind.EXHIBIT);
 
         dao.insert(insertedItem);
         List<Animal> item = dao.get("lion");

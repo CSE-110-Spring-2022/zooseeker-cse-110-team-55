@@ -28,21 +28,9 @@ public class PlanViewModelTest {
         app = RuntimeEnvironment.getApplication();
         vm = new PlanViewModel(app);
         List<String> selected = new ArrayList<>();
-        selected.add("gators");
-        selected.add("lions");
+        selected.add("flamingo");
+        selected.add("capuchin");
         vm.initRoute(selected);
-    }
-
-    // path test: gate -> plaza -> gators -> lions -> gators -> plaza -> gate
-
-    @Test
-    public void testDirections() {
-        assertEquals("Entrance Plaza", vm.getDirections().getValue().get(0).target);
-        vm.getDirectionsToNextExhibit();
-        assertEquals("Lions", vm.getDirections().getValue().get(0).target);
-        vm.getDirectionsToNextExhibit();
-        assertEquals("Alligators", vm.getDirections().getValue().get(0).target);
-        assertEquals("Entrance Plaza", vm.getDirections().getValue().get(1).target);
     }
 
     @Test
@@ -56,36 +44,36 @@ public class PlanViewModelTest {
 
     @Test
     public void testCurExhibitName() {
-        assertEquals(new String("Alligators"), vm.curExhibitName.get());
+        assertEquals("Flamingos", vm.curExhibitName.get());
         vm.getDirectionsToNextExhibit();
-        assertEquals(new String("Lions"), vm.curExhibitName.get());
+        assertEquals("Capuchin Monkeys", vm.curExhibitName.get());
         vm.getDirectionsToNextExhibit();
-        assertEquals(new String("Entrance and Exit Gate"), vm.curExhibitName.get());
+        assertEquals("Entrance and Exit Gate", vm.curExhibitName.get());
     }
 
     @Test
     public void testCurExhibitDist() {
-        assertEquals(new Integer(110), vm.curExhibitDist.get());
+        assertEquals(new Integer(90), vm.curExhibitDist.get());
         vm.getDirectionsToNextExhibit();
-        assertEquals(new Integer(200), vm.curExhibitDist.get());
+        assertEquals(new Integer(150), vm.curExhibitDist.get());
         vm.getDirectionsToNextExhibit();
-        assertEquals(new Integer(310), vm.curExhibitDist.get());
+        assertEquals(new Integer(240), vm.curExhibitDist.get());
     }
 
     @Test
     public void testNextExhibitName() {
-        // starting from alligators
-        assertEquals(new String("Lions"), vm.nextExhibitName.get());
+        // Starting from flamingos
+        assertEquals("Capuchin Monkeys", vm.nextExhibitName.get());
         vm.getDirectionsToNextExhibit();
-        assertEquals(new String("Entrance and Exit Gate"), vm.nextExhibitName.get());
+        assertEquals("Entrance and Exit Gate", vm.nextExhibitName.get());
     }
 
     @Test
     public void testNextExhibitDist() {
-        // starting from alligators
-        assertEquals(new Integer(200), vm.nextExhibitDist.get());
+        // starting from flamingos
+        assertEquals(new Integer(150), vm.nextExhibitDist.get());
         vm.getDirectionsToNextExhibit();
-        assertEquals(new Integer(310), vm.nextExhibitDist.get());
+        assertEquals(new Integer(240), vm.nextExhibitDist.get());
     }
 
 
