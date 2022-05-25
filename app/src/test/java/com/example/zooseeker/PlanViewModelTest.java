@@ -15,6 +15,7 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @RunWith(RobolectricTestRunner.class)
@@ -30,6 +31,7 @@ public class PlanViewModelTest {
         List<String> selected = new ArrayList<>();
         selected.add("flamingo");
         selected.add("capuchin");
+        vm.setExhibitGroups(new HashMap<>());
         vm.initRoute(selected);
     }
 
