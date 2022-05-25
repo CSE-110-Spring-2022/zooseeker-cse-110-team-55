@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class PlanViewModel extends AndroidViewModel {
+    private static double delta = 0.001d;
     private Context context;
     private Graph graph;
     private Route route;
@@ -68,19 +69,18 @@ public class PlanViewModel extends AndroidViewModel {
         // Create graph
         graph = new Graph();
         graph.loadGraph(context, "sample_zoo_graph.json", "sample_node_info.json", "sample_edge_info.json");
+
     }
 
     /**
      * Changes state of MutableLivaData boolean based on toggle.
      */
-    public void updateCurrentDirections() {
-        if (!detailedDirectionToggle.getValue()) {
+    public void updateCurrentDirections(boolean useDetailed) {
+        if (!useDetailed) {
             setDirections(computeSimplePlan(_plan, curExhibit));
         } else {
             setDirections(computeDetailedPlan(_plan, curExhibit));
         }
-
-        updateObservables();
     }
 
     /**
@@ -110,6 +110,17 @@ public class PlanViewModel extends AndroidViewModel {
         _plan.clear();
     }
 
+    public boolean isOnPathToCurExhibit() {
+        var loc = lastKnownLocation.getValue();
+        return directions.getValue()
+                .stream()
+                .anyMatch(e -> {
+                    var dlat = e.target.lat - loc.first;
+                    var dlng = e.target.lng - loc.second;
+                    return Math.sqrt(Math.pow(dlat, 2) + Math.pow(dlng, 2)) < delta;
+                });
+    }
+
     /**
      * Computes detailed directions
      * @param plan       each list of selected graph nodes and paths to them
@@ -127,6 +138,7 @@ public class PlanViewModel extends AndroidViewModel {
         double currWeight = 0;
         //Iterate through all edges
         for (int currEdgeNum = 0; currEdgeNum < edges.size(); currEdgeNum++) {
+            var currNode = graph.nodeInfo.get(nodes.get(currEdgeNum).id);
             EdgeInfo currEdge = graph.edgeInfo.get(edges.get(currEdgeNum).id);
             //Update weight based on first edge (entrance_exit to entrance_plaza)
             if (currEdgeNum == 0) {
@@ -135,14 +147,16 @@ public class PlanViewModel extends AndroidViewModel {
             }
             EdgeInfo previousEdge = graph.edgeInfo.get(edges.get(currEdgeNum - 1).id);
             //Add a new direction item with target node's name, edge's street name, and curr weight.
-            newDir.add(new DirectionItem(graph.nodeInfo.get(nodes.get(currEdgeNum).id), previousEdge.street, currWeight, null));
+            newDir.add(new DirectionItem(currNode, previousEdge.street, currWeight, null));
             currWeight = edges.get(currEdgeNum).weight;
         }
 
         //Add the final edge
         EdgeInfo finalEdge = graph.edgeInfo.get(getLast(edges).id);
         var containedExhibits = exhibitGroups.getOrDefault(getLast(nodes).id, null);
-        newDir.add(new DirectionItem(graph.nodeInfo.get(getLast(nodes).id), finalEdge.street, currWeight, containedExhibits));
+
+        var node = graph.nodeInfo.get(getLast(nodes).id);
+        newDir.add(new DirectionItem(node, finalEdge.street, currWeight, containedExhibits));
 
         return newDir;
     }
@@ -186,6 +200,7 @@ public class PlanViewModel extends AndroidViewModel {
         newDir.add(new DirectionItem(graph.nodeInfo.get(getLast(nodes).id), finalEdge.street, currWeight, containedExhibits));
         return newDir;
     }
+
     /**
      * Updates the subjects being observed to match current pathing data
      */

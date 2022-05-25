@@ -73,6 +73,7 @@ public class DirectionActivity extends AppCompatActivity {
 
         // Observe changes to list of current directions
         vm.getDirections().observe(this, adapter::setDirections);
+        vm.detailedDirectionToggle.observe(this, vm::updateCurrentDirections);
 
         // Show route summary fragment
         buttonDialog = findViewById(R.id.routeSummaryButton);
@@ -164,7 +165,6 @@ public class DirectionActivity extends AppCompatActivity {
                 Detailed = !item.isChecked();
                 item.setChecked(Detailed);
                 vm.detailedDirectionToggle.setValue(Detailed);
-                vm.updateCurrentDirections();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
