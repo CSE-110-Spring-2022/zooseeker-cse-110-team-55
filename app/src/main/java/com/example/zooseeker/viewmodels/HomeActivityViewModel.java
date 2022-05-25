@@ -8,10 +8,9 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.zooseeker.contracts.ICommand;
-import com.example.zooseeker.models.Animal;
-import com.example.zooseeker.models.Animal.AnimalDisplay;
-import com.example.zooseeker.models.SearchCommandParams;
-import com.example.zooseeker.models.SelectedAnimalParams;
+import com.example.zooseeker.models.db.Animal.AnimalDisplay;
+import com.example.zooseeker.models.command.SearchCommandParams;
+import com.example.zooseeker.models.command.SelectedAnimalParams;
 import com.example.zooseeker.repositories.AnimalItemDao;
 import com.example.zooseeker.repositories.AnimalDatabase;
 

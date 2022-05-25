@@ -2,13 +2,10 @@ package com.example.zooseeker;
 
 
 import static android.content.Context.MODE_PRIVATE;
-import static com.example.zooseeker.util.Constant.ANIMALS_ID;
-import static com.example.zooseeker.util.Constant.CURR_INDEX;
 import static com.example.zooseeker.util.Constant.SHARED_PREF;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.widget.SearchView;
 
 import androidx.lifecycle.Lifecycle;
@@ -21,7 +18,7 @@ import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.example.zooseeker.activities.HomeActivity;
 import com.example.zooseeker.databinding.ActivityHomeBinding;
-import com.example.zooseeker.models.Animal;
+import com.example.zooseeker.models.db.Animal;
 import com.example.zooseeker.repositories.AnimalItemDao;
 import com.example.zooseeker.repositories.AnimalDatabase;
 

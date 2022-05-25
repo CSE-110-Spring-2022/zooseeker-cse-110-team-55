@@ -11,7 +11,7 @@ import androidx.room.Room;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import com.example.zooseeker.models.Animal;
+import com.example.zooseeker.models.db.Animal;
 import com.example.zooseeker.repositories.AnimalItemDao;
 import com.example.zooseeker.repositories.AnimalDatabase;
 

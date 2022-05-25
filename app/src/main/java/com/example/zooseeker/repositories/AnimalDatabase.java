@@ -9,12 +9,9 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-import com.example.zooseeker.models.Animal;
-import com.example.zooseeker.models.AnimalTag;
-import com.example.zooseeker.models.Graph;
-import com.example.zooseeker.models.Graph.NodeInfo;
+import com.example.zooseeker.models.db.Animal;
+import com.example.zooseeker.models.db.AnimalTag;
 
-import java.util.Map;
 import java.util.concurrent.Executors;
 
 @Database(entities = {Animal.class, AnimalTag.class}, version = 2)

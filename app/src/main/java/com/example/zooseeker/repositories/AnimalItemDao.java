@@ -6,8 +6,8 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.example.zooseeker.models.Animal;
-import com.example.zooseeker.models.Animal.AnimalDisplay;
+import com.example.zooseeker.models.db.Animal;
+import com.example.zooseeker.models.db.Animal.AnimalDisplay;
 
 import java.util.List;
 

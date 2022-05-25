@@ -21,6 +21,12 @@ import com.example.zooseeker.adapters.DirectionAdapter;
 import com.example.zooseeker.databinding.ActivityDirectionBinding;
 import com.example.zooseeker.fragments.RouteSummaryFragment;
 import com.example.zooseeker.viewmodels.PlanViewModel;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class DirectionActivity extends AppCompatActivity {
     private PlanViewModel vm;
@@ -38,8 +44,14 @@ public class DirectionActivity extends AppCompatActivity {
         vm = new ViewModelProvider(this).get(PlanViewModel.class);
         binding.setVm(vm);
 
+        // Load exhibit groups
+        var t = new TypeToken<HashMap<String, List<String>>>(){}.getType();
+        HashMap<String, List<String>> groups = new Gson().fromJson(intent.getStringExtra("exhibit_groups"), t);
+        vm.setExhibitGroups(groups);
+
         // Initialize the route
-        vm.initRoute(intent.getStringArrayListExtra("selected_animals"));
+        ArrayList<String> selected = intent.getStringArrayListExtra("selected_animals");
+        vm.initRoute(selected);
 
         // Initialize recyclerview and adapter
         RecyclerView rv = findViewById(R.id.direction_rv);

@@ -13,8 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.JsonWriter;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,13 +21,17 @@ import android.widget.SearchView;
 import com.example.zooseeker.R;
 import com.example.zooseeker.adapters.AnimalAdapter;
 import com.example.zooseeker.databinding.ActivityHomeBinding;
-import com.example.zooseeker.models.Animal.AnimalDisplay;
-import com.example.zooseeker.models.SearchCommandParams;
-import com.example.zooseeker.models.SelectedAnimalParams;
+import com.example.zooseeker.models.db.Animal.AnimalDisplay;
+import com.example.zooseeker.models.command.SearchCommandParams;
+import com.example.zooseeker.models.command.SelectedAnimalParams;
 import com.example.zooseeker.viewmodels.HomeActivityViewModel;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.example.zooseeker.util.Alert;
@@ -65,12 +67,12 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
         String saved = sharedPreferences.getString(ANIMALS_ID, null);
         if (saved != null) {
-            var type = new TypeToken<List<AnimalDisplay>>(){}.getType();
+            // Load selected animals from json
+            var type = new TypeToken<List<AnimalDisplay>>() {
+            }.getType();
             List<AnimalDisplay> animals = new Gson().fromJson(saved, type);
-            var temp = new ArrayList<AnimalDisplay>();
-            for (var animal : animals) {
-                temp.add(animal);
-            }
+            // Add to list
+            var temp = new ArrayList<>(animals);
             viewModel.setSelectedAnimals(temp);
             viewModel.setAnimals(animals);
         }
@@ -79,17 +81,36 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
         int curr_index = sharedPreferences.getInt(CURR_INDEX, -1);
         if (curr_index != -1) {
             Intent intent = new Intent(this, DirectionActivity.class);
-            // Convert list of selected animals to list of their id strings
-            ArrayList<String> selectedAnimals = new ArrayList<>(
-                    viewModel.getSelectedAnimals()
-                            .stream()
-                            .map(a -> a.groupId == null ? a.id : a.groupId)
-                            .collect(Collectors.toList()));
-            // Add to intent
-            intent.putStringArrayListExtra("selected_animals", selectedAnimals);
+            addSelectionToIntent(intent);
             startActivity(intent);
         }
         binding.search.setOnQueryTextListener(this);
+    }
+
+    private void addSelectionToIntent(Intent intent) {
+        // Convert list of selected animals to list of their id strings
+        Set<String> selectedIds = new HashSet<>();
+        HashMap<String, List<String>> exhibitGroups = new HashMap<>();
+        for (var animal : viewModel.getSelectedAnimals()) {
+            // Add the animal as an exhibit if not part of a group
+            if (animal.groupId == null) {
+                selectedIds.add(animal.id);
+                continue;
+            }
+
+            // Otherwise, add it as a group
+            if (!selectedIds.contains(animal.groupId)) {
+                selectedIds.add(animal.groupId);
+                exhibitGroups.put(animal.groupId, new ArrayList<>(List.of(animal.name)));
+            } else {
+                exhibitGroups.get(animal.groupId).add(animal.name);
+            }
+        }
+        var groups = new Gson().toJson(exhibitGroups);
+        intent.putExtra("exhibit_groups", groups);
+
+        // Add to intent
+        intent.putStringArrayListExtra("selected_animals", new ArrayList<>(selectedIds));
     }
 
     /**
@@ -102,14 +123,7 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
             Alert.emptyListAlert(this, "Please select some exhibits.");
         } else {
             Intent intent = new Intent(this, DirectionActivity.class);
-            // Convert list of selected animals to list of their id strings
-            ArrayList<String> selectedAnimals = new ArrayList<>(
-                    viewModel.getSelectedAnimals()
-                            .stream()
-                            .map(a -> a.groupId == null ? a.id : a.groupId)
-                            .collect(Collectors.toList()));
-            // Add to intent
-            intent.putStringArrayListExtra("selected_animals", selectedAnimals);
+            addSelectionToIntent(intent);
 
             // Clear searchbar and close keyboard
             SearchView searchBar = binding.search;
