@@ -16,6 +16,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.zooseeker.contracts.ICommand;
 import com.example.zooseeker.models.DirectionItem;
 import com.example.zooseeker.models.Graph.EdgeInfo;
+import com.example.zooseeker.models.Graph.GraphData.GraphEdge;
 import com.example.zooseeker.models.Route;
 import com.example.zooseeker.repositories.AnimalItemDao;
 import com.example.zooseeker.models.Graph;
@@ -88,7 +89,7 @@ public class PlanViewModel extends AndroidViewModel {
         List<GraphNode> nodes = new ArrayList<>(plan.get(exhibitNum));
 
         // Get Edges
-        List<Graph.GraphData.GraphEdge> edges = graph.getEdgesFromNodes(nodes);
+        List<GraphEdge> edges = graph.getEdgesFromNodes(nodes);
         double currWeight = 0;
         //Iterate through all edges
         for (int currEdgeNum = 0; currEdgeNum < edges.size(); currEdgeNum++) {
@@ -100,14 +101,14 @@ public class PlanViewModel extends AndroidViewModel {
             }
             EdgeInfo previousEdge = graph.edgeInfo.get(edges.get(currEdgeNum - 1).id);
             //Add a new direction item with target node's name, edge's street name, and curr weight.
-            newDir.add(new DirectionItem(graph.nodeInfo.get(nodes.get(currEdgeNum).id).name, previousEdge.street, currWeight, null));
+            newDir.add(new DirectionItem(graph.nodeInfo.get(nodes.get(currEdgeNum).id), previousEdge.street, currWeight, null));
             currWeight = edges.get(currEdgeNum).weight;
         }
 
         //Add the final edge
         EdgeInfo finalEdge = graph.edgeInfo.get(getLast(edges).id);
         var containedExhibits = exhibitGroups.getOrDefault(getLast(nodes).id, null);
-        newDir.add(new DirectionItem(graph.nodeInfo.get(getLast(nodes).id).name, finalEdge.street, currWeight, containedExhibits));
+        newDir.add(new DirectionItem(graph.nodeInfo.get(getLast(nodes).id), finalEdge.street, currWeight, containedExhibits));
 
         return newDir;
     }
@@ -140,7 +141,7 @@ public class PlanViewModel extends AndroidViewModel {
                 currWeight += edges.get(currEdgeNum).weight;
             } else {
                 // Two edges do not have the same street name, so create a new DirectionItem.
-                newDir.add(new DirectionItem(graph.nodeInfo.get(nodes.get(currEdgeNum).id).name, previousEdge.street, currWeight, null));
+                newDir.add(new DirectionItem(graph.nodeInfo.get(nodes.get(currEdgeNum).id), previousEdge.street, currWeight, null));
                 currWeight = edges.get(currEdgeNum).weight;
             }
         }
@@ -148,7 +149,7 @@ public class PlanViewModel extends AndroidViewModel {
         // Add last edge to directions
         EdgeInfo finalEdge = graph.edgeInfo.get(getLast(edges).id);
         var containedExhibits = exhibitGroups.getOrDefault(getLast(nodes).id, null);
-        newDir.add(new DirectionItem(graph.nodeInfo.get(getLast(nodes).id).name, finalEdge.street, currWeight, containedExhibits));
+        newDir.add(new DirectionItem(graph.nodeInfo.get(getLast(nodes).id), finalEdge.street, currWeight, containedExhibits));
         return newDir;
     }
 

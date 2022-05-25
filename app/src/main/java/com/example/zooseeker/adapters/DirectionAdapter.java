@@ -15,6 +15,7 @@ import com.example.zooseeker.models.DirectionItem;
 import com.example.zooseeker.models.Graph;
 import com.example.zooseeker.models.Graph.GraphData.GraphEdge;
 import com.example.zooseeker.models.Graph.GraphData.GraphNode;
+import com.example.zooseeker.models.Graph.NodeInfo.Kind;
 import com.example.zooseeker.models.Graph.SymmetricPair;
 
 import java.util.ArrayList;
@@ -38,7 +39,6 @@ public class DirectionAdapter extends RecyclerView.Adapter<DirectionAdapter.Dire
 
     @Override
     public void onBindViewHolder(@NonNull DirectionHolder holder, int position) {
-        // TODO: Add logic to determine if the Detailed toggle is active and handle accordingly
         StringBuilder sb = new StringBuilder();
         if (position == 0 || position == directions.size() - 1) {
             sb.append("Proceed on ");
@@ -46,10 +46,16 @@ public class DirectionAdapter extends RecyclerView.Adapter<DirectionAdapter.Dire
             sb.append("Continue on ");
         }
 
+        // Type of exhibit
         DirectionItem edge = directions.get(position);
-        sb.append(String.format("%s towards %s", edge.streetName, edge.target));
+        sb.append(String.format("%s towards %s", edge.streetName, edge.target.name));
+        if (edge.target.kind.equals(Kind.INTERSECTION)) {
+            sb.append(" junction");
+        } else if (edge.target.kind.equals(Kind.EXHIBIT)) {
+            sb.append(" exhibit");
+        }
 
-        // Format exhibit groups
+        // Displays exhibit groups
         if (edge.containedExhibits != null) {
             sb.append(" and find ");
             if (edge.containedExhibits.size() == 1) {
@@ -66,6 +72,7 @@ public class DirectionAdapter extends RecyclerView.Adapter<DirectionAdapter.Dire
             }
         }
 
+        // Set text
         holder.directions.setText(sb);
         holder.distance.setText(String.format("%d ft", (int) directions.get(position).weight));
     }
