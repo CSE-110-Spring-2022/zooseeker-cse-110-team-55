@@ -5,6 +5,7 @@ import static com.example.zooseeker.util.Helper.getSecondToLast;
 
 import android.app.Application;
 import android.content.Context;
+import android.util.Pair;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -48,6 +49,7 @@ public class PlanViewModel extends AndroidViewModel {
     public ObservableField<Integer> nextExhibitDist = new ObservableField<>(0);
     public ObservableField<String> buttonText = new ObservableField<>("");
 
+    public MutableLiveData<Pair<Double, Double>> lastKnownLocation = new MutableLiveData<>();
     public ICommand nextExhibitCommand = params -> {
         if (remainingExhibits.get() == 1) {
             ((AppCompatActivity) params).finish();
@@ -69,15 +71,47 @@ public class PlanViewModel extends AndroidViewModel {
     }
 
     /**
-     * Initializes _plan field.
-     *
-     * @param plan list of list of nodes.
+     * Changes state of MutableLivaData boolean based on toggle.
      */
-    public void setPlan(List<List<GraphNode>> plan) {
-        this._plan = plan;
+    public void updateCurrentDirections() {
+        if (!detailedDirectionToggle.getValue()) {
+            setDirections(computeSimplePlan(_plan, curExhibit));
+        } else {
+            setDirections(computeDetailedPlan(_plan, curExhibit));
+        }
+
+        updateObservables();
     }
 
     /**
+     * Proceeds to next exhibit and changes state based on toggle.
+     */
+    public void getDirectionsToNextExhibit() {
+        // If there are no more exhibits to visit, do nothing
+        if (curExhibit >= _plan.size() - 1) return;
+
+        // Update directions display
+        if (!detailedDirectionToggle.getValue()) {
+            setDirections(computeSimplePlan(_plan, ++curExhibit));
+        } else {
+            setDirections(computeDetailedPlan(_plan, ++curExhibit));
+        }
+
+        updateObservables();
+    }
+
+    public void initRoute(List<String> selectedAnimals) {
+        this.route = new Route(graph, selectedAnimals, "entrance_exit_gate");
+        setPlan(route.getRoute());
+        getDirectionsToNextExhibit();
+    }
+
+    public void clearPlan() {
+        _plan.clear();
+    }
+
+    /**
+     * Computes detailed directions
      * @param plan       each list of selected graph nodes and paths to them
      * @param exhibitNum the specific exhibit that you compute the path for
      * @return a list of detailed DirectionItem objects
@@ -152,49 +186,6 @@ public class PlanViewModel extends AndroidViewModel {
         newDir.add(new DirectionItem(graph.nodeInfo.get(getLast(nodes).id), finalEdge.street, currWeight, containedExhibits));
         return newDir;
     }
-
-    /**
-     * Changes state of MutableLivaData boolean based on toggle.
-     */
-    public void updateCurrentDirections() {
-        if (!detailedDirectionToggle.getValue()) {
-            setDirections(computeSimplePlan(_plan, curExhibit));
-        } else {
-            setDirections(computeDetailedPlan(_plan, curExhibit));
-        }
-
-        updateObservables();
-    }
-
-    /**
-     * Proceeds to next exhibit and changes state based on toggle.
-     */
-    public void getDirectionsToNextExhibit() {
-        // If there are no more exhibits to visit, do nothing
-        if (curExhibit >= _plan.size() - 1) return;
-
-        // Update directions display
-        if (!detailedDirectionToggle.getValue()) {
-            setDirections(computeSimplePlan(_plan, ++curExhibit));
-        } else {
-            setDirections(computeDetailedPlan(_plan, ++curExhibit));
-        }
-
-        updateObservables();
-    }
-
-    public LiveData<List<DirectionItem>> getDirections() {
-        return directions;
-    }
-
-    private void setDirections(List<DirectionItem> directions) {
-        this.directions.setValue(directions);
-    }
-
-    public Route getRoute() {
-        return route;
-    }
-
     /**
      * Updates the subjects being observed to match current pathing data
      */
@@ -225,26 +216,34 @@ public class PlanViewModel extends AndroidViewModel {
         remainingExhibits.set(_plan.size() - curExhibit);
     }
 
-    public void initRoute(List<String> selectedAnimals) {
-        this.route = new Route(graph, selectedAnimals, "entrance_exit_gate");
-        setPlan(route.getRoute());
-        getDirectionsToNextExhibit();
+    /// Getters
+    public List<List<GraphNode>> getPlan() {
+        return _plan;
     }
 
     public Graph getGraph() {
         return graph;
     }
 
-    public List<List<GraphNode>> getPlan() {
-        return _plan;
+    public Route getRoute() {
+        return route;
     }
 
-    public void clearPlan() {
-        _plan.clear();
+    public LiveData<List<DirectionItem>> getDirections() {
+        return directions;
     }
 
     public boolean isLastExhibit() {
         return curExhibit >= _plan.size();
+    }
+
+    /// Setters
+    public void setPlan(List<List<GraphNode>> plan) {
+        this._plan = plan;
+    }
+
+    private void setDirections(List<DirectionItem> directions) {
+        this.directions.setValue(directions);
     }
 
     public void setExhibitGroups(HashMap<String, List<String>> groups) {

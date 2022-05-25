@@ -7,6 +7,7 @@ public class Constant {
 
     public static final String ANIMAL_TABLE = "animals";
 
+    public static final String EXTRA_LISTEN_TO_GPS = "listen_to_gps";
     // New UI color schemes (replace line 3-5 in res/values/colors.xml with below)
     // <color name="purple_200">#D58CB8</color>
     // <color name="purple_500">#6667AB</color>

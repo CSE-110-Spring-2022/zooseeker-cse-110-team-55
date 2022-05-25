@@ -1,16 +1,25 @@
 package com.example.zooseeker.activities;
 
+import static com.example.zooseeker.util.Constant.EXTRA_LISTEN_TO_GPS;
 import static com.example.zooseeker.util.Constant.SHARED_PREF;
 import static com.example.zooseeker.util.Constant.CURR_INDEX;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +29,7 @@ import com.example.zooseeker.R;
 import com.example.zooseeker.adapters.DirectionAdapter;
 import com.example.zooseeker.databinding.ActivityDirectionBinding;
 import com.example.zooseeker.fragments.RouteSummaryFragment;
+import com.example.zooseeker.util.PermissionChecker;
 import com.example.zooseeker.viewmodels.PlanViewModel;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -27,6 +37,7 @@ import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class DirectionActivity extends AppCompatActivity {
     private PlanViewModel vm;
@@ -79,6 +90,26 @@ public class DirectionActivity extends AppCompatActivity {
         for (int i = 0; i < curr_index; i++){
             vm.nextExhibitCommand.execute(this);
         }
+
+        // Use location
+        boolean useGps = getIntent().getBooleanExtra(EXTRA_LISTEN_TO_GPS, true);
+        if (useGps) {
+            initLocationListener(vm.lastKnownLocation::setValue);
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private void initLocationListener(Consumer<Pair<Double, Double>> handler) {
+        var provider = LocationManager.GPS_PROVIDER;
+        var locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        var locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(@NonNull Location location) {
+                var coords = new Pair<>(location.getLatitude(), location.getLongitude());
+                handler.accept(coords);
+            }
+        };
+        locationManager.requestLocationUpdates(provider, 0, 0f, locationListener);
     }
 
     // Hide route summary fragment
