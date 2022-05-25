@@ -1,9 +1,13 @@
 package com.example.zooseeker.viewmodels;
 
+import static android.content.Context.MODE_PRIVATE;
+import static com.example.zooseeker.util.Constant.CURR_INDEX;
+import static com.example.zooseeker.util.Constant.SHARED_PREF;
 import static com.example.zooseeker.util.Helper.getLast;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Pair;
 import android.widget.ThemedSpinnerAdapter;
 
@@ -53,12 +57,19 @@ public class PlanViewModel extends AndroidViewModel {
 
     public MutableLiveData<Pair<Double, Double>> lastKnownLocation = new MutableLiveData<>();
     public ICommand nextExhibitCommand = params -> {
-        if (remainingExhibits.get() == 1) {
-            ((AppCompatActivity) params).finish();
-            return;
-        }
+        // Increment direction index from shared preferences or reset index when reaches final destination
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        getDirectionsToNextExhibit();
+        if (isLastExhibit()) {
+            editor.putInt(CURR_INDEX, -1);
+            editor.apply();
+            ((AppCompatActivity) params).finish();
+        } else {
+            editor.putInt(CURR_INDEX, curExhibit + 1);
+            editor.apply();
+            getDirectionsToNextExhibit();
+        }
     };
 
     public PlanViewModel(@NonNull Application application) {
@@ -114,7 +125,6 @@ public class PlanViewModel extends AndroidViewModel {
     public void adjustToNewLocation(Pair<Double, Double> location) {
         // If user is off-track
         if (!isOnPathToCurExhibit()) {
-            // TODO: Recalculate route to current exhibit based off of new location
             // Get exhibit user is currently at
             var exhibit = exhibitAtLocation(location);
             if (exhibit == null) return;
@@ -122,6 +132,7 @@ public class PlanViewModel extends AndroidViewModel {
             // Find fastest route to current exhibit
             var start = graph.nodes.get(exhibit.id);
             var dest = getLast(_plan.get(curExhibit));
+
             // Update plan
             _plan.set(curExhibit, route.shortestPathToNode(start, dest));
             route.updateDistances();
@@ -287,7 +298,7 @@ public class PlanViewModel extends AndroidViewModel {
     }
 
     public boolean isLastExhibit() {
-        return curExhibit >= _plan.size();
+        return curExhibit >= _plan.size() - 1;
     }
 
     /// Setters

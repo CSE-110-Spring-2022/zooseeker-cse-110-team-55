@@ -81,12 +81,9 @@ public class DirectionActivity extends AppCompatActivity {
 
         // Show route summary fragment
         buttonDialog = findViewById(R.id.routeSummaryButton);
-        buttonDialog.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                routeSummaryFragment = new RouteSummaryFragment();
-                routeSummaryFragment.show(getSupportFragmentManager(), "TAG");
-            }
+        buttonDialog.setOnClickListener(view -> {
+            routeSummaryFragment = new RouteSummaryFragment();
+            routeSummaryFragment.show(getSupportFragmentManager(), "TAG");
         });
 
         // Load direction index from shared preferences and configure plan view model
@@ -98,12 +95,8 @@ public class DirectionActivity extends AppCompatActivity {
 
         // Use location
         boolean useGps = getIntent().getBooleanExtra(EXTRA_LISTEN_TO_GPS, false);
-        if (useGps) {
-            initLocationListener(l -> {
-            });
-        } else {
-            vm.lastKnownLocation.observe(this, vm::adjustToNewLocation);
-        }
+        if (useGps) initLocationListener(vm::adjustToNewLocation);
+        else vm.lastKnownLocation.observe(this, vm::adjustToNewLocation);
     }
 
     @SuppressLint("MissingPermission")
@@ -168,16 +161,6 @@ public class DirectionActivity extends AppCompatActivity {
      */
     public void onLaunchNextClicked(View view) {
         vm.nextExhibitCommand.execute(this);
-
-        // Increment direction index from shared preferences or reset index when reaches final destination
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        int temp = sharedPreferences.getInt(CURR_INDEX, 0);
-        editor.putInt(CURR_INDEX, temp + 1);
-        if(vm.isLastExhibit()){
-            editor.putInt(CURR_INDEX, -1);
-        }
-        editor.apply();
     }
 
     // Create an action bar button
@@ -193,7 +176,7 @@ public class DirectionActivity extends AppCompatActivity {
         int id = item.getItemId();
         switch(id) {
             case R.id.eraseRoutePlanButton:
-                SharedPreferences sharedPreferences = getSharedPreferences("SHARED_PREF", MODE_PRIVATE);
+                SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.clear();
                 editor.apply();
