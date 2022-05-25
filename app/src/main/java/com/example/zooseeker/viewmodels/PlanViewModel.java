@@ -5,11 +5,12 @@ import static com.example.zooseeker.util.Constant.CURR_INDEX;
 import static com.example.zooseeker.util.Constant.SHARED_PREF;
 import static com.example.zooseeker.util.Helper.getLast;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.util.Pair;
-import android.widget.ThemedSpinnerAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,11 +25,11 @@ import com.example.zooseeker.models.Graph.EdgeInfo;
 import com.example.zooseeker.models.Graph.GraphData.GraphEdge;
 import com.example.zooseeker.models.Graph.NodeInfo;
 import com.example.zooseeker.models.Route;
-import com.example.zooseeker.models.db.Animal;
 import com.example.zooseeker.repositories.AnimalItemDao;
 import com.example.zooseeker.models.Graph;
 import com.example.zooseeker.models.Graph.GraphData.GraphNode;
 import com.example.zooseeker.repositories.AnimalDatabase;
+import com.example.zooseeker.util.Alert;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,6 +50,7 @@ public class PlanViewModel extends AndroidViewModel {
     public MutableLiveData<Boolean> detailedDirectionToggle = new MutableLiveData<>(false);
     public MutableLiveData<List<DirectionItem>> directions;
     public ObservableField<Integer> remainingExhibits = new ObservableField<>(0);
+    public ObservableField<String> closestExhibit = new ObservableField<>("");
     public ObservableField<String> curExhibitName = new ObservableField<>("");
     public ObservableField<Integer> curExhibitDist = new ObservableField<>(0);
     public ObservableField<String> nextExhibitName = new ObservableField<>("");
@@ -133,6 +135,14 @@ public class PlanViewModel extends AndroidViewModel {
             var start = graph.nodes.get(exhibit.id);
             var dest = getLast(_plan.get(curExhibit));
 
+            var closestExhibit = findClosestExhibit();
+            // If there is a closer exhibit
+            if (!closestExhibit.id.equals(dest.id)) {
+                // TODO: Prompt user to navigate to closest exhibit
+                Log.d(this.getClass().getCanonicalName(), String.format("NEW CLOSEST EXHIBIT: %s", closestExhibit.name));
+                this.closestExhibit.set(closestExhibit.name);
+            }
+
             // Update plan
             _plan.set(curExhibit, route.shortestPathToNode(start, dest));
             route.updateDistances();
@@ -156,6 +166,30 @@ public class PlanViewModel extends AndroidViewModel {
                 })
                 .findFirst()
                 .orElse(null);
+    }
+
+    private NodeInfo findClosestExhibit() {
+        // Get paths to all remaining exhibits
+        double minWeight = curExhibitDist.get();
+        GraphNode closestExhibit = getLast(_plan.get(curExhibit));
+        for (int i = curExhibit; i < _plan.size() - 1; i++) {
+            // Get the exhibit the user is closest to right now
+            var location = exhibitAtLocation(lastKnownLocation.getValue());
+            // Find a path to all exhibits in the list
+            var pathToExhibit = route.shortestPathToNode(graph.nodes.get(location.id), getLast(_plan.get(i)));
+            // Calculate distance
+            double pathWeight = 0;
+            for (int j = 0; j < pathToExhibit.size() - 1; j++) {
+                var edge = graph.edges.get(new Graph.SymmetricPair(pathToExhibit.get(j).id, pathToExhibit.get(j + 1).id));
+                pathWeight += edge.weight;
+            }
+            if (pathWeight < minWeight) {
+                minWeight = pathWeight;
+                closestExhibit = getLast(pathToExhibit);
+            }
+        }
+        // Find closest one
+        return graph.nodeInfo.get(closestExhibit.id);
     }
 
     public boolean isOnPathToCurExhibit() {

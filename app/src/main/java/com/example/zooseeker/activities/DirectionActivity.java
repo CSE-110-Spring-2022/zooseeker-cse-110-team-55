@@ -7,6 +7,9 @@ import static com.example.zooseeker.util.Constant.CURR_INDEX;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.databinding.Observable;
+import androidx.databinding.Observable.OnPropertyChangedCallback;
+import androidx.databinding.ObservableField;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,6 +36,7 @@ import com.example.zooseeker.R;
 import com.example.zooseeker.adapters.DirectionAdapter;
 import com.example.zooseeker.databinding.ActivityDirectionBinding;
 import com.example.zooseeker.fragments.RouteSummaryFragment;
+import com.example.zooseeker.util.Alert;
 import com.example.zooseeker.util.PermissionChecker;
 import com.example.zooseeker.viewmodels.PlanViewModel;
 import com.google.gson.Gson;
@@ -97,6 +101,14 @@ public class DirectionActivity extends AppCompatActivity {
         boolean useGps = getIntent().getBooleanExtra(EXTRA_LISTEN_TO_GPS, false);
         if (useGps) initLocationListener(vm::adjustToNewLocation);
         else vm.lastKnownLocation.observe(this, vm::adjustToNewLocation);
+
+        var x = this;
+        vm.closestExhibit.addOnPropertyChangedCallback(new OnPropertyChangedCallback() {
+            @Override
+            public void onPropertyChanged(Observable sender, int propertyId) {
+                Alert.alert(x, "Uh oh!", String.format("Looks like you're off track. You're now closest to: %s. Reroute?", ((ObservableField<String>) sender).get()));
+            }
+        });
     }
 
     @SuppressLint("MissingPermission")
@@ -120,15 +132,16 @@ public class DirectionActivity extends AppCompatActivity {
                 | EditorInfo.TYPE_NUMBER_FLAG_SIGNED
                 | EditorInfo.TYPE_NUMBER_FLAG_DECIMAL;
 
+        // Default is orangutan!
         final EditText latInput = new EditText(this);
         latInput.setInputType(inputType);
         latInput.setHint("Latitude");
-        latInput.setText("32.72211788245888");
+        latInput.setText("32.736864688333235");
 
         final EditText lngInput = new EditText(this);
         lngInput.setInputType(inputType);
         lngInput.setHint("Longitude");
-        lngInput.setText("-117.15794384136309");
+        lngInput.setText("-117.16364410510093");
 
         final LinearLayout layout = new LinearLayout(this);
         layout.setDividerPadding(8);

@@ -18,4 +18,19 @@ public class Alert {
         AlertDialog alertDialog = alertBuilder.create();
         alertDialog.show();
     }
+
+    public static void alert(Activity activity, String title, String message) {
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(activity);
+
+        alertBuilder
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton("OK", (dialog, id) -> {
+                    dialog.cancel();
+                })
+                .setCancelable(true);
+
+        AlertDialog alertDialog = alertBuilder.create();
+        alertDialog.show();
+    }
 }
