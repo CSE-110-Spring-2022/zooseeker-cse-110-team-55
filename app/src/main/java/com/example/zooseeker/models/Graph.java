@@ -183,6 +183,7 @@ public class Graph {
             // from the strings in our JSON to this Enum.
             @SerializedName("gate") GATE,
             @SerializedName("exhibit") EXHIBIT,
+            @SerializedName("exhibit_group") EXHIBIT_GROUP,
             @SerializedName("intersection") INTERSECTION
         }
 

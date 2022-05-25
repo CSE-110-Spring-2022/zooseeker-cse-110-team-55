@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.zooseeker.R;
 import com.example.zooseeker.models.Animal;
+import com.example.zooseeker.models.Animal.AnimalDisplay;
 import com.example.zooseeker.viewmodels.HomeActivityViewModel;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ import java.util.List;
  * Adapter to display data in Animal model
  */
 public class AnimalAdapter extends RecyclerView.Adapter<AnimalAdapter.AnimalHolder> {
-    List<Animal> animals = new ArrayList<>();
+    List<AnimalDisplay> animals = new ArrayList<>();
     OnAnimalClickListener onAnimalClickListener;
     HomeActivityViewModel vm;
 
@@ -40,9 +41,9 @@ public class AnimalAdapter extends RecyclerView.Adapter<AnimalAdapter.AnimalHold
 
     @Override
     public void onBindViewHolder(@NonNull AnimalHolder holder, int position) {
-        Animal curAnimal = animals.get(position);
+        AnimalDisplay curAnimal = animals.get(position);
         holder.animalName.setText(curAnimal.name);
-        List<Animal> selectedAnimals = vm.getSelectedAnimals();
+        var selectedAnimals = vm.getSelectedAnimals();
         holder.checkBox.setChecked(selectedAnimals
                 .stream()
                 .anyMatch(a -> a.name.equals(curAnimal.name))
@@ -54,7 +55,7 @@ public class AnimalAdapter extends RecyclerView.Adapter<AnimalAdapter.AnimalHold
         return animals.size();
     }
 
-    public void setAnimals(List<Animal> animals) {
+    public void setAnimals(List<AnimalDisplay> animals) {
         this.animals.clear();
         this.animals = animals;
         // TODO: Avoid using notifyDataSetChanged

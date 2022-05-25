@@ -13,16 +13,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.JsonWriter;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.SearchView;
-import android.widget.TextView;
 
 import com.example.zooseeker.R;
 import com.example.zooseeker.adapters.AnimalAdapter;
 import com.example.zooseeker.databinding.ActivityHomeBinding;
-import com.example.zooseeker.models.Animal;
+import com.example.zooseeker.models.Animal.AnimalDisplay;
 import com.example.zooseeker.models.SearchCommandParams;
 import com.example.zooseeker.models.SelectedAnimalParams;
 import com.example.zooseeker.viewmodels.HomeActivityViewModel;
@@ -32,6 +33,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.example.zooseeker.util.Alert;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnAnimalClickListener, SearchView.OnQueryTextListener {
     private ActivityHomeBinding binding;
@@ -60,16 +63,16 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
 
         // Load shared preferences and update home activity view model
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
-        String id = sharedPreferences.getString(ANIMALS_ID, null);
-        if (id != null) {
-            String[] saved_id = id.split("[\\s@&.?$+-]+");
-            List<Animal> animalList = new ArrayList<>();
-            for (String s : saved_id) {
-                animalList.add(viewModel.searchInDatabaseById(this, s));
+        String saved = sharedPreferences.getString(ANIMALS_ID, null);
+        if (saved != null) {
+            var type = new TypeToken<List<AnimalDisplay>>(){}.getType();
+            List<AnimalDisplay> animals = new Gson().fromJson(saved, type);
+            var temp = new ArrayList<AnimalDisplay>();
+            for (var animal : animals) {
+                temp.add(animal);
             }
-            viewModel.setSelectedAnimals(animalList);
-            List<Animal> tempList = new ArrayList<>(animalList);
-            viewModel.setAnimals(tempList);
+            viewModel.setSelectedAnimals(temp);
+            viewModel.setAnimals(animals);
         }
 
         // Load shared preferences and launch direction activity if direction index != -1
@@ -80,7 +83,7 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
             ArrayList<String> selectedAnimals = new ArrayList<>(
                     viewModel.getSelectedAnimals()
                             .stream()
-                            .map(a -> a.id)
+                            .map(a -> a.groupId == null ? a.id : a.groupId)
                             .collect(Collectors.toList()));
             // Add to intent
             intent.putStringArrayListExtra("selected_animals", selectedAnimals);
@@ -103,7 +106,7 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
             ArrayList<String> selectedAnimals = new ArrayList<>(
                     viewModel.getSelectedAnimals()
                             .stream()
-                            .map(a -> a.id)
+                            .map(a -> a.groupId == null ? a.id : a.groupId)
                             .collect(Collectors.toList()));
             // Add to intent
             intent.putStringArrayListExtra("selected_animals", selectedAnimals);
@@ -131,13 +134,9 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
         // Reconstruct and update animal id string in shared preferences
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        StringBuilder sb = new StringBuilder();
-        List<Animal> list = viewModel.getSelectedAnimals();
-        for (int i = 0; i < list.size(); i++) {
-            sb.append(list.get(i).id);
-            sb.append("@");
-        }
-        editor.putString(ANIMALS_ID, sb.toString());
+        var list = viewModel.getSelectedAnimals();
+        String saved = new Gson().toJson(list);
+        editor.putString(ANIMALS_ID, saved);
         editor.apply();
     }
 

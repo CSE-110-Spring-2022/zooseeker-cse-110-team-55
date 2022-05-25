@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.zooseeker.contracts.ICommand;
 import com.example.zooseeker.models.Animal;
+import com.example.zooseeker.models.Animal.AnimalDisplay;
 import com.example.zooseeker.models.SearchCommandParams;
 import com.example.zooseeker.models.SelectedAnimalParams;
 import com.example.zooseeker.repositories.AnimalItemDao;
@@ -19,17 +20,17 @@ import java.util.*;
 
 public class HomeActivityViewModel extends ViewModel {
     // List of animals to be displayed
-    private MutableLiveData<List<Animal>> animals = new MutableLiveData<>();
+    private MutableLiveData<List<AnimalDisplay>> animals = new MutableLiveData<>();
 
     // List of selected animals
-    private List<Animal> _selectedAnimals = new ArrayList<>();
+    private List<AnimalDisplay> _selectedAnimals = new ArrayList<>();
     public ObservableInt numSelectedAnimals = new ObservableInt(0);
 
 
     // Commands for Activity to call
     public ICommand<SearchCommandParams> searchCommand = params -> performSearch(params.context, params.query);
     public ICommand<SelectedAnimalParams> selectAnimalCommand = params -> {
-        Animal animal = getAnimals().getValue().get(params.position);
+        AnimalDisplay animal = getAnimals().getValue().get(params.position);
         toggleSelectedAnimal(animal);
     };
 
@@ -39,12 +40,12 @@ public class HomeActivityViewModel extends ViewModel {
         setAnimals(new ArrayList<>());
     }
 
-    private void toggleSelectedAnimal(Animal animal) {
-        Optional<Animal> potentialMatch = _selectedAnimals
+    private void toggleSelectedAnimal(AnimalDisplay animal) {
+        Optional<AnimalDisplay> potentialMatch = _selectedAnimals
                 .stream()
                 .filter(a -> a.name.equals(animal.name))
                 .findFirst();
-        Animal matchedAnimal = potentialMatch.orElse(null);
+        AnimalDisplay matchedAnimal = potentialMatch.orElse(null);
 
         if (matchedAnimal != null) {
             _selectedAnimals.remove(matchedAnimal);
@@ -57,34 +58,34 @@ public class HomeActivityViewModel extends ViewModel {
 
     private void performSearch(Context context, String query) {
         // Show selected exhibits if empty
-        List<Animal> animalsToDisplay = query.equals("") ?
+        var animalsToDisplay = query.equals("") ?
                 new ArrayList<>(_selectedAnimals) :
                 searchInDatabase(context, query);
 
         setAnimals(animalsToDisplay);
     }
 
-    private List<Animal> searchInDatabase(Context context, String query) {
+    private List<AnimalDisplay> searchInDatabase(Context context, String query) {
         AnimalItemDao animalItemDao = AnimalDatabase.getSingleton(context).animalItemDao();
-        return animalItemDao.get(query);
+        return animalItemDao.getDisplay(query);
     }
 
-    public Animal searchInDatabaseById(Context context, String query) {
+    public AnimalDisplay searchInDatabaseById(Context context, String query) {
         AnimalItemDao animalItemDao = AnimalDatabase.getSingleton(context).animalItemDao();
         return animalItemDao.getById(query);
     }
 
-    public List<Animal> getSelectedAnimals() { return _selectedAnimals; }
+    public List<AnimalDisplay> getSelectedAnimals() { return _selectedAnimals; }
 
-    public LiveData<List<Animal>> getAnimals() {
+    public LiveData<List<AnimalDisplay>> getAnimals() {
         return animals;
     }
 
-    public void setAnimals(List<Animal> animals) {
+    public void setAnimals(List<AnimalDisplay> animals) {
         this.animals.setValue(animals);
     }
 
-    public void setSelectedAnimals(List<Animal> animalList){
+    public void setSelectedAnimals(List<AnimalDisplay> animalList){
         _selectedAnimals = animalList;
         numSelectedAnimals.set(animalList.size());
     }

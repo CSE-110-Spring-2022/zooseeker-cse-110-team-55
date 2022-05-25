@@ -55,11 +55,11 @@ public class PersistTest {
             ActivityHomeBinding binding = activity.getBinding();
 
             SearchView searchView = activity.getBinding().search;
-            searchView.setQuery("Lions", true);
+            searchView.setQuery("Bali Mynah", true);
 
             RecyclerView recyclerView = binding.recyclerView;
             recyclerView.getAdapter().getItemCount();
-            List<Animal> animals = binding.getVm().getAnimals().getValue();
+            var animals = binding.getVm().getAnimals().getValue();
 
             assertTrue(animals.get(0).name.contains(searchView.getQuery()));
         });
@@ -74,9 +74,9 @@ public class PersistTest {
             ActivityHomeBinding binding = activity.getBinding();
             RecyclerView recyclerView = binding.recyclerView;
             recyclerView.getAdapter().getItemCount();
-            List<Animal> animals = binding.getVm().getAnimals().getValue();
+            var animals = binding.getVm().getAnimals().getValue();
 
-            assertEquals("Lions", animals.get(0).name);
+            assertEquals("Bali Mynah", animals.get(0).name);
         });
     }
 }

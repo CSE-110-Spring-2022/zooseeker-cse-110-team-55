@@ -5,6 +5,8 @@ public class Constant {
     public static final String ANIMALS_ID = "ANIMALS";
     public static final String CURR_INDEX = "CURR_INDEX";
 
+    public static final String ANIMAL_TABLE = "animals";
+
     // New UI color schemes (replace line 3-5 in res/values/colors.xml with below)
     // <color name="purple_200">#D58CB8</color>
     // <color name="purple_500">#6667AB</color>
