@@ -1,11 +1,11 @@
 package com.example.zooseeker.viewmodels;
 
 import static com.example.zooseeker.util.Helper.getLast;
-import static com.example.zooseeker.util.Helper.getSecondToLast;
 
 import android.app.Application;
 import android.content.Context;
 import android.util.Pair;
+import android.widget.ThemedSpinnerAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,12 +18,13 @@ import com.example.zooseeker.contracts.ICommand;
 import com.example.zooseeker.models.DirectionItem;
 import com.example.zooseeker.models.Graph.EdgeInfo;
 import com.example.zooseeker.models.Graph.GraphData.GraphEdge;
+import com.example.zooseeker.models.Graph.NodeInfo;
 import com.example.zooseeker.models.Route;
+import com.example.zooseeker.models.db.Animal;
 import com.example.zooseeker.repositories.AnimalItemDao;
 import com.example.zooseeker.models.Graph;
 import com.example.zooseeker.models.Graph.GraphData.GraphNode;
 import com.example.zooseeker.repositories.AnimalDatabase;
-import com.example.zooseeker.util.Helper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -110,15 +111,52 @@ public class PlanViewModel extends AndroidViewModel {
         _plan.clear();
     }
 
+    public void adjustToNewLocation(Pair<Double, Double> location) {
+        // If user is off-track
+        if (!isOnPathToCurExhibit()) {
+            // TODO: Recalculate route to current exhibit based off of new location
+            // Get exhibit user is currently at
+            var exhibit = exhibitAtLocation(location);
+            if (exhibit == null) return;
+
+            // Find fastest route to current exhibit
+            var start = graph.nodes.get(exhibit.id);
+            var dest = getLast(_plan.get(curExhibit));
+            // Update plan
+            _plan.set(curExhibit, route.shortestPathToNode(start, dest));
+            route.updateDistances();
+            updateCurrentDirections(detailedDirectionToggle.getValue());
+            updateObservables();
+        }
+    }
+
+    /**
+     * Converts lat/long location to exhibit
+     * @param location
+     * @return Exhibit at given location, or null if one doesn't exist
+     */
+    private NodeInfo exhibitAtLocation(Pair<Double, Double> location) {
+        return graph.nodeInfo.values()
+                .stream()
+                .filter(e -> {
+                    var dlat = e.lat - location.first;
+                    var dlng = e.lng - location.second;
+                    return Math.pow(dlat, 2) + Math.pow(dlng, 2) < Math.pow(delta, 2);
+                })
+                .findFirst()
+                .orElse(null);
+    }
+
     public boolean isOnPathToCurExhibit() {
         var loc = lastKnownLocation.getValue();
-        return directions.getValue()
+        var isOnPath = directions.getValue()
                 .stream()
                 .anyMatch(e -> {
                     var dlat = e.target.lat - loc.first;
                     var dlng = e.target.lng - loc.second;
-                    return Math.sqrt(Math.pow(dlat, 2) + Math.pow(dlng, 2)) < delta;
+                    return Math.pow(dlat, 2) + Math.pow(dlng, 2) < Math.pow(delta, 2);
                 });
+        return isOnPath;
     }
 
     /**

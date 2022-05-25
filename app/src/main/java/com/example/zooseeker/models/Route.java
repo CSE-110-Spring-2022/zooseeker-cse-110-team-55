@@ -44,6 +44,10 @@ public class Route {
 
     public int[] getDistancesToEachExhibit() { return _distances; }
 
+    public void updateDistances() {
+        _distances = calculateDistances();
+    }
+
     public Graph getGraph() { return graph; }
 
     /**
@@ -98,7 +102,7 @@ public class Route {
         return plan;
     }
 
-    private ArrayList<GraphNode> shortestPathToNode(GraphNode start, GraphNode end) {
+    public ArrayList<GraphNode> shortestPathToNode(GraphNode start, GraphNode end) {
         return pathToNearestNeighbor(start, new ArrayList<>(Collections.singleton(end)));
     }
 
