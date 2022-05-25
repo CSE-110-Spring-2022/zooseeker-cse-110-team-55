@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.JsonWriter;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,9 +29,12 @@ import com.example.zooseeker.models.SelectedAnimalParams;
 import com.example.zooseeker.viewmodels.HomeActivityViewModel;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import com.example.zooseeker.util.Alert;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnAnimalClickListener, SearchView.OnQueryTextListener {
     private ActivityHomeBinding binding;
@@ -58,16 +63,16 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
 
         // Load shared preferences and update home activity view model
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
-        String id = sharedPreferences.getString(ANIMALS_ID, null);
-        if (id != null) {
-            String[] saved_id = id.split("[\\s@&.?$+-]+");
-            var animalList = new ArrayList<AnimalDisplay>();
-            for (String s : saved_id) {
-                animalList.add(viewModel.searchInDatabaseById(this, s));
+        String saved = sharedPreferences.getString(ANIMALS_ID, null);
+        if (saved != null) {
+            var type = new TypeToken<List<AnimalDisplay>>(){}.getType();
+            List<AnimalDisplay> animals = new Gson().fromJson(saved, type);
+            var temp = new ArrayList<AnimalDisplay>();
+            for (var animal : animals) {
+                temp.add(animal);
             }
-            viewModel.setSelectedAnimals(animalList);
-            var tempList = new ArrayList<>(animalList);
-            viewModel.setAnimals(tempList);
+            viewModel.setSelectedAnimals(temp);
+            viewModel.setAnimals(animals);
         }
 
         // Load shared preferences and launch direction activity if direction index != -1
@@ -129,13 +134,9 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
         // Reconstruct and update animal id string in shared preferences
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        StringBuilder sb = new StringBuilder();
         var list = viewModel.getSelectedAnimals();
-        for (var animal : list) {
-            sb.append(animal.groupId == null ? animal.id : animal.groupId);
-            sb.append("@");
-        }
-        editor.putString(ANIMALS_ID, sb.toString());
+        String saved = new Gson().toJson(list);
+        editor.putString(ANIMALS_ID, saved);
         editor.apply();
     }
 
