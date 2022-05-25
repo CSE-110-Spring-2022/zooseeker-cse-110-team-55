@@ -6,9 +6,7 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.example.zooseeker.models.AnimalTag;
-
-import java.util.List;
+import com.example.zooseeker.models.db.AnimalTag;
 
 @Dao
 public interface AnimalTagDao {

@@ -1,15 +1,20 @@
 package com.example.zooseeker.models;
 
-public class DirectionItem {
+import com.example.zooseeker.models.Graph.NodeInfo;
 
-    public String target;
+import java.util.List;
+
+public class DirectionItem {
+    public NodeInfo target;
     public String streetName;
     public double weight;
+    public List<String> containedExhibits;
 
-    public DirectionItem(String target, String streetName, double weight) {
+    public DirectionItem(NodeInfo target, String streetName, double weight, List<String> containedExhibits) {
         this.target = target;
         this.streetName = streetName;
         this.weight = weight;
+        this.containedExhibits = containedExhibits;
     }
 
 }

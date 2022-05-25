@@ -1,5 +1,7 @@
 package com.example.zooseeker.adapters;
 
+import static com.example.zooseeker.util.Helper.getLast;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,7 @@ import com.example.zooseeker.models.DirectionItem;
 import com.example.zooseeker.models.Graph;
 import com.example.zooseeker.models.Graph.GraphData.GraphEdge;
 import com.example.zooseeker.models.Graph.GraphData.GraphNode;
+import com.example.zooseeker.models.Graph.NodeInfo.Kind;
 import com.example.zooseeker.models.Graph.SymmetricPair;
 
 import java.util.ArrayList;
@@ -36,19 +39,40 @@ public class DirectionAdapter extends RecyclerView.Adapter<DirectionAdapter.Dire
 
     @Override
     public void onBindViewHolder(@NonNull DirectionHolder holder, int position) {
-        // TODO: Add logic to determine if the Detailed toggle is active and handle accordingly
         StringBuilder sb = new StringBuilder();
         if (position == 0 || position == directions.size() - 1) {
             sb.append("Proceed on ");
         } else {
-            sb.append("Continue to ");
+            sb.append("Continue on ");
         }
 
+        // Type of exhibit
         DirectionItem edge = directions.get(position);
-        sb.append(edge.streetName);
-        sb.append(" towards ");
-        sb.append(edge.target);
+        sb.append(String.format("%s towards %s", edge.streetName, edge.target.name));
+        if (edge.target.kind.equals(Kind.INTERSECTION)) {
+            sb.append(" junction");
+        } else if (edge.target.kind.equals(Kind.EXHIBIT)) {
+            sb.append(" exhibit");
+        }
 
+        // Displays exhibit groups
+        if (edge.containedExhibits != null) {
+            sb.append(" and find ");
+            if (edge.containedExhibits.size() == 1) {
+                sb.append(getLast(edge.containedExhibits));
+            } else if (edge.containedExhibits.size() == 2) {
+                sb.append(edge.containedExhibits.get(0));
+                sb.append(" and ");
+                sb.append(edge.containedExhibits.get(1));
+            } else {
+                for (int i = 0; i < edge.containedExhibits.size() - 1; i++) {
+                    sb.append(edge.containedExhibits.get(i)).append(", ");
+                }
+                sb.append("and ").append(getLast(edge.containedExhibits));
+            }
+        }
+
+        // Set text
         holder.directions.setText(sb);
         holder.distance.setText(String.format("%d ft", (int) directions.get(position).weight));
     }

@@ -7,12 +7,10 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.ViewModel;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.zooseeker.R;
-import com.example.zooseeker.models.Animal;
-import com.example.zooseeker.models.Animal.AnimalDisplay;
+import com.example.zooseeker.models.db.Animal.AnimalDisplay;
 import com.example.zooseeker.viewmodels.HomeActivityViewModel;
 
 import java.util.ArrayList;

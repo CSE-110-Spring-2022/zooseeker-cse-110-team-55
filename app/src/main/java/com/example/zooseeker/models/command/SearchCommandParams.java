@@ -1,4 +1,4 @@
-package com.example.zooseeker.models;
+package com.example.zooseeker.models.command;
 
 import android.content.Context;
 

@@ -6,11 +6,10 @@ import static org.junit.Assert.assertTrue;
 
 import android.app.Application;
 
-import com.example.zooseeker.models.Animal;
-import com.example.zooseeker.models.SelectedAnimalParams;
+import com.example.zooseeker.models.db.Animal;
+import com.example.zooseeker.models.command.SelectedAnimalParams;
 import com.example.zooseeker.viewmodels.HomeActivityViewModel;
 
-import org.checkerframework.checker.units.qual.A;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

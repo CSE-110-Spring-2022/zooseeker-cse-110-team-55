@@ -1,4 +1,4 @@
-package com.example.zooseeker.models;
+package com.example.zooseeker.models.db;
 
 import android.content.Context;
 
@@ -12,7 +12,6 @@ import androidx.room.PrimaryKey;
 
 import com.example.zooseeker.util.Constant;
 import com.google.gson.Gson;
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
 
@@ -21,7 +20,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Type;
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
