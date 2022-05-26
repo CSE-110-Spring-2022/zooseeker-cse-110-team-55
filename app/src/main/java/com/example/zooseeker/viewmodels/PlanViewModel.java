@@ -4,6 +4,7 @@ import static android.content.Context.MODE_PRIVATE;
 import static com.example.zooseeker.util.Constant.CURR_INDEX;
 import static com.example.zooseeker.util.Constant.SHARED_PREF;
 import static com.example.zooseeker.util.Helper.getLast;
+import static com.example.zooseeker.viewmodels.PlanViewModel.*;
 
 import android.app.Activity;
 import android.app.Application;
@@ -30,12 +31,13 @@ import com.example.zooseeker.models.Graph;
 import com.example.zooseeker.models.Graph.GraphData.GraphNode;
 import com.example.zooseeker.repositories.AnimalDatabase;
 import com.example.zooseeker.util.Alert;
+import com.example.zooseeker.util.Alert.AlertHandler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class PlanViewModel extends AndroidViewModel {
+public class PlanViewModel extends AndroidViewModel implements AlertHandler {
     private static double delta = 0.001d;
     private Context context;
     private Graph graph;
@@ -49,8 +51,9 @@ public class PlanViewModel extends AndroidViewModel {
     // Observables
     public MutableLiveData<Boolean> detailedDirectionToggle = new MutableLiveData<>(false);
     public MutableLiveData<List<DirectionItem>> directions;
+    public MutableLiveData<String> closestExhibit = new MutableLiveData<>();
+
     public ObservableField<Integer> remainingExhibits = new ObservableField<>(0);
-    public ObservableField<String> closestExhibit = new ObservableField<>("");
     public ObservableField<String> curExhibitName = new ObservableField<>("");
     public ObservableField<Integer> curExhibitDist = new ObservableField<>(0);
     public ObservableField<String> nextExhibitName = new ObservableField<>("");
@@ -115,7 +118,7 @@ public class PlanViewModel extends AndroidViewModel {
     }
 
     public void initRoute(List<String> selectedAnimals) {
-        this.route = new Route(graph, selectedAnimals, "entrance_exit_gate");
+        this.route = new Route(graph, selectedAnimals, "entrance_exit_gate", "entrance_exit_gate");
         setPlan(route.getRoute());
         getDirectionsToNextExhibit();
     }
@@ -138,9 +141,7 @@ public class PlanViewModel extends AndroidViewModel {
             var closestExhibit = findClosestExhibit();
             // If there is a closer exhibit
             if (!closestExhibit.id.equals(dest.id)) {
-                // TODO: Prompt user to navigate to closest exhibit
-                Log.d(this.getClass().getCanonicalName(), String.format("NEW CLOSEST EXHIBIT: %s", closestExhibit.name));
-                this.closestExhibit.set(closestExhibit.name);
+                this.closestExhibit.setValue(closestExhibit.name);
             }
 
             // Update plan
@@ -148,6 +149,13 @@ public class PlanViewModel extends AndroidViewModel {
             route.updateDistances();
             updateCurrentDirections(detailedDirectionToggle.getValue());
             updateObservables();
+        } else {
+            var node = directions.getValue().remove(0);
+            while (!exhibitAtLocation(location).id.equals(node.target.id)) {
+                node = directions.getValue().remove(0);
+            }
+            directions.setValue(new ArrayList<>(directions.getValue()));
+            // TODO: Decrease total distance
         }
     }
 
@@ -347,4 +355,27 @@ public class PlanViewModel extends AndroidViewModel {
     public void setExhibitGroups(HashMap<String, List<String>> groups) {
         this.exhibitGroups = groups;
     }
+
+    @Override
+    public void acceptHandler() {
+        var exhibit = exhibitAtLocation(lastKnownLocation.getValue());
+        var start = graph.nodes.get(exhibit.id);
+        var remaining = new ArrayList<String>();
+        for (int i = curExhibit; i < _plan.size() - 1; i++) {
+            remaining.add(getLast(_plan.get(i)).id);
+        }
+        curExhibit = 0;
+        // Create plan through remaining exhibits
+        route.createRouteThroughExhibits(remaining, start.id, "entrance_exit_gate");
+        if (route.getRoute().get(0).size() <= 1) {
+            route.getRoute().remove(0);
+            route.updateDistances();
+        }
+        setPlan(route.getRoute());
+        updateCurrentDirections(detailedDirectionToggle.getValue());
+        updateObservables();
+    }
+
+    @Override
+    public void rejectHandler() { }
 }

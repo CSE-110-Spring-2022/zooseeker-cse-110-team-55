@@ -36,6 +36,7 @@ import com.example.zooseeker.R;
 import com.example.zooseeker.adapters.DirectionAdapter;
 import com.example.zooseeker.databinding.ActivityDirectionBinding;
 import com.example.zooseeker.fragments.RouteSummaryFragment;
+import com.example.zooseeker.models.Graph;
 import com.example.zooseeker.util.Alert;
 import com.example.zooseeker.util.PermissionChecker;
 import com.example.zooseeker.viewmodels.PlanViewModel;
@@ -103,12 +104,13 @@ public class DirectionActivity extends AppCompatActivity {
         else vm.lastKnownLocation.observe(this, vm::adjustToNewLocation);
 
         var x = this;
-        vm.closestExhibit.addOnPropertyChangedCallback(new OnPropertyChangedCallback() {
-            @Override
-            public void onPropertyChanged(Observable sender, int propertyId) {
-                Alert.alert(x, "Uh oh!", String.format("Looks like you're off track. You're now closest to: %s. Reroute?", ((ObservableField<String>) sender).get()));
-            }
-        });
+        vm.closestExhibit.observe(this, s ->
+                Alert.alert(this,
+                        "Uh oh!",
+                        String.format("Looks like you're off track. You're now closest to: %s. Replan?", s),
+                        vm::acceptHandler,
+                        vm::rejectHandler
+                ));
     }
 
     @SuppressLint("MissingPermission")
@@ -131,6 +133,7 @@ public class DirectionActivity extends AppCompatActivity {
         var inputType = EditorInfo.TYPE_CLASS_NUMBER
                 | EditorInfo.TYPE_NUMBER_FLAG_SIGNED
                 | EditorInfo.TYPE_NUMBER_FLAG_DECIMAL;
+        var exhibitInputType = EditorInfo.TYPE_CLASS_TEXT;
 
         // Default is orangutan!
         final EditText latInput = new EditText(this);
@@ -143,18 +146,32 @@ public class DirectionActivity extends AppCompatActivity {
         lngInput.setHint("Longitude");
         lngInput.setText("-117.16364410510093");
 
+        final EditText exhibitInput = new EditText(this);
+        exhibitInput.setInputType(exhibitInputType);
+        exhibitInput.setHint("Exhibit ID (Optional)");
+        exhibitInput.setText("siamang");
+
         final LinearLayout layout = new LinearLayout(this);
         layout.setDividerPadding(8);
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.addView(latInput);
         layout.addView(lngInput);
+        layout.addView(exhibitInput);
 
         var builder = new AlertDialog.Builder(this)
                 .setTitle("Inject a Mock Location")
                 .setView(layout)
                 .setPositiveButton("Submit", (dialog, which) -> {
-                    var lat = Double.parseDouble(latInput.getText().toString());
-                    var lng = Double.parseDouble(lngInput.getText().toString());
+                    double lat = 0, lng = 0;
+                    if (exhibitInput.equals("")) {
+                        lat = Double.parseDouble(latInput.getText().toString());
+                        lng = Double.parseDouble(lngInput.getText().toString());
+                    } else {
+                        var node = vm.getGraph().nodeInfo.get(exhibitInput.getText().toString());
+                        if (node == null) return;
+                        lat = node.lat;
+                        lng = node.lng;
+                    }
                     vm.lastKnownLocation.setValue((Pair.create(lat, lng)));
                 })
                 .setNegativeButton("Cancel", (dialog, which) -> {
