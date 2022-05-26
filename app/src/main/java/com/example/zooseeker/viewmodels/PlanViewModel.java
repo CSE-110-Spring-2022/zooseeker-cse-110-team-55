@@ -38,8 +38,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public class PlanViewModel extends AndroidViewModel implements AlertHandler {
+    private Application app;
     private static double delta = 0.001d;
-    private Context context;
     private Graph graph;
     private Route route;
     private AnimalItemDao repository;
@@ -63,7 +63,7 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
     public MutableLiveData<Pair<Double, Double>> lastKnownLocation = new MutableLiveData<>();
     public ICommand nextExhibitCommand = params -> {
         // Increment direction index from shared preferences or reset index when reaches final destination
-        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
+        SharedPreferences sharedPreferences = app.getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         if (isLastExhibit()) {
@@ -79,13 +79,13 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
 
     public PlanViewModel(@NonNull Application application) {
         super(application);
-        this.context = getApplication().getApplicationContext();
-        repository = AnimalDatabase.getSingleton(context).animalItemDao();
+        this.app = application;
+        repository = AnimalDatabase.getSingleton(application).animalItemDao();
         directions = new MutableLiveData<>();
 
         // Create graph
         graph = new Graph();
-        graph.loadGraph(context, "sample_zoo_graph.json", "sample_node_info.json", "sample_edge_info.json");
+        graph.loadGraph(app, "sample_zoo_graph.json", "sample_node_info.json", "sample_edge_info.json");
 
     }
 
@@ -200,7 +200,7 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
         return graph.nodeInfo.get(closestExhibit.id);
     }
 
-    public boolean isOnPathToCurExhibit() {
+    private boolean isOnPathToCurExhibit() {
         var loc = lastKnownLocation.getValue();
         var isOnPath = directions.getValue()
                 .stream()
