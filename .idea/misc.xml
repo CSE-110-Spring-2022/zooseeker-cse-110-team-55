@@ -4,9 +4,11 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../../../layout/custom_preview.xml" value="0.19166666666666668" />
-        <entry key="..\:/Users/chenz/AndroidStudioProjects/zooseeker-cse-110-team-55/app/src/main/res/layout/activity_direction.xml" value="0.1" />
+        <entry key="..\:/Users/chenz/AndroidStudioProjects/zooseeker-cse-110-team-55/app/src/main/res/layout/activity_direction.xml" value="0.33" />
         <entry key="..\:/Users/chenz/AndroidStudioProjects/zooseeker-cse-110-team-55/app/src/main/res/layout/activity_home.xml" value="0.1" />
         <entry key="..\:/Users/chenz/AndroidStudioProjects/zooseeker-cse-110-team-55/app/src/main/res/layout/activity_plan.xml" value="0.33" />
+        <entry key="..\:/Users/chenz/AndroidStudioProjects/zooseeker-cse-110-team-55/app/src/main/res/layout/animal_item.xml" value="0.31302083333333336" />
+        <entry key="..\:/Users/chenz/AndroidStudioProjects/zooseeker-cse-110-team-55/app/src/main/res/layout/direction_item.xml" value="0.31302083333333336" />
         <entry key="app/src/main/res/drawable/heart_checkbox.xml" value="0.1465" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.1465" />
         <entry key="app/src/main/res/layout/activity_animal_list.xml" value="0.27677154541015625" />
