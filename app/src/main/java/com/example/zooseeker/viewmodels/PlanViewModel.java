@@ -150,12 +150,13 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
             updateCurrentDirections(detailedDirectionToggle.getValue());
             updateObservables();
         } else {
-            var node = directions.getValue().remove(0);
-            while (!exhibitAtLocation(location).id.equals(node.target.id)) {
+            // Update distances to current exhibit
+            DirectionItem node;
+            do {
                 node = directions.getValue().remove(0);
-            }
+                curExhibitDist.set(curExhibitDist.get() - (int) node.weight);
+            } while (!exhibitAtLocation(location).id.equals(node.target.id));
             directions.setValue(new ArrayList<>(directions.getValue()));
-            // TODO: Decrease total distance
         }
     }
 
