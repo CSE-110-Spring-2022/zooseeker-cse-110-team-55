@@ -195,7 +195,7 @@ public class EraseUITest {
                                 childAtPosition(
                                         withClassName(is("androidx.constraintlayout.widget.ConstraintLayout")),
                                         0),
-                                1),
+                                2),
                         isDisplayed()));
         materialButton2.perform(click());
 
@@ -205,7 +205,7 @@ public class EraseUITest {
                                 childAtPosition(
                                         withId(androidx.appcompat.R.id.action_bar),
                                         1),
-                                0),
+                                2),
                         isDisplayed()));
         actionMenuItemView2.perform(click());
 

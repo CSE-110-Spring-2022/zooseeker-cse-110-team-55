@@ -33,6 +33,7 @@ public class AdapterTest {
     AnimalAdapter.OnAnimalClickListener onAnimalClickListener;
     HomeActivityViewModel vm;
 
+
     @Before
     public void resetDatabase() {
         Context context = ApplicationProvider.getApplicationContext();
@@ -48,8 +49,7 @@ public class AdapterTest {
         Context context = ApplicationProvider.getApplicationContext();
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.remove(ANIMALS_ID);
-        editor.remove(CURR_INDEX);
+        editor.clear();
         editor.apply();
     }
 
