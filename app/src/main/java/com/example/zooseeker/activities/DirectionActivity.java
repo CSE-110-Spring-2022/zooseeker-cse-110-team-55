@@ -61,8 +61,8 @@ public class DirectionActivity extends AppCompatActivity {
 
         // Use location
         boolean useGps = getIntent().getBooleanExtra(EXTRA_LISTEN_TO_GPS, false);
-        if (useGps) initLocationListener(vm::adjustToNewLocation);
-        else vm.lastKnownLocation.observe(this, vm::adjustToNewLocation);
+        if (useGps) initLocationListener(vm::setLocation);
+        vm.lastKnownLocation.observe(this, vm::adjustToNewLocation);
 
         // Load exhibit groups
         var t = new TypeToken<HashMap<String, List<String>>>(){}.getType();

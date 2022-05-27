@@ -2,6 +2,7 @@ package com.example.zooseeker.activities;
 
 import static com.example.zooseeker.util.Constant.ANIMALS_ID;
 import static com.example.zooseeker.util.Constant.CURR_INDEX;
+import static com.example.zooseeker.util.Constant.EXTRA_LISTEN_TO_GPS;
 import static com.example.zooseeker.util.Constant.SHARED_PREF;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -86,6 +87,7 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
             Intent intent = new Intent(this, DirectionActivity.class);
             addSelectionToIntent(intent);
             intent.putExtra("last_exhibit", sharedPreferences.getString("last_exhibit", null));
+            intent.putExtra(EXTRA_LISTEN_TO_GPS, true);
             startActivity(intent);
         }
         binding.search.setOnQueryTextListener(this);

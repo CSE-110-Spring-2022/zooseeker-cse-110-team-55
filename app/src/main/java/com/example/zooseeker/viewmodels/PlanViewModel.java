@@ -347,6 +347,10 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
     }
 
     /// Setters
+    public void setLocation(Pair<Double, Double> location) {
+        this.lastKnownLocation.setValue(location);
+    }
+
     public void setPlan(List<List<GraphNode>> plan) {
         this._plan = plan;
     }
