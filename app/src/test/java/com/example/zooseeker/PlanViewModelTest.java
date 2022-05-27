@@ -32,7 +32,7 @@ public class PlanViewModelTest {
         selected.add("flamingo");
         selected.add("capuchin");
         vm.setExhibitGroups(new HashMap<>());
-        vm.initRoute(selected);
+        vm.initRoute(selected, "entrance_exit_gate");
     }
 
     @Test

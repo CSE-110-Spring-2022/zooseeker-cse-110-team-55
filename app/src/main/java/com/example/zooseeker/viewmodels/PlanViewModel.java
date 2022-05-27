@@ -112,8 +112,8 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
         updateObservables();
     }
 
-    public void initRoute(List<String> selectedAnimals) {
-        this.route = new Route(graph, selectedAnimals, "entrance_exit_gate", "entrance_exit_gate");
+    public void initRoute(List<String> selectedAnimals, String start) {
+        this.route = new Route(graph, selectedAnimals, start == null ? "entrance_exit_gate" : start, "entrance_exit_gate");
         setPlan(route.getRoute());
         getDirectionsToNextExhibit();
     }
@@ -123,11 +123,18 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
     }
 
     public void adjustToNewLocation(Pair<Double, Double> location) {
+        SharedPreferences sharedPreferences = app.getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
         // If user is off-track
         if (!isOnPathToCurExhibit()) {
             // Get exhibit user is currently at
             var exhibit = exhibitAtLocation(location);
             if (exhibit == null) return;
+
+            // Save last known location
+            editor.putString("last_exhibit", exhibit.id);
+            editor.apply();
 
             // Find fastest route to current exhibit
             var start = graph.nodes.get(exhibit.id);
@@ -174,11 +181,11 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
 
     private NodeInfo findClosestExhibit() {
         // Get paths to all remaining exhibits
-        double minWeight = curExhibitDist.get();
-        GraphNode closestExhibit = getLast(_plan.get(curExhibit));
+        double minWeight = Double.MAX_VALUE;
+        GraphNode closestExhibit = null;
+        // Get the exhibit the user is closest to right now
+        var location = exhibitAtLocation(lastKnownLocation.getValue());
         for (int i = curExhibit; i < _plan.size() - 1; i++) {
-            // Get the exhibit the user is closest to right now
-            var location = exhibitAtLocation(lastKnownLocation.getValue());
             // Find a path to all exhibits in the list
             var pathToExhibit = route.shortestPathToNode(graph.nodes.get(location.id), getLast(_plan.get(i)));
             // Calculate distance

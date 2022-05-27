@@ -85,6 +85,7 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
         if (curr_index != -1) {
             Intent intent = new Intent(this, DirectionActivity.class);
             addSelectionToIntent(intent);
+            intent.putExtra("last_exhibit", sharedPreferences.getString("last_exhibit", null));
             startActivity(intent);
         }
         binding.search.setOnQueryTextListener(this);

@@ -35,7 +35,7 @@ public class SimpleDirectionsTest {
         selected.add("capuchin");
         selected.add("scripps_aviary");
         vm.setExhibitGroups(new HashMap<>());
-        vm.initRoute(selected);
+        vm.initRoute(selected, "entrance_exit_gate");
     }
 
 

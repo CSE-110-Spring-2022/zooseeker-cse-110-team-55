@@ -1,18 +1,8 @@
 package com.example.zooseeker.activities;
 
+import static com.example.zooseeker.util.Constant.CURR_INDEX;
 import static com.example.zooseeker.util.Constant.EXTRA_LISTEN_TO_GPS;
 import static com.example.zooseeker.util.Constant.SHARED_PREF;
-import static com.example.zooseeker.util.Constant.CURR_INDEX;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
-import androidx.databinding.Observable;
-import androidx.databinding.Observable.OnPropertyChangedCallback;
-import androidx.databinding.ObservableField;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -29,18 +19,21 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
-
-import android.widget.TextView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.zooseeker.R;
 import com.example.zooseeker.adapters.DirectionAdapter;
 import com.example.zooseeker.databinding.ActivityDirectionBinding;
 import com.example.zooseeker.fragments.RouteSummaryFragment;
-import com.example.zooseeker.models.Graph;
 import com.example.zooseeker.util.Alert;
-import com.example.zooseeker.util.PermissionChecker;
 import com.example.zooseeker.viewmodels.PlanViewModel;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -66,6 +59,11 @@ public class DirectionActivity extends AppCompatActivity {
         vm = new ViewModelProvider(this).get(PlanViewModel.class);
         binding.setVm(vm);
 
+        // Use location
+        boolean useGps = getIntent().getBooleanExtra(EXTRA_LISTEN_TO_GPS, false);
+        if (useGps) initLocationListener(vm::adjustToNewLocation);
+        else vm.lastKnownLocation.observe(this, vm::adjustToNewLocation);
+
         // Load exhibit groups
         var t = new TypeToken<HashMap<String, List<String>>>(){}.getType();
         HashMap<String, List<String>> groups = new Gson().fromJson(intent.getStringExtra("exhibit_groups"), t);
@@ -73,7 +71,8 @@ public class DirectionActivity extends AppCompatActivity {
 
         // Initialize the route
         ArrayList<String> selected = intent.getStringArrayListExtra("selected_animals");
-        vm.initRoute(selected);
+        String lastExhibit = intent.getStringExtra("last_exhibit");
+        vm.initRoute(selected, lastExhibit);
 
         // Initialize recyclerview and adapter
         RecyclerView rv = findViewById(R.id.direction_rv);
@@ -100,12 +99,7 @@ public class DirectionActivity extends AppCompatActivity {
             vm.nextExhibitCommand.execute(this);
         }
 
-        // Use location
-        boolean useGps = getIntent().getBooleanExtra(EXTRA_LISTEN_TO_GPS, false);
-        if (useGps) initLocationListener(vm::adjustToNewLocation);
-        else vm.lastKnownLocation.observe(this, vm::adjustToNewLocation);
 
-        var x = this;
         vm.closestExhibit.observe(this, s ->
                 Alert.alert(this,
                         "Uh oh!",
@@ -164,7 +158,7 @@ public class DirectionActivity extends AppCompatActivity {
                 .setTitle("Inject a Mock Location")
                 .setView(layout)
                 .setPositiveButton("Submit", (dialog, which) -> {
-                    double lat = 0, lng = 0;
+                    double lat, lng;
                     if (exhibitInput.equals("")) {
                         lat = Double.parseDouble(latInput.getText().toString());
                         lng = Double.parseDouble(lngInput.getText().toString());
