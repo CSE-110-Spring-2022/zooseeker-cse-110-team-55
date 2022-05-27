@@ -4,6 +4,9 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../../../layout/custom_preview.xml" value="0.19166666666666668" />
+        <entry key="..\:/Users/chenz/AndroidStudioProjects/zooseeker-cse-110-team-55/app/src/main/res/drawable/skip_button_background.xml" value="0.207" />
+        <entry key="..\:/Users/chenz/AndroidStudioProjects/zooseeker-cse-110-team-55/app/src/main/res/drawable/skip_button_foreground.xml" value="0.207" />
+        <entry key="..\:/Users/chenz/AndroidStudioProjects/zooseeker-cse-110-team-55/app/src/main/res/menu/direction_menu.xml" value="0.31302083333333336" />
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.326" />
         <entry key="app/src/main/res/drawable/heart_checkbox.xml" value="0.1475" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.326" />
