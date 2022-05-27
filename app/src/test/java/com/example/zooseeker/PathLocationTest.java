@@ -65,7 +65,10 @@ public class PathLocationTest {
     }
 
     @Test
-    public void testRerouteWhenCloser() {
+    /**
+     * Test if navigation reroutes properly when there is a new closest exhibit
+     */
+    public void testRerouteWhenOtherExhibitIsCloser() {
         vm = new PlanViewModel(app);
         List<String> selected = new ArrayList<>();
         selected.add("siamang");
@@ -94,5 +97,62 @@ public class PathLocationTest {
         // We are routing to new closest exhibit
         assertEquals("gorilla", getLast(directions.get(0)).id);
         assertEquals("siamang", getLast(directions.get(1)).id);
+    }
+
+    @Test
+    public void testNewLocationIsOnClosestExhibit() {
+        vm = new PlanViewModel(app);
+        List<String> selected = new ArrayList<>();
+        selected.add("siamang");
+        selected.add("gorilla");
+        vm.setExhibitGroups(new HashMap<>());
+        vm.initRoute(selected);
+        var directions = vm.getRoute().getRoute();
+
+        // Teleport to gorillas
+        vm.lastKnownLocation.setValue(new Pair<>(32.74812588554637, -117.17565073656901));
+        vm.adjustToNewLocation(vm.lastKnownLocation.getValue());
+
+        // Gorillas is our new closest exhibit
+        assertEquals("Gorillas", vm.closestExhibit.getValue());
+
+        // Accept reroute
+        vm.acceptHandler();
+        directions = vm.getRoute().getRoute();
+
+        // We're already on gorillas, so route to the next one
+        assertEquals(2, directions.size());
+        assertEquals("siamang", getLast(directions.get(0)).id);
+    }
+
+    @Test
+    /**
+     * Tests that when the user is on an exhibit that is not the closest one, rerouting removes the
+     * exhibit and routes to the others
+     */
+    public void testNewLocationIsOnAnotherExhibit() {
+        vm = new PlanViewModel(app);
+        List<String> selected = new ArrayList<>();
+        selected.add("siamang");
+        selected.add("owens_aviary");
+        selected.add("gorilla");
+        vm.setExhibitGroups(new HashMap<>());
+        vm.initRoute(selected);
+        var directions = vm.getRoute().getRoute();
+
+        // Teleport to gorillas
+        vm.lastKnownLocation.setValue(new Pair<>(32.74812588554637, -117.17565073656901));
+        vm.adjustToNewLocation(vm.lastKnownLocation.getValue());
+
+        // Gorillas is our new closest exhibit
+        assertEquals("Gorillas", vm.closestExhibit.getValue());
+
+        // Accept reroute
+        vm.acceptHandler();
+        directions = vm.getRoute().getRoute();
+
+        // We're already on gorillas, so route to the next one
+        assertEquals(3, directions.size());
+        assertEquals("owens_aviary", getLast(directions.get(0)).id);
     }
 }
