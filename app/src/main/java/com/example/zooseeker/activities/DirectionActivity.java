@@ -205,14 +205,12 @@ public class DirectionActivity extends AppCompatActivity {
     // Handle button activities
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        SharedPreferences sharedPreferences = getSharedPreferences("SHARED_PREF", MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         int id = item.getItemId();
 
         switch(id) {
             case R.id.eraseRoutePlanButton:
-                SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.clear();
                 editor.apply();
                 vm.clearPlan();
@@ -231,11 +229,6 @@ public class DirectionActivity extends AppCompatActivity {
                 return true;
 
             case R.id.skipButton:
-                int index = sharedPreferences.getInt(CURR_INDEX, 0) + 1;
-                String temp = vm.skipNextExhibit(index);
-                TextView textView = findViewById(R.id.test_view);
-                textView.setText(temp);
-
                 return true;
 
             case R.id.returnButton:

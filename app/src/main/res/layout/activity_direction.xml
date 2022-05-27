@@ -98,18 +98,6 @@
                     android:textColor="@color/black"
                     android:textSize="24sp"
                     android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/test_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerInParent="true"
-                    android:text="Testing..."
-                    android:textColor="@color/black"
-                    android:textSize="24sp" />
-
             </RelativeLayout>
 
             <RelativeLayout
