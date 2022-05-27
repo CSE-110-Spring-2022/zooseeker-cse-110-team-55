@@ -1,5 +1,7 @@
 package com.example.zooseeker.models;
 
+import android.util.Pair;
+
 import com.example.zooseeker.models.Graph.NodeInfo;
 
 import java.util.List;

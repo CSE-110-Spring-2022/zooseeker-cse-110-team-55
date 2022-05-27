@@ -1,16 +1,19 @@
 package com.example.zooseeker.viewmodels;
 
 import static android.content.Context.MODE_PRIVATE;
-import static com.example.zooseeker.util.Constant.ANIMALS_ID;
 import static com.example.zooseeker.util.Constant.CURR_INDEX;
 import static com.example.zooseeker.util.Constant.SHARED_PREF;
 import static com.example.zooseeker.util.Helper.getLast;
-import static com.example.zooseeker.util.Helper.getSecondToLast;
+import static com.example.zooseeker.viewmodels.PlanViewModel.*;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.widget.TextView;
+import android.util.Log;
+import android.util.Pair;
+
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +26,7 @@ import com.example.zooseeker.contracts.ICommand;
 import com.example.zooseeker.models.DirectionItem;
 import com.example.zooseeker.models.Graph.EdgeInfo;
 import com.example.zooseeker.models.Graph.GraphData.GraphEdge;
+import com.example.zooseeker.models.Graph.NodeInfo;
 import com.example.zooseeker.models.Route;
 import com.example.zooseeker.models.db.Animal;
 import com.example.zooseeker.repositories.AnimalItemDao;
@@ -32,15 +36,18 @@ import com.example.zooseeker.repositories.AnimalDatabase;
 import com.example.zooseeker.util.Helper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import org.w3c.dom.Text;
+import com.example.zooseeker.util.Alert;
+import com.example.zooseeker.util.Alert.AlertHandler;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class PlanViewModel extends AndroidViewModel {
-    private Context context;
+public class PlanViewModel extends AndroidViewModel implements AlertHandler {
+    private Application app;
+    private static double delta = 0.001d;
     private Graph graph;
     private Route route;
     private AnimalItemDao repository;
@@ -52,6 +59,8 @@ public class PlanViewModel extends AndroidViewModel {
     // Observables
     public MutableLiveData<Boolean> detailedDirectionToggle = new MutableLiveData<>(false);
     public MutableLiveData<List<DirectionItem>> directions;
+    public MutableLiveData<String> closestExhibit = new MutableLiveData<>();
+
     public ObservableField<Integer> remainingExhibits = new ObservableField<>(0);
     public ObservableField<String> curExhibitName = new ObservableField<>("");
     public ObservableField<Integer> curExhibitDist = new ObservableField<>(0);
@@ -59,36 +68,161 @@ public class PlanViewModel extends AndroidViewModel {
     public ObservableField<Integer> nextExhibitDist = new ObservableField<>(0);
     public ObservableField<String> buttonText = new ObservableField<>("");
 
+    public MutableLiveData<Pair<Double, Double>> lastKnownLocation = new MutableLiveData<>();
     public ICommand nextExhibitCommand = params -> {
-        if (remainingExhibits.get() == 1) {
-            ((AppCompatActivity) params).finish();
-            return;
-        }
+        // Increment direction index from shared preferences or reset index when reaches final destination
+        SharedPreferences sharedPreferences = app.getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        getDirectionsToNextExhibit();
+        if (isLastExhibit()) {
+            editor.putInt(CURR_INDEX, -1);
+            editor.apply();
+            ((AppCompatActivity) params).finish();
+        } else {
+            editor.putInt(CURR_INDEX, curExhibit + 1);
+            editor.apply();
+            getDirectionsToNextExhibit();
+        }
     };
 
     public PlanViewModel(@NonNull Application application) {
         super(application);
-        this.context = getApplication().getApplicationContext();
-        repository = AnimalDatabase.getSingleton(context).animalItemDao();
+        this.app = application;
+        repository = AnimalDatabase.getSingleton(application).animalItemDao();
         directions = new MutableLiveData<>();
 
         // Create graph
         graph = new Graph();
-        graph.loadGraph(context, "sample_zoo_graph.json", "sample_node_info.json", "sample_edge_info.json");
+        graph.loadGraph(app, "sample_zoo_graph.json", "sample_node_info.json", "sample_edge_info.json");
+
     }
 
     /**
-     * Initializes _plan field.
-     *
-     * @param plan list of list of nodes.
+     * Changes state of MutableLivaData boolean based on toggle.
      */
-    public void setPlan(List<List<GraphNode>> plan) {
-        this._plan = plan;
+    public void updateCurrentDirections(boolean useDetailed) {
+        if (!useDetailed) {
+            setDirections(computeSimplePlan(_plan, curExhibit));
+        } else {
+            setDirections(computeDetailedPlan(_plan, curExhibit));
+        }
     }
 
     /**
+     * Proceeds to next exhibit and changes state based on toggle.
+     */
+    public void getDirectionsToNextExhibit() {
+        // If there are no more exhibits to visit, do nothing
+        if (curExhibit >= _plan.size() - 1) return;
+
+        // Update directions display
+        if (!detailedDirectionToggle.getValue()) {
+            setDirections(computeSimplePlan(_plan, ++curExhibit));
+        } else {
+            setDirections(computeDetailedPlan(_plan, ++curExhibit));
+        }
+
+        updateObservables();
+    }
+
+    public void initRoute(List<String> selectedAnimals) {
+        this.route = new Route(graph, selectedAnimals, "entrance_exit_gate", "entrance_exit_gate");
+        setPlan(route.getRoute());
+        getDirectionsToNextExhibit();
+    }
+
+    public void clearPlan() {
+        _plan.clear();
+    }
+
+    public void adjustToNewLocation(Pair<Double, Double> location) {
+        // If user is off-track
+        if (!isOnPathToCurExhibit()) {
+            // Get exhibit user is currently at
+            var exhibit = exhibitAtLocation(location);
+            if (exhibit == null) return;
+
+            // Find fastest route to current exhibit
+            var start = graph.nodes.get(exhibit.id);
+            var dest = getLast(_plan.get(curExhibit));
+
+            var closestExhibit = findClosestExhibit();
+            // If there is a closer exhibit
+            if (!closestExhibit.id.equals(dest.id)) {
+                this.closestExhibit.setValue(closestExhibit.name);
+            }
+
+            // Update plan
+            _plan.set(curExhibit, route.shortestPathToNode(start, dest));
+            route.updateDistances();
+            updateCurrentDirections(detailedDirectionToggle.getValue());
+            updateObservables();
+        } else {
+            // Update distances to current exhibit
+            DirectionItem node;
+            do {
+                node = directions.getValue().remove(0);
+                curExhibitDist.set(curExhibitDist.get() - (int) node.weight);
+            } while (!exhibitAtLocation(location).id.equals(node.target.id));
+            directions.setValue(new ArrayList<>(directions.getValue()));
+        }
+    }
+
+    /**
+     * Converts lat/long location to exhibit
+     * @param location
+     * @return Exhibit at given location, or null if one doesn't exist
+     */
+    private NodeInfo exhibitAtLocation(Pair<Double, Double> location) {
+        return graph.nodeInfo.values()
+                .stream()
+                .filter(e -> {
+                    var dlat = e.lat - location.first;
+                    var dlng = e.lng - location.second;
+                    return Math.pow(dlat, 2) + Math.pow(dlng, 2) < Math.pow(delta, 2);
+                })
+                .findFirst()
+                .orElse(null);
+    }
+
+    private NodeInfo findClosestExhibit() {
+        // Get paths to all remaining exhibits
+        double minWeight = curExhibitDist.get();
+        GraphNode closestExhibit = getLast(_plan.get(curExhibit));
+        for (int i = curExhibit; i < _plan.size() - 1; i++) {
+            // Get the exhibit the user is closest to right now
+            var location = exhibitAtLocation(lastKnownLocation.getValue());
+            // Find a path to all exhibits in the list
+            var pathToExhibit = route.shortestPathToNode(graph.nodes.get(location.id), getLast(_plan.get(i)));
+            // Calculate distance
+            double pathWeight = 0;
+            for (int j = 0; j < pathToExhibit.size() - 1; j++) {
+                var edge = graph.edges.get(new Graph.SymmetricPair(pathToExhibit.get(j).id, pathToExhibit.get(j + 1).id));
+                pathWeight += edge.weight;
+            }
+            if (pathWeight < minWeight) {
+                minWeight = pathWeight;
+                closestExhibit = getLast(pathToExhibit);
+            }
+        }
+        // Find closest one
+        return graph.nodeInfo.get(closestExhibit.id);
+    }
+
+    private boolean isOnPathToCurExhibit() {
+        var loc = lastKnownLocation.getValue();
+        var isOnPath = directions.getValue()
+                .stream()
+                .anyMatch(e -> {
+                    var dlat = e.target.lat - loc.first;
+                    var dlng = e.target.lng - loc.second;
+                    return Math.pow(dlat, 2) + Math.pow(dlng, 2) < Math.pow(delta, 2);
+                });
+        return isOnPath;
+    }
+
+    /**
+     * Computes detailed directions
      * @param plan       each list of selected graph nodes and paths to them
      * @param exhibitNum the specific exhibit that you compute the path for
      * @return a list of detailed DirectionItem objects
@@ -104,6 +238,7 @@ public class PlanViewModel extends AndroidViewModel {
         double currWeight = 0;
         //Iterate through all edges
         for (int currEdgeNum = 0; currEdgeNum < edges.size(); currEdgeNum++) {
+            var currNode = graph.nodeInfo.get(nodes.get(currEdgeNum).id);
             EdgeInfo currEdge = graph.edgeInfo.get(edges.get(currEdgeNum).id);
             //Update weight based on first edge (entrance_exit to entrance_plaza)
             if (currEdgeNum == 0) {
@@ -112,14 +247,16 @@ public class PlanViewModel extends AndroidViewModel {
             }
             EdgeInfo previousEdge = graph.edgeInfo.get(edges.get(currEdgeNum - 1).id);
             //Add a new direction item with target node's name, edge's street name, and curr weight.
-            newDir.add(new DirectionItem(graph.nodeInfo.get(nodes.get(currEdgeNum).id), previousEdge.street, currWeight, null));
+            newDir.add(new DirectionItem(currNode, previousEdge.street, currWeight, null));
             currWeight = edges.get(currEdgeNum).weight;
         }
 
         //Add the final edge
         EdgeInfo finalEdge = graph.edgeInfo.get(getLast(edges).id);
         var containedExhibits = exhibitGroups.getOrDefault(getLast(nodes).id, null);
-        newDir.add(new DirectionItem(graph.nodeInfo.get(getLast(nodes).id), finalEdge.street, currWeight, containedExhibits));
+
+        var node = graph.nodeInfo.get(getLast(nodes).id);
+        newDir.add(new DirectionItem(node, finalEdge.street, currWeight, containedExhibits));
 
         return newDir;
     }
@@ -165,48 +302,6 @@ public class PlanViewModel extends AndroidViewModel {
     }
 
     /**
-     * Changes state of MutableLivaData boolean based on toggle.
-     */
-    public void updateCurrentDirections() {
-        if (!detailedDirectionToggle.getValue()) {
-            setDirections(computeSimplePlan(_plan, curExhibit));
-        } else {
-            setDirections(computeDetailedPlan(_plan, curExhibit));
-        }
-
-        updateObservables();
-    }
-
-    /**
-     * Proceeds to next exhibit and changes state based on toggle.
-     */
-    public void getDirectionsToNextExhibit() {
-        // If there are no more exhibits to visit, do nothing
-        if (curExhibit >= _plan.size() - 1) return;
-
-        // Update directions display
-        if (!detailedDirectionToggle.getValue()) {
-            setDirections(computeSimplePlan(_plan, ++curExhibit));
-        } else {
-            setDirections(computeDetailedPlan(_plan, ++curExhibit));
-        }
-
-        updateObservables();
-    }
-
-    public LiveData<List<DirectionItem>> getDirections() {
-        return directions;
-    }
-
-    private void setDirections(List<DirectionItem> directions) {
-        this.directions.setValue(directions);
-    }
-
-    public Route getRoute() {
-        return route;
-    }
-
-    /**
      * Updates the subjects being observed to match current pathing data
      */
     private void updateObservables() {
@@ -236,44 +331,62 @@ public class PlanViewModel extends AndroidViewModel {
         remainingExhibits.set(_plan.size() - curExhibit);
     }
 
-    public void initRoute(List<String> selectedAnimals) {
-        this.route = new Route(graph, selectedAnimals, "entrance_exit_gate");
-        setPlan(route.getRoute());
-        getDirectionsToNextExhibit();
+    /// Getters
+    public List<List<GraphNode>> getPlan() {
+        return _plan;
     }
 
     public Graph getGraph() {
         return graph;
     }
 
-    public List<List<GraphNode>> getPlan() {
-        return _plan;
+    public Route getRoute() {
+        return route;
     }
 
-    public void clearPlan() {
-        _plan.clear();
+    public LiveData<List<DirectionItem>> getDirections() {
+        return directions;
     }
 
     public boolean isLastExhibit() {
-        return curExhibit >= _plan.size();
+        return curExhibit >= _plan.size() - 1;
+    }
+
+    /// Setters
+    public void setPlan(List<List<GraphNode>> plan) {
+        this._plan = plan;
+    }
+
+    private void setDirections(List<DirectionItem> directions) {
+        this.directions.setValue(directions);
     }
 
     public void setExhibitGroups(HashMap<String, List<String>> groups) {
         this.exhibitGroups = groups;
     }
 
-    public String skipNextExhibit(int index) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
-        String saved = sharedPreferences.getString(ANIMALS_ID, null);
-
-        // Load selected animals from json
-        var type = new TypeToken<List<Animal.AnimalDisplay>>() {
-        }.getType();
-        List<Animal.AnimalDisplay> animals = new Gson().fromJson(saved, type);
-
-        // Add to list
-        var temp = new ArrayList<>(animals);
-
-        return saved;
+    @Override
+    public void acceptHandler() {
+        var exhibit = exhibitAtLocation(lastKnownLocation.getValue());
+        var start = graph.nodes.get(exhibit.id);
+        var remaining = new ArrayList<String>();
+        for (int i = curExhibit; i < _plan.size() - 1; i++) {
+            remaining.add(getLast(_plan.get(i)).id);
+        }
+        curExhibit = 0;
+        // Create plan through remaining exhibits
+        route.createRouteThroughExhibits(remaining, start.id, "entrance_exit_gate");
+        if (route.getRoute().get(0).size() <= 1) {
+            route.getRoute().remove(0);
+            route.updateDistances();
+        }
+        setPlan(route.getRoute());
+        updateCurrentDirections(detailedDirectionToggle.getValue());
+        updateObservables();
     }
+
+    @Override
+    public void rejectHandler() { }
+  
+    public void skipNextExhibit() { }
 }

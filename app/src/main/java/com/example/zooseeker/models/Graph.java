@@ -190,6 +190,8 @@ public class Graph {
         public String id;
         public Kind kind;
         public String name;
+        public double lat;
+        public double lng;
         public List<String> tags;
     }
 

@@ -24,6 +24,7 @@ import com.example.zooseeker.databinding.ActivityHomeBinding;
 import com.example.zooseeker.models.db.Animal.AnimalDisplay;
 import com.example.zooseeker.models.command.SearchCommandParams;
 import com.example.zooseeker.models.command.SelectedAnimalParams;
+import com.example.zooseeker.util.PermissionChecker;
 import com.example.zooseeker.viewmodels.HomeActivityViewModel;
 
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        new PermissionChecker(this).ensurePermissions();
 
         // Create view model instance
         viewModel = new ViewModelProvider(this).get(HomeActivityViewModel.class);
