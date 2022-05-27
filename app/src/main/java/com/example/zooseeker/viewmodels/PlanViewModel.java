@@ -4,16 +4,10 @@ import static android.content.Context.MODE_PRIVATE;
 import static com.example.zooseeker.util.Constant.CURR_INDEX;
 import static com.example.zooseeker.util.Constant.SHARED_PREF;
 import static com.example.zooseeker.util.Helper.getLast;
-import static com.example.zooseeker.viewmodels.PlanViewModel.*;
 
-import android.app.Activity;
 import android.app.Application;
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.widget.TextView;
-import android.util.Log;
 import android.util.Pair;
-
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,22 +18,15 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.zooseeker.contracts.ICommand;
 import com.example.zooseeker.models.DirectionItem;
+import com.example.zooseeker.models.Graph;
 import com.example.zooseeker.models.Graph.EdgeInfo;
 import com.example.zooseeker.models.Graph.GraphData.GraphEdge;
+import com.example.zooseeker.models.Graph.GraphData.GraphNode;
 import com.example.zooseeker.models.Graph.NodeInfo;
 import com.example.zooseeker.models.Route;
-import com.example.zooseeker.models.db.Animal;
-import com.example.zooseeker.repositories.AnimalItemDao;
-import com.example.zooseeker.models.Graph;
-import com.example.zooseeker.models.Graph.GraphData.GraphNode;
 import com.example.zooseeker.repositories.AnimalDatabase;
-import com.example.zooseeker.util.Helper;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import org.w3c.dom.Text;
-import com.example.zooseeker.util.Alert;
+import com.example.zooseeker.repositories.AnimalItemDao;
 import com.example.zooseeker.util.Alert.AlertHandler;
-
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -367,19 +354,25 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
 
     @Override
     public void acceptHandler() {
+        // Get exhibit user is currently at
         var exhibit = exhibitAtLocation(lastKnownLocation.getValue());
+
+        // Add all exhibits that are remaining
         var start = graph.nodes.get(exhibit.id);
         var remaining = new ArrayList<String>();
         for (int i = curExhibit; i < _plan.size() - 1; i++) {
             remaining.add(getLast(_plan.get(i)).id);
         }
-        curExhibit = 0;
+
         // Create plan through remaining exhibits
+        curExhibit = 0;
         route.createRouteThroughExhibits(remaining, start.id, "entrance_exit_gate");
         if (route.getRoute().get(0).size() <= 1) {
             route.getRoute().remove(0);
             route.updateDistances();
         }
+
+        // Update plan
         setPlan(route.getRoute());
         updateCurrentDirections(detailedDirectionToggle.getValue());
         updateObservables();

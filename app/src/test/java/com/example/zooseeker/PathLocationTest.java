@@ -1,5 +1,6 @@
 package com.example.zooseeker;
 
+import static com.example.zooseeker.util.Helper.getLast;
 import static org.junit.Assert.assertEquals;
 
 import android.app.Application;
@@ -61,5 +62,37 @@ public class PathLocationTest {
         vm.lastKnownLocation.setValue(new Pair<>(32.74213959255212, -117.16066409380507));
         vm.adjustToNewLocation(vm.lastKnownLocation.getValue());
         assertEquals(115, (int) vm.curExhibitDist.get());
+    }
+
+    @Test
+    public void testRerouteWhenCloser() {
+        vm = new PlanViewModel(app);
+        List<String> selected = new ArrayList<>();
+        selected.add("siamang");
+        selected.add("gorilla");
+        vm.setExhibitGroups(new HashMap<>());
+        vm.initRoute(selected);
+
+        var directions = vm.getRoute().getRoute();
+
+        // Pathing to siamangs first
+        assertEquals("siamang", getLast(directions.get(0)).id);
+
+        // Teleport to Scripps Aviary
+        vm.lastKnownLocation.setValue(new Pair<>(32.748538318135594, -117.17255093386991));
+        vm.adjustToNewLocation(vm.lastKnownLocation.getValue());
+
+        // Gorillas is our new closest exhibit
+        assertEquals("Gorillas", vm.closestExhibit.getValue());
+
+        // Accept reroute
+        vm.acceptHandler();
+        directions = vm.getRoute().getRoute();
+
+        // Number of exhibits is unchanged
+        assertEquals(3, directions.size());
+        // We are routing to new closest exhibit
+        assertEquals("gorilla", getLast(directions.get(0)).id);
+        assertEquals("siamang", getLast(directions.get(1)).id);
     }
 }

@@ -13,23 +13,7 @@
         android:id="@+id/skipButton"
         android:title=""
         app:showAsAction="always"
-        android:icon="@drawable/skip_button"
-        android:iconTint="@color/white" />
-
-    <item
-        android:id="@+id/previousButton"
-        android:title=""
-        app:showAsAction="always"
-        android:icon="@drawable/previous_button_foreground"
-        android:iconTint="@color/white"
-        />
-    <item
-    android:id="@+id/skipButton"
-    android:title=""
-    app:showAsAction="always"
-    android:icon="@drawable/skip_button_foreground"
-        android:iconTint="@color/white"
-        />
+        android:icon="@drawable/skip_button" />
     <item
         android:id="@+id/eraseRoutePlanButton"
         android:title=""
