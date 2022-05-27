@@ -151,7 +151,7 @@ public class DirectionActivity extends AppCompatActivity {
         final EditText exhibitInput = new EditText(this);
         exhibitInput.setInputType(exhibitInputType);
         exhibitInput.setHint("Exhibit ID (Optional)");
-        exhibitInput.setText("siamang");
+        exhibitInput.setText("");
 
         final LinearLayout layout = new LinearLayout(this);
         layout.setDividerPadding(8);
