@@ -146,6 +146,7 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
                 this.closestExhibit.setValue(closestExhibit.name);
             }
 
+            if (directions.getValue().size() < 1) return;
             // Update plan
             _plan.set(curExhibit, route.shortestPathToNode(start, dest));
             route.updateDistances();
