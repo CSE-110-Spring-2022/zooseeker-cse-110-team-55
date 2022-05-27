@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.example.zooseeker.R;
 import com.example.zooseeker.adapters.DirectionAdapter;
@@ -114,11 +115,12 @@ public class DirectionActivity extends AppCompatActivity {
     // Handle button activities
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        SharedPreferences sharedPreferences = getSharedPreferences("SHARED_PREF", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
         int id = item.getItemId();
+
         switch(id) {
             case R.id.eraseRoutePlanButton:
-                SharedPreferences sharedPreferences = getSharedPreferences("SHARED_PREF", MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.clear();
                 editor.apply();
                 vm.clearPlan();
@@ -129,12 +131,26 @@ public class DirectionActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, HomeActivity.class);
                 startActivity(intent);
                 return true;
+
             case R.id.toggleDetailed:
                 Detailed = !item.isChecked();
                 item.setChecked(Detailed);
                 vm.detailedDirectionToggle.setValue(Detailed);
                 vm.updateCurrentDirections();
                 return true;
+
+            case R.id.skipButton:
+                int index = sharedPreferences.getInt(CURR_INDEX, 0) + 1;
+                String temp = vm.skipNextExhibit(index);
+                TextView textView = findViewById(R.id.test_view);
+                textView.setText(temp);
+
+                return true;
+
+            case R.id.returnButton:
+                // TODO Implement the behaviour of return button here
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }

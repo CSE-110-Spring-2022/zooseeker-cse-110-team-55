@@ -1,10 +1,16 @@
 package com.example.zooseeker.viewmodels;
 
+import static android.content.Context.MODE_PRIVATE;
+import static com.example.zooseeker.util.Constant.ANIMALS_ID;
+import static com.example.zooseeker.util.Constant.CURR_INDEX;
+import static com.example.zooseeker.util.Constant.SHARED_PREF;
 import static com.example.zooseeker.util.Helper.getLast;
 import static com.example.zooseeker.util.Helper.getSecondToLast;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,11 +24,16 @@ import com.example.zooseeker.models.DirectionItem;
 import com.example.zooseeker.models.Graph.EdgeInfo;
 import com.example.zooseeker.models.Graph.GraphData.GraphEdge;
 import com.example.zooseeker.models.Route;
+import com.example.zooseeker.models.db.Animal;
 import com.example.zooseeker.repositories.AnimalItemDao;
 import com.example.zooseeker.models.Graph;
 import com.example.zooseeker.models.Graph.GraphData.GraphNode;
 import com.example.zooseeker.repositories.AnimalDatabase;
 import com.example.zooseeker.util.Helper;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -249,5 +260,20 @@ public class PlanViewModel extends AndroidViewModel {
 
     public void setExhibitGroups(HashMap<String, List<String>> groups) {
         this.exhibitGroups = groups;
+    }
+
+    public String skipNextExhibit(int index) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
+        String saved = sharedPreferences.getString(ANIMALS_ID, null);
+
+        // Load selected animals from json
+        var type = new TypeToken<List<Animal.AnimalDisplay>>() {
+        }.getType();
+        List<Animal.AnimalDisplay> animals = new Gson().fromJson(saved, type);
+
+        // Add to list
+        var temp = new ArrayList<>(animals);
+
+        return saved;
     }
 }
