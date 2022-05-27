@@ -10,8 +10,10 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.widget.TextView;
 import android.util.Log;
 import android.util.Pair;
+
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,12 +28,18 @@ import com.example.zooseeker.models.Graph.EdgeInfo;
 import com.example.zooseeker.models.Graph.GraphData.GraphEdge;
 import com.example.zooseeker.models.Graph.NodeInfo;
 import com.example.zooseeker.models.Route;
+import com.example.zooseeker.models.db.Animal;
 import com.example.zooseeker.repositories.AnimalItemDao;
 import com.example.zooseeker.models.Graph;
 import com.example.zooseeker.models.Graph.GraphData.GraphNode;
 import com.example.zooseeker.repositories.AnimalDatabase;
+import com.example.zooseeker.util.Helper;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import org.w3c.dom.Text;
 import com.example.zooseeker.util.Alert;
 import com.example.zooseeker.util.Alert.AlertHandler;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -379,4 +387,6 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
 
     @Override
     public void rejectHandler() { }
+  
+    public void skipNextExhibit() { }
 }

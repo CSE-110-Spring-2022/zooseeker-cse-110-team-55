@@ -29,6 +29,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
+
+import android.widget.TextView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
@@ -204,6 +206,7 @@ public class DirectionActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+
         switch(id) {
             case R.id.eraseRoutePlanButton:
                 SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
@@ -218,11 +221,17 @@ public class DirectionActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, HomeActivity.class);
                 startActivity(intent);
                 return true;
+
             case R.id.toggleDetailed:
                 Detailed = !item.isChecked();
                 item.setChecked(Detailed);
                 vm.detailedDirectionToggle.setValue(Detailed);
                 return true;
+
+            case R.id.returnButton:
+                // TODO Implement the behaviour of return button here
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }

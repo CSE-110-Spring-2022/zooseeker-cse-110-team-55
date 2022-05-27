@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/returnButton"
+        android:title=""
+        app:showAsAction="always"
+        android:icon="@drawable/return_button"
+        android:iconTint="@color/white" />
+
+    <item
+        android:id="@+id/skipButton"
+        android:title=""
+        app:showAsAction="always"
+        android:icon="@drawable/skip_button"
+        android:iconTint="@color/white" />
+
     <item
         android:id="@+id/previousButton"
         android:title=""
@@ -20,13 +35,12 @@
         android:title=""
         app:showAsAction="always"
         android:icon="@drawable/trash_bin"
-        android:iconTint="@color/white"
-        />
+        android:iconTint="@color/white" />
+
     <item
         android:id="@+id/toggleDetailed"
         android:title="Toggle Detailed"
         app:showAsAction="never"
-        android:checkable="true"
-    />
+        android:checkable="true" />
 
 </menu>
