@@ -2,6 +2,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/previousButton"
+        android:title=""
+        app:showAsAction="always"
+        android:icon="@drawable/previous_button_foreground"
+        android:iconTint="@color/white"
+        />
+    <item
+    android:id="@+id/skipButton"
+    android:title=""
+    app:showAsAction="always"
+    android:icon="@drawable/skip_button_foreground"
+        android:iconTint="@color/white"
+        />
+    <item
         android:id="@+id/eraseRoutePlanButton"
         android:title=""
         app:showAsAction="always"
