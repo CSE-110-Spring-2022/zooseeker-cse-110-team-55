@@ -32,7 +32,7 @@ public class PathLocationTest {
         List<String> selected = new ArrayList<>();
         selected.add("siamang");
         vm.setExhibitGroups(new HashMap<>());
-        vm.initRoute(selected);
+        vm.initRoute(selected, "entrance_exit_gate");
     }
 
     @Test
@@ -74,7 +74,7 @@ public class PathLocationTest {
         selected.add("siamang");
         selected.add("gorilla");
         vm.setExhibitGroups(new HashMap<>());
-        vm.initRoute(selected);
+        vm.initRoute(selected, "entrance_exit_gate");
 
         var directions = vm.getRoute().getRoute();
 
@@ -106,7 +106,7 @@ public class PathLocationTest {
         selected.add("siamang");
         selected.add("gorilla");
         vm.setExhibitGroups(new HashMap<>());
-        vm.initRoute(selected);
+        vm.initRoute(selected, "entrance_exit_gate");
         var directions = vm.getRoute().getRoute();
 
         // Teleport to gorillas
@@ -137,7 +137,7 @@ public class PathLocationTest {
         selected.add("owens_aviary");
         selected.add("gorilla");
         vm.setExhibitGroups(new HashMap<>());
-        vm.initRoute(selected);
+        vm.initRoute(selected, "entrance_exit_gate");
         var directions = vm.getRoute().getRoute();
 
         // Teleport to gorillas
