@@ -10,32 +10,26 @@ import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
-import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static com.example.zooseeker.util.Constant.ANIMALS_ID;
-import static com.example.zooseeker.util.Constant.CURR_INDEX;
 import static com.example.zooseeker.util.Constant.SHARED_PREF;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.is;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
 import androidx.test.core.app.ActivityScenario;
-import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.ViewInteraction;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.rule.GrantPermissionRule;
 
 import com.example.zooseeker.R;
 import com.example.zooseeker.activities.HomeActivity;
-import com.example.zooseeker.util.Constant;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -47,7 +41,8 @@ import org.junit.runner.RunWith;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class CompleteUITest {
+public class FullUITest {
+
     public ActivityScenario mActivityTestRule = null;
 
     @Before
@@ -64,18 +59,15 @@ public class CompleteUITest {
         editor.apply();
     }
 
-    @Test
-    public void completeUITest() {
-        ViewInteraction actionMenuItemView = onView(
-                allOf(withId(R.id.eraseSelectedExhibitsButton),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(androidx.appcompat.R.id.action_bar),
-                                        1),
-                                0),
-                        isDisplayed()));
-        actionMenuItemView.perform(click());
 
+    @Rule
+    public GrantPermissionRule mGrantPermissionRule =
+            GrantPermissionRule.grant(
+                    "android.permission.ACCESS_FINE_LOCATION",
+                    "android.permission.ACCESS_COARSE_LOCATION");
+
+    @Test
+    public void fullUITest() {
         ViewInteraction searchAutoComplete = onView(
                 allOf(withClassName(is("android.widget.SearchView$SearchAutoComplete")),
                         childAtPosition(
@@ -98,19 +90,8 @@ public class CompleteUITest {
                         isDisplayed()));
         searchAutoComplete2.perform(pressImeActionButton());
 
-        ViewInteraction appCompatImageView = onView(
-                allOf(withClassName(is("androidx.appcompat.widget.AppCompatImageView")), withContentDescription("Clear query"),
-                        childAtPosition(
-                                allOf(withClassName(is("android.widget.LinearLayout")),
-                                        childAtPosition(
-                                                withClassName(is("android.widget.LinearLayout")),
-                                                1)),
-                                1),
-                        isDisplayed()));
-        appCompatImageView.perform(click());
-
         ViewInteraction searchAutoComplete3 = onView(
-                allOf(withClassName(is("android.widget.SearchView$SearchAutoComplete")),
+                allOf(withClassName(is("android.widget.SearchView$SearchAutoComplete")), withText("l"),
                         childAtPosition(
                                 allOf(withClassName(is("android.widget.LinearLayout")),
                                         childAtPosition(
@@ -118,7 +99,7 @@ public class CompleteUITest {
                                                 1)),
                                 0),
                         isDisplayed()));
-        searchAutoComplete3.perform(replaceText("l"), closeSoftKeyboard());
+        searchAutoComplete3.perform(click());
 
         ViewInteraction searchAutoComplete4 = onView(
                 allOf(withClassName(is("android.widget.SearchView$SearchAutoComplete")), withText("l"),
@@ -161,7 +142,7 @@ public class CompleteUITest {
                                 childAtPosition(
                                         withClassName(is("androidx.constraintlayout.widget.ConstraintLayout")),
                                         0),
-                                1),
+                                2),
                         isDisplayed()));
         materialButton2.perform(click());
 
@@ -171,7 +152,7 @@ public class CompleteUITest {
                                 childAtPosition(
                                         withClassName(is("androidx.constraintlayout.widget.ConstraintLayout")),
                                         0),
-                                1),
+                                2),
                         isDisplayed()));
         materialButton3.perform(click());
 
@@ -181,11 +162,11 @@ public class CompleteUITest {
                                 childAtPosition(
                                         withClassName(is("androidx.constraintlayout.widget.ConstraintLayout")),
                                         0),
-                                1),
+                                2),
                         isDisplayed()));
         materialButton4.perform(click());
 
-        ViewInteraction actionMenuItemView2 = onView(
+        ViewInteraction actionMenuItemView = onView(
                 allOf(withId(R.id.eraseSelectedExhibitsButton),
                         childAtPosition(
                                 childAtPosition(
@@ -193,7 +174,7 @@ public class CompleteUITest {
                                         1),
                                 0),
                         isDisplayed()));
-        actionMenuItemView2.perform(click());
+        actionMenuItemView.perform(click());
 
         ViewInteraction searchAutoComplete5 = onView(
                 allOf(withClassName(is("android.widget.SearchView$SearchAutoComplete")),
@@ -270,15 +251,15 @@ public class CompleteUITest {
                         isDisplayed()));
         materialButton7.perform(click());
 
-        ViewInteraction actionMenuItemView3 = onView(
+        ViewInteraction actionMenuItemView2 = onView(
                 allOf(withId(R.id.eraseRoutePlanButton),
                         childAtPosition(
                                 childAtPosition(
                                         withId(androidx.appcompat.R.id.action_bar),
                                         1),
-                                0),
+                                2),
                         isDisplayed()));
-        actionMenuItemView3.perform(click());
+        actionMenuItemView2.perform(click());
     }
 
     private static Matcher<View> childAtPosition(

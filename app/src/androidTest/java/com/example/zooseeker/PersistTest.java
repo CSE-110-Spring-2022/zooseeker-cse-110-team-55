@@ -1,6 +1,8 @@
 package com.example.zooseeker;
 
 
+import static android.content.Context.MODE_PRIVATE;
+import static com.example.zooseeker.util.Constant.SHARED_PREF;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
@@ -13,6 +15,7 @@ import androidx.room.Room;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.example.zooseeker.activities.HomeActivity;
 import com.example.zooseeker.databinding.ActivityHomeBinding;
@@ -31,6 +34,14 @@ public class PersistTest {
     AnimalDatabase testDb;
     AnimalItemDao animalItemDao;
 
+    private void clearSharedPrefs() {
+        var context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        var editor = context.getSharedPreferences(SHARED_PREF, MODE_PRIVATE).edit();
+        editor.clear();
+        editor.apply();
+    }
+
+
     @Before
     public void resetDatabase() {
         Context context = ApplicationProvider.getApplicationContext();
@@ -46,6 +57,7 @@ public class PersistTest {
 
     @Test
     public void testListShowsDbItems() {
+        clearSharedPrefs();
         ActivityScenario<HomeActivity> scenario = ActivityScenario.launch(HomeActivity.class);
         scenario.moveToState(Lifecycle.State.CREATED);
         scenario.moveToState(Lifecycle.State.STARTED);

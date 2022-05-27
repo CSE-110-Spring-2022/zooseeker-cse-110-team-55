@@ -126,14 +126,14 @@ public class FullRelocateTest {
                         childAtPosition(
                                 withClassName(is("android.widget.RelativeLayout")),
                                 1)));
-        recyclerView2.perform(actionOnItemAtPosition(5, click()));
+        recyclerView2.perform(actionOnItemAtPosition(6, click()));
 
         ViewInteraction recyclerView3 = onView(
                 allOf(withId(R.id.recyclerView),
                         childAtPosition(
                                 withClassName(is("android.widget.RelativeLayout")),
                                 1)));
-        recyclerView3.perform(actionOnItemAtPosition(9, click()));
+        recyclerView3.perform(actionOnItemAtPosition(8, click()));
 
         ViewInteraction materialButton = onView(
                 allOf(withId(R.id.direction_button), withText("Directions"),

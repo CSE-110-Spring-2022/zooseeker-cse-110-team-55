@@ -47,6 +47,7 @@ import org.junit.runner.RunWith;
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 public class AdjustFromLocationUITest {
+
     public ActivityScenario mActivityTestRule = null;
 
     @Before
@@ -93,8 +94,19 @@ public class AdjustFromLocationUITest {
                         isDisplayed()));
         searchAutoComplete2.perform(pressImeActionButton());
 
+        ViewInteraction appCompatImageView = onView(
+                allOf(withClassName(is("androidx.appcompat.widget.AppCompatImageView")), withContentDescription("Clear query"),
+                        childAtPosition(
+                                allOf(withClassName(is("android.widget.LinearLayout")),
+                                        childAtPosition(
+                                                withClassName(is("android.widget.LinearLayout")),
+                                                1)),
+                                1),
+                        isDisplayed()));
+        appCompatImageView.perform(click());
+
         ViewInteraction searchAutoComplete3 = onView(
-                allOf(withClassName(is("android.widget.SearchView$SearchAutoComplete")), withText("a"),
+                allOf(withClassName(is("android.widget.SearchView$SearchAutoComplete")),
                         childAtPosition(
                                 allOf(withClassName(is("android.widget.LinearLayout")),
                                         childAtPosition(
@@ -102,7 +114,7 @@ public class AdjustFromLocationUITest {
                                                 1)),
                                 0),
                         isDisplayed()));
-        searchAutoComplete3.perform(click());
+        searchAutoComplete3.perform(replaceText("a"), closeSoftKeyboard());
 
         ViewInteraction searchAutoComplete4 = onView(
                 allOf(withClassName(is("android.widget.SearchView$SearchAutoComplete")), withText("a"),
@@ -120,21 +132,7 @@ public class AdjustFromLocationUITest {
                         childAtPosition(
                                 withClassName(is("android.widget.RelativeLayout")),
                                 1)));
-        recyclerView.perform(actionOnItemAtPosition(0, click()));
-
-        ViewInteraction recyclerView2 = onView(
-                allOf(withId(R.id.recyclerView),
-                        childAtPosition(
-                                withClassName(is("android.widget.RelativeLayout")),
-                                1)));
-        recyclerView2.perform(actionOnItemAtPosition(6, click()));
-
-        ViewInteraction recyclerView3 = onView(
-                allOf(withId(R.id.recyclerView),
-                        childAtPosition(
-                                withClassName(is("android.widget.RelativeLayout")),
-                                1)));
-        recyclerView3.perform(actionOnItemAtPosition(11, click()));
+        recyclerView.perform(actionOnItemAtPosition(6, click()));
 
         ViewInteraction materialButton = onView(
                 allOf(withId(R.id.direction_button), withText("Directions"),
@@ -145,6 +143,13 @@ public class AdjustFromLocationUITest {
                                 2),
                         isDisplayed()));
         materialButton.perform(click());
+
+        ViewInteraction textView = onView(
+                allOf(withId(R.id.animal_distance), withText("90 feet away"),
+                        withParent(allOf(withId(R.id.distance_header),
+                                withParent(IsInstanceOf.<View>instanceOf(android.widget.RelativeLayout.class)))),
+                        isDisplayed()));
+        textView.check(matches(withText("90 feet away")));
 
         ViewInteraction materialButton2 = onView(
                 allOf(withText("MOCK LOCATION"),
@@ -163,46 +168,7 @@ public class AdjustFromLocationUITest {
                                         0),
                                 2),
                         isDisplayed()));
-        editText.perform(click());
-
-        ViewInteraction editText2 = onView(
-                allOf(childAtPosition(
-                                childAtPosition(
-                                        withId(android.R.id.custom),
-                                        0),
-                                2),
-                        isDisplayed()));
-        editText2.perform(replaceText("in"), closeSoftKeyboard());
-
-        ViewInteraction editText3 = onView(
-                allOf(withText("in"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(android.R.id.custom),
-                                        0),
-                                2),
-                        isDisplayed()));
-        editText3.perform(click());
-
-        ViewInteraction editText4 = onView(
-                allOf(withText("in"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(android.R.id.custom),
-                                        0),
-                                2),
-                        isDisplayed()));
-        editText4.perform(replaceText("intxn_hippo_monkey_trails"));
-
-        ViewInteraction editText5 = onView(
-                allOf(withText("intxn_hippo_monkey_trails"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(android.R.id.custom),
-                                        0),
-                                2),
-                        isDisplayed()));
-        editText5.perform(closeSoftKeyboard());
+        editText.perform(replaceText("koi"), closeSoftKeyboard());
 
         ViewInteraction materialButton3 = onView(
                 allOf(withId(android.R.id.button1), withText("Submit"),
@@ -213,39 +179,12 @@ public class AdjustFromLocationUITest {
                                 3)));
         materialButton3.perform(scrollTo(), click());
 
-        ViewInteraction overflowMenuButton = onView(
-                allOf(withContentDescription("More options"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(androidx.appcompat.R.id.action_bar),
-                                        1),
-                                3),
-                        isDisplayed()));
-        overflowMenuButton.perform(click());
-
-        ViewInteraction materialTextView = onView(
-                allOf(withId(androidx.appcompat.R.id.title), withText("Toggle Detailed"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(androidx.appcompat.R.id.content),
-                                        0),
-                                0),
-                        isDisplayed()));
-        materialTextView.perform(click());
-
-        ViewInteraction textView = onView(
-                allOf(withId(R.id.animal_name), withText("Flamingos "),
-                        withParent(allOf(withId(R.id.name_header),
-                                withParent(IsInstanceOf.<View>instanceOf(android.widget.RelativeLayout.class)))),
-                        isDisplayed()));
-        textView.check(matches(withText("Flamingos ")));
-
         ViewInteraction textView2 = onView(
-                allOf(withId(R.id.animal_distance), withText("200 feet away"),
+                allOf(withId(R.id.animal_distance), withText("130 feet away"),
                         withParent(allOf(withId(R.id.distance_header),
                                 withParent(IsInstanceOf.<View>instanceOf(android.widget.RelativeLayout.class)))),
                         isDisplayed()));
-        textView2.check(matches(withText("200 feet away")));
+        textView2.check(matches(withText("130 feet away")));
     }
 
     private static Matcher<View> childAtPosition(
