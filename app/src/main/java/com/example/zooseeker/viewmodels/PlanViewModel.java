@@ -182,7 +182,7 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
     private NodeInfo findClosestExhibit() {
         // Get paths to all remaining exhibits
         double minWeight = Double.MAX_VALUE;
-        GraphNode closestExhibit = null;
+        GraphNode closestExhibit = getLast(_plan.get(curExhibit));
         // Get the exhibit the user is closest to right now
         var location = exhibitAtLocation(lastKnownLocation.getValue());
         for (int i = curExhibit; i < _plan.size() - 1; i++) {
