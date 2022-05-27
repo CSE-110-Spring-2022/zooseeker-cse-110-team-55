@@ -228,6 +228,10 @@ public class DirectionActivity extends AppCompatActivity {
                 vm.detailedDirectionToggle.setValue(Detailed);
                 return true;
 
+            case R.id.skipButton:
+                // TODO Implement the behaviour of skip button here
+                return true;
+
             case R.id.returnButton:
                 // TODO Implement the behaviour of return button here
                 return true;
