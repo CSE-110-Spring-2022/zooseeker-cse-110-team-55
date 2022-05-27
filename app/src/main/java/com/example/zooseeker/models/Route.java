@@ -1,5 +1,7 @@
 package com.example.zooseeker.models;
 
+import static com.example.zooseeker.util.Helper.getLast;
+
 import android.util.Log;
 
 import com.example.zooseeker.models.Graph.GraphData.GraphEdge;
@@ -18,12 +20,18 @@ public class Route {
     private int[] _distances;
     private List<List<GraphNode>> route;
 
-    public Route(Graph graph, List<String> exhibitIds, String startExhibit) {
+    public Route(Graph graph, List<String> exhibitIds, String startExhibit, String endExhibit) {
         this.graph = graph;
-        createRouteThroughExhibits(exhibitIds, startExhibit);
+        createRouteThroughExhibits(exhibitIds, startExhibit, endExhibit);
     }
 
-    public void createRouteThroughExhibits(List<String> exhibitIds, String startExhibit) {
+    /**
+     * Creates a route through given exhibit IDs and calculates distances
+     * @param exhibitIds
+     * @param startExhibit
+     * @param endExhibit
+     */
+    public void createRouteThroughExhibits(List<String> exhibitIds, String startExhibit, String endExhibit) {
         // Convert exhibit IDs to graph nodes
         List<GraphNode> selectedAnimalNodes = new ArrayList<>(
                 exhibitIds
@@ -32,9 +40,10 @@ public class Route {
                         .collect(Collectors.toList())
         );
         GraphNode start = graph.nodes.get(startExhibit);
+        GraphNode end = startExhibit.equals(endExhibit) ? start : graph.nodes.get(endExhibit);
 
         // Set instance fields
-        route = createShortestRoute(selectedAnimalNodes, start);
+        route = createShortestRoute(selectedAnimalNodes, start, end);
         _distances = calculateDistances();
     }
 
@@ -43,6 +52,10 @@ public class Route {
     }
 
     public int[] getDistancesToEachExhibit() { return _distances; }
+
+    public void updateDistances() {
+        _distances = calculateDistances();
+    }
 
     public Graph getGraph() { return graph; }
 
@@ -69,11 +82,11 @@ public class Route {
     }
 
     // Algo
-    private List<List<GraphNode>> createShortestRoute(List<GraphNode> selected, GraphNode start) {
+    private List<List<GraphNode>> createShortestRoute(List<GraphNode> selected, GraphNode start, GraphNode end) {
         List<List<GraphNode>> plan = new ArrayList<>();
         // exhibits to be planned
         List<GraphNode> unplanned_exhibits = new ArrayList<>(selected);
-        // u = entrance
+        // u = start node
         GraphNode u = start;
         List<GraphNode> partialPath;
         // Run dijkstra's on u
@@ -93,12 +106,12 @@ public class Route {
             Log.d("Added element", String.valueOf(u.id));
         }
 
-        plan.add(shortestPathToNode(u, start));
+        plan.add(shortestPathToNode(u, end));
 
         return plan;
     }
 
-    private ArrayList<GraphNode> shortestPathToNode(GraphNode start, GraphNode end) {
+    public ArrayList<GraphNode> shortestPathToNode(GraphNode start, GraphNode end) {
         return pathToNearestNeighbor(start, new ArrayList<>(Collections.singleton(end)));
     }
 

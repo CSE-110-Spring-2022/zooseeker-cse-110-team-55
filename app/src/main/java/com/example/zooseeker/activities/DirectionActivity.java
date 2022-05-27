@@ -1,25 +1,44 @@
 package com.example.zooseeker.activities;
 
+import static com.example.zooseeker.util.Constant.EXTRA_LISTEN_TO_GPS;
 import static com.example.zooseeker.util.Constant.SHARED_PREF;
 import static com.example.zooseeker.util.Constant.CURR_INDEX;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.databinding.Observable;
+import androidx.databinding.Observable.OnPropertyChangedCallback;
+import androidx.databinding.ObservableField;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 
 import com.example.zooseeker.R;
 import com.example.zooseeker.adapters.DirectionAdapter;
 import com.example.zooseeker.databinding.ActivityDirectionBinding;
 import com.example.zooseeker.fragments.RouteSummaryFragment;
+import com.example.zooseeker.models.Graph;
+import com.example.zooseeker.util.Alert;
+import com.example.zooseeker.util.PermissionChecker;
 import com.example.zooseeker.viewmodels.PlanViewModel;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -27,6 +46,7 @@ import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class DirectionActivity extends AppCompatActivity {
     private PlanViewModel vm;
@@ -62,15 +82,13 @@ public class DirectionActivity extends AppCompatActivity {
 
         // Observe changes to list of current directions
         vm.getDirections().observe(this, adapter::setDirections);
+        vm.detailedDirectionToggle.observe(this, vm::updateCurrentDirections);
 
         // Show route summary fragment
         buttonDialog = findViewById(R.id.routeSummaryButton);
-        buttonDialog.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                routeSummaryFragment = new RouteSummaryFragment();
-                routeSummaryFragment.show(getSupportFragmentManager(), "TAG");
-            }
+        buttonDialog.setOnClickListener(view -> {
+            routeSummaryFragment = new RouteSummaryFragment();
+            routeSummaryFragment.show(getSupportFragmentManager(), "TAG");
         });
 
         // Load direction index from shared preferences and configure plan view model
@@ -79,6 +97,87 @@ public class DirectionActivity extends AppCompatActivity {
         for (int i = 0; i < curr_index; i++){
             vm.nextExhibitCommand.execute(this);
         }
+
+        // Use location
+        boolean useGps = getIntent().getBooleanExtra(EXTRA_LISTEN_TO_GPS, false);
+        if (useGps) initLocationListener(vm::adjustToNewLocation);
+        else vm.lastKnownLocation.observe(this, vm::adjustToNewLocation);
+
+        var x = this;
+        vm.closestExhibit.observe(this, s ->
+                Alert.alert(this,
+                        "Uh oh!",
+                        String.format("Looks like you're off track. You're now closest to: %s. Replan?", s),
+                        vm::acceptHandler,
+                        vm::rejectHandler
+                ));
+    }
+
+    @SuppressLint("MissingPermission")
+    private void initLocationListener(Consumer<Pair<Double, Double>> handler) {
+        var provider = LocationManager.GPS_PROVIDER;
+        var locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        var locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(@NonNull Location location) {
+                var coords = new Pair<>(location.getLatitude(), location.getLongitude());
+                handler.accept(coords);
+            }
+        };
+        locationManager.requestLocationUpdates(provider, 0, 0f, locationListener);
+    }
+
+    @SuppressLint("SetTextI18n")
+    public void onMockButtonClicked(View view) {
+        // TODO: could define this layout in an XML and inflate it, instead of defining in code...
+        var inputType = EditorInfo.TYPE_CLASS_NUMBER
+                | EditorInfo.TYPE_NUMBER_FLAG_SIGNED
+                | EditorInfo.TYPE_NUMBER_FLAG_DECIMAL;
+        var exhibitInputType = EditorInfo.TYPE_CLASS_TEXT;
+
+        // Default is orangutan!
+        final EditText latInput = new EditText(this);
+        latInput.setInputType(inputType);
+        latInput.setHint("Latitude");
+        latInput.setText("32.736864688333235");
+
+        final EditText lngInput = new EditText(this);
+        lngInput.setInputType(inputType);
+        lngInput.setHint("Longitude");
+        lngInput.setText("-117.16364410510093");
+
+        final EditText exhibitInput = new EditText(this);
+        exhibitInput.setInputType(exhibitInputType);
+        exhibitInput.setHint("Exhibit ID (Optional)");
+        exhibitInput.setText("siamang");
+
+        final LinearLayout layout = new LinearLayout(this);
+        layout.setDividerPadding(8);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.addView(latInput);
+        layout.addView(lngInput);
+        layout.addView(exhibitInput);
+
+        var builder = new AlertDialog.Builder(this)
+                .setTitle("Inject a Mock Location")
+                .setView(layout)
+                .setPositiveButton("Submit", (dialog, which) -> {
+                    double lat = 0, lng = 0;
+                    if (exhibitInput.equals("")) {
+                        lat = Double.parseDouble(latInput.getText().toString());
+                        lng = Double.parseDouble(lngInput.getText().toString());
+                    } else {
+                        var node = vm.getGraph().nodeInfo.get(exhibitInput.getText().toString());
+                        if (node == null) return;
+                        lat = node.lat;
+                        lng = node.lng;
+                    }
+                    vm.lastKnownLocation.setValue((Pair.create(lat, lng)));
+                })
+                .setNegativeButton("Cancel", (dialog, which) -> {
+                    dialog.cancel();
+                });
+        builder.show();
     }
 
     // Hide route summary fragment
@@ -92,16 +191,6 @@ public class DirectionActivity extends AppCompatActivity {
      */
     public void onLaunchNextClicked(View view) {
         vm.nextExhibitCommand.execute(this);
-
-        // Increment direction index from shared preferences or reset index when reaches final destination
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        int temp = sharedPreferences.getInt(CURR_INDEX, 0);
-        editor.putInt(CURR_INDEX, temp + 1);
-        if(vm.isLastExhibit()){
-            editor.putInt(CURR_INDEX, -1);
-        }
-        editor.apply();
     }
 
     // Create an action bar button
@@ -117,7 +206,7 @@ public class DirectionActivity extends AppCompatActivity {
         int id = item.getItemId();
         switch(id) {
             case R.id.eraseRoutePlanButton:
-                SharedPreferences sharedPreferences = getSharedPreferences("SHARED_PREF", MODE_PRIVATE);
+                SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.clear();
                 editor.apply();
@@ -133,7 +222,6 @@ public class DirectionActivity extends AppCompatActivity {
                 Detailed = !item.isChecked();
                 item.setChecked(Detailed);
                 vm.detailedDirectionToggle.setValue(Detailed);
-                vm.updateCurrentDirections();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

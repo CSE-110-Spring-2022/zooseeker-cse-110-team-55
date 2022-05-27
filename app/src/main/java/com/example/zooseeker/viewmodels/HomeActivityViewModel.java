@@ -64,7 +64,7 @@ public class HomeActivityViewModel extends ViewModel {
         setAnimals(animalsToDisplay);
     }
 
-    private List<AnimalDisplay> searchInDatabase(Context context, String query) {
+    private static List<AnimalDisplay> searchInDatabase(Context context, String query) {
         AnimalItemDao animalItemDao = AnimalDatabase.getSingleton(context).animalItemDao();
         return animalItemDao.getDisplay(query);
     }

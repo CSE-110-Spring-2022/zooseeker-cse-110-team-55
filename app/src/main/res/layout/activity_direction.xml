@@ -58,6 +58,15 @@
 
             </RelativeLayout>
 
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/next_button"
+                android:text="MOCK LOCATION"
+                android:layout_centerHorizontal="true"
+                android:onClick="onMockButtonClicked"
+                />
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/next_button"
                 android:layout_width="match_parent"

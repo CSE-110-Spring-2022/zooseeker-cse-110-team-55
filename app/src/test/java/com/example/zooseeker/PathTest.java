@@ -49,7 +49,7 @@ public class PathTest {
 
         List<String> selected = new ArrayList<>();
         selected.add("flamingo");
-        Route route = new Route(graph, selected, "entrance_exit_gate");
+        Route route = new Route(graph, selected, "entrance_exit_gate", "entrance_exit_gate");
         List<List<GraphNode>> plan = route.getRoute();
         assertEquals(2, plan.size());
         assertEquals(4, plan.get(1).size());
@@ -62,7 +62,7 @@ public class PathTest {
 
         List<String> selected = new ArrayList<>();
         selected.add("flamingo");
-        Route route = new Route(graph, selected, "entrance_exit_gate");
+        Route route = new Route(graph, selected, "entrance_exit_gate", "entrance_exit_gate");
         List<List<GraphNode>> plan = route.getRoute();
         double totalWeight = 0;
         List<GraphNode> path = plan.get(0);
@@ -82,7 +82,7 @@ public class PathTest {
         selected.add("siamang");
         selected.add("hippo");
         selected.add("orangutan");
-        Route route = new Route(graph, selected, "entrance_exit_gate");
+        Route route = new Route(graph, selected, "entrance_exit_gate", "entrance_exit_gate");
         List<List<GraphNode>> plan = route.getRoute();
 
         assertEquals("entrance_exit_gate", plan.get(0).get(0).id);
