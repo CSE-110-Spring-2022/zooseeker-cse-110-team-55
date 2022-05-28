@@ -1,8 +1,6 @@
-package com.example.zooseeker;
+package com.example.zooseeker.GroupTest;
 
 import static android.content.Context.MODE_PRIVATE;
-import static com.example.zooseeker.util.Constant.ANIMALS_ID;
-import static com.example.zooseeker.util.Constant.CURR_INDEX;
 import static com.example.zooseeker.util.Constant.SHARED_PREF;
 import static org.junit.Assert.assertEquals;
 

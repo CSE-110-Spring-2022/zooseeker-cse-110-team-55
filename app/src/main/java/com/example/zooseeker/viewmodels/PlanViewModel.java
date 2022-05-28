@@ -393,5 +393,7 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
     @Override
     public void rejectHandler() { }
   
-    public void skipNextExhibit() { }
+    public void skipNextExhibit() {
+        // TODO Implement the logic to skip next exhibit
+    }
 }

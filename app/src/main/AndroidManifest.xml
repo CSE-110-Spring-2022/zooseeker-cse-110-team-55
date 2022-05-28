@@ -14,10 +14,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ZooSeeker" >
         <activity
-            android:name=".activities.DirectionActivity"
+            android:name=".GroupTest.DirectionActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.HomeActivity"
+            android:name=".GroupTest.HomeActivity"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />

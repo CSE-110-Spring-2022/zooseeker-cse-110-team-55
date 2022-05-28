@@ -1,4 +1,4 @@
-package com.example.zooseeker.activities;
+package com.example.zooseeker.GroupTest;
 
 import static com.example.zooseeker.util.Constant.CURR_INDEX;
 import static com.example.zooseeker.util.Constant.EXTRA_LISTEN_TO_GPS;
@@ -223,7 +223,11 @@ public class DirectionActivity extends AppCompatActivity {
                 return true;
 
             case R.id.returnButton:
-                // TODO Implement the behaviour of return button here
+                // TODO Implement the behaviour of return button
+                return true;
+
+            case R.id.skipButton:
+                // TODO Implement the behaviour of skip button
                 return true;
 
             default:

@@ -1,4 +1,4 @@
-package com.example.zooseeker;
+package com.example.zooseeker.IndividualTest;
 
 
 import static android.content.Context.MODE_PRIVATE;
@@ -25,17 +25,18 @@ import android.view.ViewParent;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.ViewInteraction;
-import androidx.test.ext.junit.rules.ActivityScenarioRule;
+import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.GrantPermissionRule;
 
 import com.example.zooseeker.R;
-import com.example.zooseeker.activities.HomeActivity;
+import com.example.zooseeker.GroupTest.HomeActivity;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.hamcrest.TypeSafeMatcher;
 import org.hamcrest.core.IsInstanceOf;
 import org.junit.Before;
@@ -115,7 +116,7 @@ public class FullRelocateTest {
         searchAutoComplete4.perform(pressImeActionButton());
 
         ViewInteraction recyclerView = onView(
-                allOf(withId(R.id.recyclerView),
+                Matchers.allOf(ViewMatchers.withId(R.id.recyclerView),
                         childAtPosition(
                                 withClassName(is("android.widget.RelativeLayout")),
                                 1)));

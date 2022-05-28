@@ -1,4 +1,4 @@
-package com.example.zooseeker.activities;
+package com.example.zooseeker.GroupTest;
 
 import static com.example.zooseeker.util.Constant.ANIMALS_ID;
 import static com.example.zooseeker.util.Constant.CURR_INDEX;
@@ -29,12 +29,10 @@ import com.example.zooseeker.util.PermissionChecker;
 import com.example.zooseeker.viewmodels.HomeActivityViewModel;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.example.zooseeker.util.Alert;
 import com.google.gson.Gson;
