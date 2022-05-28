@@ -72,6 +72,8 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
             editor.apply();
             getDirectionsToNextExhibit();
         }
+        // Reset skip
+        skip = false;
     };
 
     public PlanViewModel(@NonNull Application application) {
@@ -369,10 +371,6 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
 
     public void setExhibitGroups(HashMap<String, List<String>> groups) {
         this.exhibitGroups = groups;
-    }
-
-    public void resetSkip() {
-        skip = false;
     }
 
     @Override

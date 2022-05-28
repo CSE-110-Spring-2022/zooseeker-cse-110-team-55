@@ -190,7 +190,6 @@ public class DirectionActivity extends AppCompatActivity {
      */
     public void onLaunchNextClicked(View view) {
         vm.nextExhibitCommand.execute(this);
-        vm.resetSkip();
     }
 
     // Create an action bar button
