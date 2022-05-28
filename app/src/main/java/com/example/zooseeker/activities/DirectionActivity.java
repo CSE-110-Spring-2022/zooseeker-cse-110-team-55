@@ -223,7 +223,11 @@ public class DirectionActivity extends AppCompatActivity {
                 return true;
 
             case R.id.returnButton:
-                // TODO Implement the behaviour of return button here
+                // TODO Implement the behaviour of return button
+                return true;
+
+            case R.id.skipButton:
+                // TODO Implement the behaviour of skip button
                 return true;
 
             default:

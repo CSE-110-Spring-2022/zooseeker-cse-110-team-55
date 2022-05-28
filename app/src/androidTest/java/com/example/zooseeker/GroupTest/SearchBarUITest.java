@@ -1,4 +1,4 @@
-package com.example.zooseeker;
+package com.example.zooseeker.GroupTest;
 
 
 import static android.content.Context.MODE_PRIVATE;
@@ -25,7 +25,6 @@ import android.view.ViewParent;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.ViewInteraction;
-import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -38,20 +37,19 @@ import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.hamcrest.core.IsInstanceOf;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class RouteSummaryUITest {
-    public ActivityScenario mActivityTestRule = null;
+public class SearchBarUITest {
+    public ActivityScenario mActivityScenarioRule = null;
 
     @Before
     public void init() {
         clearSharedPrefs();
 
-        mActivityTestRule = ActivityScenario.launch(HomeActivity.class);
+        mActivityScenarioRule  = ActivityScenario.launch(HomeActivity.class);
     }
 
     private void clearSharedPrefs() {
@@ -61,9 +59,8 @@ public class RouteSummaryUITest {
         editor.apply();
     }
 
-
     @Test
-    public void routeSummaryUITest() {
+    public void searchBarUITest() {
         ViewInteraction actionMenuItemView = onView(
                 allOf(withId(R.id.eraseSelectedExhibitsButton),
                         childAtPosition(
@@ -73,6 +70,13 @@ public class RouteSummaryUITest {
                                 0),
                         isDisplayed()));
         actionMenuItemView.perform(click());
+
+        ViewInteraction textView = onView(
+                allOf(withId(R.id.count), withText("0"),
+                        withParent(allOf(withId(R.id.topbar),
+                                withParent(IsInstanceOf.<View>instanceOf(android.widget.RelativeLayout.class)))),
+                        isDisplayed()));
+        textView.check(matches(withText("0")));
 
         ViewInteraction searchAutoComplete = onView(
                 allOf(withClassName(is("android.widget.SearchView$SearchAutoComplete")),
@@ -161,52 +165,45 @@ public class RouteSummaryUITest {
                                 1)));
         recyclerView3.perform(actionOnItemAtPosition(2, click()));
 
-        ViewInteraction materialButton = onView(
-                allOf(withId(R.id.direction_button), withText("Directions"),
+        ViewInteraction recyclerView4 = onView(
+                allOf(withId(R.id.recyclerView),
                         childAtPosition(
-                                childAtPosition(
-                                        withClassName(is("androidx.constraintlayout.widget.ConstraintLayout")),
-                                        0),
-                                2),
-                        isDisplayed()));
-        materialButton.perform(click());
+                                withClassName(is("android.widget.RelativeLayout")),
+                                1)));
+        recyclerView4.perform(actionOnItemAtPosition(3, click()));
 
-        ViewInteraction materialButton2 = onView(
-                allOf(withId(R.id.routeSummaryButton), withText("Route Summary"),
+        ViewInteraction recyclerView5 = onView(
+                allOf(withId(R.id.recyclerView),
                         childAtPosition(
-                                allOf(withId(R.id.topbar),
-                                        childAtPosition(
-                                                withClassName(is("android.widget.RelativeLayout")),
-                                                0)),
-                                2),
-                        isDisplayed()));
-        materialButton2.perform(click());
+                                withClassName(is("android.widget.RelativeLayout")),
+                                1)));
+        recyclerView5.perform(actionOnItemAtPosition(4, click()));
 
-        ViewInteraction textView = onView(
-                allOf(withId(R.id.textView), withText("Planned Exhibits"),
+        ViewInteraction textView2 = onView(
+                allOf(withId(R.id.count), withText("5"),
                         withParent(allOf(withId(R.id.topbar),
                                 withParent(IsInstanceOf.<View>instanceOf(android.widget.RelativeLayout.class)))),
                         isDisplayed()));
-        textView.check(matches(withText("Planned Exhibits")));
+        textView2.check(matches(withText("5")));
 
-        ViewInteraction materialButton3 = onView(
-                allOf(withId(R.id.hide_button), withText("Hide"),
+        ViewInteraction appCompatImageView2 = onView(
+                allOf(withClassName(is("androidx.appcompat.widget.AppCompatImageView")), withContentDescription("Clear query"),
                         childAtPosition(
-                                allOf(withId(R.id.topbar),
+                                allOf(withClassName(is("android.widget.LinearLayout")),
                                         childAtPosition(
-                                                withClassName(is("android.widget.RelativeLayout")),
-                                                0)),
+                                                withClassName(is("android.widget.LinearLayout")),
+                                                1)),
                                 1),
                         isDisplayed()));
-        materialButton3.perform(click());
+        appCompatImageView2.perform(click());
 
         ViewInteraction actionMenuItemView2 = onView(
-                allOf(withId(R.id.eraseRoutePlanButton),
+                allOf(withId(R.id.eraseSelectedExhibitsButton),
                         childAtPosition(
                                 childAtPosition(
                                         withId(androidx.appcompat.R.id.action_bar),
                                         1),
-                                2),
+                                0),
                         isDisplayed()));
         actionMenuItemView2.perform(click());
     }

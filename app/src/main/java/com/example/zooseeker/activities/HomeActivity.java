@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.SearchView;
 
 import com.example.zooseeker.R;
+import com.example.zooseeker.activities.DirectionActivity;
 import com.example.zooseeker.adapters.AnimalAdapter;
 import com.example.zooseeker.databinding.ActivityHomeBinding;
 import com.example.zooseeker.models.db.Animal.AnimalDisplay;
@@ -29,12 +30,10 @@ import com.example.zooseeker.util.PermissionChecker;
 import com.example.zooseeker.viewmodels.HomeActivityViewModel;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.example.zooseeker.util.Alert;
 import com.google.gson.Gson;
