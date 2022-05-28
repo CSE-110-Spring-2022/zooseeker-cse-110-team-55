@@ -38,6 +38,8 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
     private Graph graph;
     private Route route;
     private AnimalItemDao repository;
+    private GraphNode startNode;
+    private boolean skip = false;
 
     private int curExhibit = -1;
     private List<List<GraphNode>> _plan;
@@ -347,6 +349,10 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
         return curExhibit >= _plan.size() - 1;
     }
 
+    public int getCurIndex() {
+        return curExhibit;
+    }
+
     /// Setters
     public void setLocation(Pair<Double, Double> location) {
         this.lastKnownLocation.setValue(location);
@@ -394,6 +400,48 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
     public void rejectHandler() { }
   
     public void skipNextExhibit() {
-        // TODO Implement the logic to skip next exhibit
+
+        // Original     A -> B, B -> C
+        // Skip at A    A -> C
+        // Logic        A = cur, C = next
+
+        // Get start node
+        int index = curExhibit;
+
+        // If skipping in a row
+        if (skip == true){
+            // Don't update the start node
+        }
+        // If skipping at first exhibit
+        else if (index == 0) {
+            startNode = route.getRoute().get(0).get(0);
+        }
+        // If skipping at second or further exhibit
+        else {
+            int curr_size = route.getRoute().get(index - 1).size() - 1;
+            startNode = route.getRoute().get(index - 1).get(curr_size);
+        }
+
+        // Get end node
+        int next_size = route.getRoute().get(index + 1).size() - 1;
+        GraphNode next_exhibit = route.getRoute().get(index + 1).get(next_size);
+
+        // Computer the shortest path between start and end nodes
+        List<GraphNode> newRoute = route.shortestPathToNode(startNode, next_exhibit);
+        List<List<GraphNode>> routeList = new ArrayList<>();
+        routeList.add(newRoute);
+
+        // Override the route for the next exhibit and update the view model
+        skip = true;
+        _plan.set(index + 1, newRoute);
+        getDirectionsToNextExhibit();
+    }
+
+    public void resetSkip() {
+        skip = false;
+    }
+
+    public boolean checkSkip() {
+        return remainingExhibits.get() == 2 && startNode == route.getRoute().get(0).get(0);
     }
 }

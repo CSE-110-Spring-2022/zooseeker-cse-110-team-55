@@ -21,6 +21,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -37,6 +38,8 @@ import com.example.zooseeker.util.Alert;
 import com.example.zooseeker.viewmodels.PlanViewModel;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -116,8 +119,8 @@ public class DirectionActivity extends AppCompatActivity {
         var locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(@NonNull Location location) {
-                var coords = new Pair<>(location.getLatitude(), location.getLongitude());
-                handler.accept(coords);
+                //var coords = new Pair<>(location.getLatitude(), location.getLongitude());
+                //handler.accept(coords);
             }
         };
         locationManager.requestLocationUpdates(provider, 0, 0f, locationListener);
@@ -187,6 +190,7 @@ public class DirectionActivity extends AppCompatActivity {
      */
     public void onLaunchNextClicked(View view) {
         vm.nextExhibitCommand.execute(this);
+        vm.resetSkip();
     }
 
     // Create an action bar button
@@ -200,11 +204,11 @@ public class DirectionActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
         switch(id) {
             case R.id.eraseRoutePlanButton:
-                SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.clear();
                 editor.apply();
                 vm.clearPlan();
@@ -214,21 +218,25 @@ public class DirectionActivity extends AppCompatActivity {
                 this.finish();
                 Intent intent = new Intent(this, HomeActivity.class);
                 startActivity(intent);
-                return true;
 
             case R.id.toggleDetailed:
                 Detailed = !item.isChecked();
                 item.setChecked(Detailed);
                 vm.detailedDirectionToggle.setValue(Detailed);
-                return true;
 
             case R.id.returnButton:
                 // TODO Implement the behaviour of return button
-                return true;
 
             case R.id.skipButton:
-                // TODO Implement the behaviour of skip button
-                return true;
+                if (vm.remainingExhibits.get() == 1) {
+                    Alert.oopsAlert(this, "Final destination can't be skipped");
+                }
+                else if (vm.checkSkip() == true) {
+                    this.finish();
+                }
+                else {
+                    vm.skipNextExhibit();
+                }
 
             default:
                 return super.onOptionsItemSelected(item);

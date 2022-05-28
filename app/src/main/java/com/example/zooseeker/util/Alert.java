@@ -21,6 +21,21 @@ public class Alert {
         alertDialog.show();
     }
 
+    public static void oopsAlert(Activity activity, String message) {
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(activity);
+
+        alertBuilder
+                .setTitle("Oops, something went wrong.")
+                .setMessage(message)
+                .setPositiveButton("OK", (dialog, id) -> {
+                    dialog.cancel();
+                })
+                .setCancelable(true);
+
+        AlertDialog alertDialog = alertBuilder.create();
+        alertDialog.show();
+    }
+
     public static void alert(Activity activity, String title, String message, Runnable acceptHandler, Runnable rejectHandler) {
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(activity);
 
