@@ -1,4 +1,4 @@
-package com.example.zooseeker.GroupTest;
+package com.example.zooseeker.activities;
 
 import static com.example.zooseeker.util.Constant.ANIMALS_ID;
 import static com.example.zooseeker.util.Constant.CURR_INDEX;
@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.SearchView;
 
 import com.example.zooseeker.R;
+import com.example.zooseeker.activities.DirectionActivity;
 import com.example.zooseeker.adapters.AnimalAdapter;
 import com.example.zooseeker.databinding.ActivityHomeBinding;
 import com.example.zooseeker.models.db.Animal.AnimalDisplay;

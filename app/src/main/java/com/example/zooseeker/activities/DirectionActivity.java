@@ -1,4 +1,4 @@
-package com.example.zooseeker.GroupTest;
+package com.example.zooseeker.activities;
 
 import static com.example.zooseeker.util.Constant.CURR_INDEX;
 import static com.example.zooseeker.util.Constant.EXTRA_LISTEN_TO_GPS;

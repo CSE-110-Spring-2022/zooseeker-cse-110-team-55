@@ -33,7 +33,7 @@ import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.GrantPermissionRule;
 
 import com.example.zooseeker.R;
-import com.example.zooseeker.GroupTest.HomeActivity;
+import com.example.zooseeker.activities.HomeActivity;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;

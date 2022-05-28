@@ -30,6 +30,7 @@ import androidx.test.filters.LargeTest;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.example.zooseeker.R;
+import com.example.zooseeker.activities.HomeActivity;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
