@@ -82,7 +82,7 @@ public class Route {
     }
 
     // Algo
-    private List<List<GraphNode>> createShortestRoute(List<GraphNode> selected, GraphNode start, GraphNode end) {
+    public List<List<GraphNode>> createShortestRoute(List<GraphNode> selected, GraphNode start, GraphNode end) {
         List<List<GraphNode>> plan = new ArrayList<>();
         // exhibits to be planned
         List<GraphNode> unplanned_exhibits = new ArrayList<>(selected);

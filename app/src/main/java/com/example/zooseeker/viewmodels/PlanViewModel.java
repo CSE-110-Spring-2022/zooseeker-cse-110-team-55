@@ -38,6 +38,7 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
     private Graph graph;
     private Route route;
     private AnimalItemDao repository;
+    private boolean skip = false;
 
     private int curExhibit = -1;
     private List<List<GraphNode>> _plan;
@@ -70,6 +71,8 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
             editor.apply();
             getDirectionsToNextExhibit();
         }
+        // Reset skip
+        skip = false;
     };
 
     public PlanViewModel(@NonNull Application application) {
@@ -227,6 +230,7 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
         ArrayList<DirectionItem> newDir = new ArrayList<>();
         // Add all nodes from current direction set to nodes
         List<GraphNode> nodes = new ArrayList<>(plan.get(exhibitNum));
+        if (nodes.size() == 1) return new ArrayList<>();
 
         // Get Edges
         List<GraphEdge> edges = graph.getEdgesFromNodes(nodes);
@@ -266,6 +270,7 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
         ArrayList<DirectionItem> newDir = new ArrayList<>();
         // Add all nodes from current direction set to nodes
         List<GraphNode> nodes = new ArrayList<>(plan.get(exhibitNum));
+        if (nodes.size() == 1) return new ArrayList<>();
 
         // Get Edges
         var edges = graph.getEdgesFromNodes(nodes);
@@ -377,7 +382,6 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
         }
 
         // Create plan through remaining exhibits
-        curExhibit = 0;
         route.createRouteThroughExhibits(remaining, start.id, "entrance_exit_gate");
         if (route.getRoute().get(0).size() <= 1) {
             route.getRoute().remove(0);
@@ -392,8 +396,47 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
 
     @Override
     public void rejectHandler() { }
+
   
     public void skipNextExhibit() {
-        // TODO Implement the logic to skip next exhibit
+        // Original     A -> B, B -> C
+        // Skip at A    A -> C
+        // A = startNode, C = endNode
+
+        // Get start node
+        int index = curExhibit;
+        GraphNode startNode;
+        GraphNode endNode = route.getRoute().get(0).get(0);
+
+        if (lastKnownLocation.getValue() == null){
+            startNode = route.getRoute().get(0).get(0);
+        } else {
+            startNode = graph.nodes.get(exhibitAtLocation(lastKnownLocation.getValue()).id);
+        }
+
+        var remaining = new ArrayList<GraphNode>();
+
+        int i = curExhibit + 1;
+        for (; i < route.getRoute().size() - 1; i++){
+            remaining.add(getLast(_plan.get(i)));
+        }
+
+        // Create plan through remaining exhibits
+        var newPath = route.createShortestRoute(remaining, startNode, endNode);
+
+        i = curExhibit;
+        while(i < route.getRoute().size()){
+            route.getRoute().remove(i);
+        }
+
+        for (var path: newPath){
+            route.getRoute().add(path);
+        }
+
+        // Update plan
+        setPlan(route.getRoute());
+        updateCurrentDirections(detailedDirectionToggle.getValue());
+        route.updateDistances();
+        updateObservables();
     }
 }

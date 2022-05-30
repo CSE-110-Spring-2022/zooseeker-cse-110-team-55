@@ -21,6 +21,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -37,6 +38,8 @@ import com.example.zooseeker.util.Alert;
 import com.example.zooseeker.viewmodels.PlanViewModel;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -207,28 +210,31 @@ public class DirectionActivity extends AppCompatActivity {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.clear();
                 editor.apply();
-                vm.clearPlan();
+
+                // the app will freeze and crash if we try to clean the plan
+                // Without this everything works fine and passed all tests
+                // vm.clearPlan();
 
                 // TODO Change to update activity from another activity
                 super.finish();
                 this.finish();
                 Intent intent = new Intent(this, HomeActivity.class);
                 startActivity(intent);
-                return true;
 
             case R.id.toggleDetailed:
                 Detailed = !item.isChecked();
                 item.setChecked(Detailed);
                 vm.detailedDirectionToggle.setValue(Detailed);
-                return true;
 
             case R.id.returnButton:
                 // TODO Implement the behaviour of return button
-                return true;
 
             case R.id.skipButton:
-                // TODO Implement the behaviour of skip button
-                return true;
+                if (vm.remainingExhibits.get() == 1) {
+                    Alert.oopsAlert(this, "Final destination can't be skipped");
+                } else {
+                    vm.skipNextExhibit();
+                }
 
             default:
                 return super.onOptionsItemSelected(item);
