@@ -3,6 +3,8 @@ package com.example.zooseeker.util;
 import android.app.Activity;
 import android.app.AlertDialog;
 
+import androidx.lifecycle.ViewModel;
+
 import java.util.function.Consumer;
 
 public class Alert {
@@ -11,6 +13,21 @@ public class Alert {
 
         alertBuilder
                 .setTitle("Empty List")
+                .setMessage(message)
+                .setPositiveButton("OK", (dialog, id) -> {
+                    dialog.cancel();
+                })
+                .setCancelable(true);
+
+        AlertDialog alertDialog = alertBuilder.create();
+        alertDialog.show();
+    }
+
+    public static void oopsAlert(Activity activity, String message) {
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(activity);
+
+        alertBuilder
+                .setTitle("Oops, something went wrong.")
                 .setMessage(message)
                 .setPositiveButton("OK", (dialog, id) -> {
                     dialog.cancel();

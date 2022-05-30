@@ -7,6 +7,7 @@ import static com.example.zooseeker.util.Helper.getLast;
 
 import android.app.Application;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.util.Pair;
 
 import androidx.annotation.NonNull;
@@ -26,6 +27,7 @@ import com.example.zooseeker.models.Graph.NodeInfo;
 import com.example.zooseeker.models.Route;
 import com.example.zooseeker.repositories.AnimalDatabase;
 import com.example.zooseeker.repositories.AnimalItemDao;
+import com.example.zooseeker.util.Alert;
 import com.example.zooseeker.util.Alert.AlertHandler;
 
 import java.util.ArrayList;
@@ -38,6 +40,7 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
     private Graph graph;
     private Route route;
     private AnimalItemDao repository;
+    public boolean consecutivePrevious = false;
 
     private int curExhibit = -1;
     private List<List<GraphNode>> _plan;
@@ -326,6 +329,8 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
         remainingExhibits.set(_plan.size() - curExhibit);
     }
 
+    public int getCurExhibit() { return curExhibit; }
+
     /// Getters
     public List<List<GraphNode>> getPlan() {
         return _plan;
@@ -392,8 +397,54 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
 
     @Override
     public void rejectHandler() { }
+
+    public GraphNode startNode;
+    public GraphNode endNode;
+
+    public void reverseExhibit(){
+        //int index = curExhibit;
+        if (consecutivePrevious == true){
+            curExhibit--;
+        }
+        else {
+            startNode = graph.nodes.get(exhibitAtLocation(lastKnownLocation.getValue()).id);
+        }
+
+        if(curExhibit == 0){
+            endNode = route.getRoute().get(curExhibit).get(0);
+        }
+        else{
+            endNode = route.getRoute().get(curExhibit - 1).get(route.getRoute().get(curExhibit - 1).size()-1);
+        }
+        Log.i("route", endNode.id + "!!!!!!!" );
+
+        if(startNode.equals(endNode)){
+            curExhibit++;
+            return;
+        }
+
+        List<GraphNode> newRoute = route.shortestPathToNode(startNode, endNode);
+        List<List<GraphNode>> routeList = new ArrayList<>();
+        routeList.add(newRoute);
+
+
+
+        _plan.add(curExhibit,newRoute);
+        updateCurrentDirections(detailedDirectionToggle.getValue());
+        route.updateDistances();
+//        if(consecutivePrevious == true){
+//            curExhibit++;
+//            updateObservables();
+//            curExhibit--;
+//        }else{
+            updateObservables();
+//        }
+
+        consecutivePrevious = true;
+    }
   
     public void skipNextExhibit() {
         // TODO Implement the logic to skip next exhibit
     }
 }
+///enter-> dove -> croc -> monkey -> exit

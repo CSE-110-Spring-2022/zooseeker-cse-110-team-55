@@ -33,6 +33,7 @@ import com.example.zooseeker.R;
 import com.example.zooseeker.adapters.DirectionAdapter;
 import com.example.zooseeker.databinding.ActivityDirectionBinding;
 import com.example.zooseeker.fragments.RouteSummaryFragment;
+import com.example.zooseeker.models.Graph;
 import com.example.zooseeker.util.Alert;
 import com.example.zooseeker.viewmodels.PlanViewModel;
 import com.google.gson.Gson;
@@ -224,7 +225,16 @@ public class DirectionActivity extends AppCompatActivity {
 
             case R.id.returnButton:
                 // TODO Implement the behaviour of return button
+                if((vm.getCurExhibit() == 0)) {
+                    Alert.oopsAlert(this,
+                            "Currently at first exhibit can't do previous action");
+                }
+                // Previous action, call previousExhibit()
+                else{
+                    vm.reverseExhibit();
+                }
                 return true;
+
 
             case R.id.skipButton:
                 // TODO Implement the behaviour of skip button
