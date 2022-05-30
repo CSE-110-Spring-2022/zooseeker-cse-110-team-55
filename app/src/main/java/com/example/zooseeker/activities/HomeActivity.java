@@ -86,7 +86,7 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
             Intent intent = new Intent(this, DirectionActivity.class);
             addSelectionToIntent(intent);
             intent.putExtra("last_exhibit", sharedPreferences.getString("last_exhibit", null));
-            intent.putExtra(EXTRA_LISTEN_TO_GPS, true);
+            intent.putExtra(EXTRA_LISTEN_TO_GPS, false);
             startActivity(intent);
         }
         binding.search.setOnQueryTextListener(this);
@@ -139,7 +139,7 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
             SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putInt(CURR_INDEX, 0);
-            intent.putExtra(EXTRA_LISTEN_TO_GPS, true);
+            intent.putExtra(EXTRA_LISTEN_TO_GPS, false);
             editor.apply();
 
             startActivity(intent);

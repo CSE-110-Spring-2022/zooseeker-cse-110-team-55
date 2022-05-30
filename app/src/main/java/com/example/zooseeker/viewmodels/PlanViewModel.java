@@ -40,7 +40,10 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
     private Graph graph;
     private Route route;
     private AnimalItemDao repository;
-    public boolean consecutivePrevious = false;
+    //public boolean consecutivePrevious = false;
+    private GraphNode startNode;
+    private GraphNode endNode;
+    private int countReversedTime = 0;
 
     private int curExhibit = -1;
     private List<List<GraphNode>> _plan;
@@ -398,15 +401,19 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
     @Override
     public void rejectHandler() { }
 
-    public GraphNode startNode;
-    public GraphNode endNode;
+//    public boolean sameStartAndEnd(){
+//        if(startNode.equals(endNode)){
+//            return true;
+//        }
+//
+//    }
 
-    public void reverseExhibit(){
-        //int index = curExhibit;
-        if (consecutivePrevious == true){
-            curExhibit--;
-        }
-        else {
+    public boolean reverseExhibit(){
+        //int index = curExhibit - countReversedTime;
+        //curExhibit--;
+        if(lastKnownLocation.getValue() == null){
+            startNode = route.getRoute().get(0).get(0);
+        }else {
             startNode = graph.nodes.get(exhibitAtLocation(lastKnownLocation.getValue()).id);
         }
 
@@ -416,35 +423,27 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
         else{
             endNode = route.getRoute().get(curExhibit - 1).get(route.getRoute().get(curExhibit - 1).size()-1);
         }
-        Log.i("route", endNode.id + "!!!!!!!" );
-
         if(startNode.equals(endNode)){
-            curExhibit++;
-            return;
+            //warning msg
+            return false;
         }
 
         List<GraphNode> newRoute = route.shortestPathToNode(startNode, endNode);
         List<List<GraphNode>> routeList = new ArrayList<>();
         routeList.add(newRoute);
-
-
-
+        curExhibit--;
+        _plan.remove(curExhibit);
         _plan.add(curExhibit,newRoute);
+
         updateCurrentDirections(detailedDirectionToggle.getValue());
         route.updateDistances();
-//        if(consecutivePrevious == true){
-//            curExhibit++;
-//            updateObservables();
-//            curExhibit--;
-//        }else{
-            updateObservables();
-//        }
-
-        consecutivePrevious = true;
+        updateObservables();
+        countReversedTime++;
+        return true;
     }
+    //owen avery(dove mynah) -> parker(BCM) -> croc ->monkey -> exit
   
     public void skipNextExhibit() {
         // TODO Implement the logic to skip next exhibit
     }
 }
-///enter-> dove -> croc -> monkey -> exit
