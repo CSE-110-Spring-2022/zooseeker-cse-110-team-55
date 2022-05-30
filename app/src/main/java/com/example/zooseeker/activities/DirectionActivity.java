@@ -229,14 +229,6 @@ public class DirectionActivity extends AppCompatActivity {
                     Alert.oopsAlert(this,
                             "Currently at first exhibit can't do previous action");
                 }
-                // Previous action, call previousExhibit()
-                else if(vm.reverseExhibit() == false){
-                    Alert.oopsAlert(this,
-                            "you're now at your destination");
-                }
-                else {
-                    return true;
-                }
                 return true;
 
 

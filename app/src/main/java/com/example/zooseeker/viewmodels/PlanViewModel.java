@@ -40,10 +40,8 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
     private Graph graph;
     private Route route;
     private AnimalItemDao repository;
-    //public boolean consecutivePrevious = false;
     private GraphNode startNode;
     private GraphNode endNode;
-    private int countReversedTime = 0;
 
     private int curExhibit = -1;
     private List<List<GraphNode>> _plan;
@@ -107,12 +105,26 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
     public void getDirectionsToNextExhibit() {
         // If there are no more exhibits to visit, do nothing
         if (curExhibit >= _plan.size() - 1) return;
+        curExhibit++;
+
+        // Get user location
+        GraphNode userNode;
+        if (lastKnownLocation.getValue() == null) {
+            userNode = route.getRoute().get(0).get(0);
+        } else {
+            var exhibit = exhibitAtLocation(lastKnownLocation.getValue());
+            userNode = graph.nodes.get(exhibit.id);
+        }
+        // Get path to next exhibit from user's location
+        var x = route.shortestPathToNode(userNode, getLast(_plan.get(curExhibit)));
+        _plan.set(curExhibit, x);
+        route.updateDistances();
 
         // Update directions display
         if (!detailedDirectionToggle.getValue()) {
-            setDirections(computeSimplePlan(_plan, ++curExhibit));
+            setDirections(computeSimplePlan(_plan, curExhibit));
         } else {
-            setDirections(computeDetailedPlan(_plan, ++curExhibit));
+            setDirections(computeDetailedPlan(_plan, curExhibit));
         }
 
         updateObservables();
@@ -273,6 +285,8 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
         // Add all nodes from current direction set to nodes
         List<GraphNode> nodes = new ArrayList<>(plan.get(exhibitNum));
 
+        if (nodes.size() == 1) return new ArrayList<>();
+
         // Get Edges
         var edges = graph.getEdgesFromNodes(nodes);
         double currWeight = 0;
@@ -401,48 +415,36 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
     @Override
     public void rejectHandler() { }
 
-//    public boolean sameStartAndEnd(){
-//        if(startNode.equals(endNode)){
-//            return true;
-//        }
-//
-//    }
-
     public boolean reverseExhibit(){
-        //int index = curExhibit - countReversedTime;
-        //curExhibit--;
+        // Get start node
         if(lastKnownLocation.getValue() == null){
             startNode = route.getRoute().get(0).get(0);
         }else {
             startNode = graph.nodes.get(exhibitAtLocation(lastKnownLocation.getValue()).id);
         }
 
-        if(curExhibit == 0){
-            endNode = route.getRoute().get(curExhibit).get(0);
-        }
-        else{
-            endNode = route.getRoute().get(curExhibit - 1).get(route.getRoute().get(curExhibit - 1).size()-1);
-        }
-        if(startNode.equals(endNode)){
-            //warning msg
-            return false;
+        // Get end node
+        if (curExhibit == 0){
+            endNode = _plan.get(curExhibit).get(0);
+        } else {
+            endNode = getLast(_plan.get(curExhibit - 1));
         }
 
+        // Create a new route to previous
         List<GraphNode> newRoute = route.shortestPathToNode(startNode, endNode);
         List<List<GraphNode>> routeList = new ArrayList<>();
         routeList.add(newRoute);
         curExhibit--;
         _plan.remove(curExhibit);
-        _plan.add(curExhibit,newRoute);
+        _plan.add(curExhibit, newRoute);
 
+        // Update
         updateCurrentDirections(detailedDirectionToggle.getValue());
         route.updateDistances();
         updateObservables();
-        countReversedTime++;
         return true;
     }
-    //owen avery(dove mynah) -> parker(BCM) -> croc ->monkey -> exit
-  
+
     public void skipNextExhibit() {
         // TODO Implement the logic to skip next exhibit
     }
