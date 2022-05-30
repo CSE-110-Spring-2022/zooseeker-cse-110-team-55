@@ -232,11 +232,7 @@ public class DirectionActivity extends AppCompatActivity {
             case R.id.skipButton:
                 if (vm.remainingExhibits.get() == 1) {
                     Alert.oopsAlert(this, "Final destination can't be skipped");
-                }
-                else if (vm.getSkipValidation() == true) {
-                    this.finish();
-                }
-                else {
+                } else {
                     vm.skipNextExhibit();
                 }
 

@@ -230,6 +230,7 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
         ArrayList<DirectionItem> newDir = new ArrayList<>();
         // Add all nodes from current direction set to nodes
         List<GraphNode> nodes = new ArrayList<>(plan.get(exhibitNum));
+        if (nodes.size() == 1) return new ArrayList<>();
 
         // Get Edges
         List<GraphEdge> edges = graph.getEdgesFromNodes(nodes);
@@ -269,6 +270,7 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
         ArrayList<DirectionItem> newDir = new ArrayList<>();
         // Add all nodes from current direction set to nodes
         List<GraphNode> nodes = new ArrayList<>(plan.get(exhibitNum));
+        if (nodes.size() == 1) return new ArrayList<>();
 
         // Get Edges
         var edges = graph.getEdgesFromNodes(nodes);
@@ -348,11 +350,6 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
 
     public boolean isLastExhibit() {
         return curExhibit >= _plan.size() - 1;
-    }
-
-    // Ensure that the direction won't start and end at the same node
-    public boolean getSkipValidation() {
-        return remainingExhibits.get() == 2;
     }
 
     /// Setters

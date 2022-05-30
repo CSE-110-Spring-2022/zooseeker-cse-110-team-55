@@ -38,7 +38,7 @@ import org.junit.runner.RunWith;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class skipUITest {
+public class SkipUITest {
 
     @Rule
     public ActivityScenarioRule<HomeActivity> mActivityScenarioRule =
@@ -71,20 +71,9 @@ public class skipUITest {
                                                 1)),
                                 0),
                         isDisplayed()));
-        searchAutoComplete.perform(click());
+        searchAutoComplete.perform(replaceText("l"), closeSoftKeyboard());
 
         ViewInteraction searchAutoComplete2 = onView(
-                allOf(withClassName(is("android.widget.SearchView$SearchAutoComplete")),
-                        childAtPosition(
-                                allOf(withClassName(is("android.widget.LinearLayout")),
-                                        childAtPosition(
-                                                withClassName(is("android.widget.LinearLayout")),
-                                                1)),
-                                0),
-                        isDisplayed()));
-        searchAutoComplete2.perform(replaceText("l"), closeSoftKeyboard());
-
-        ViewInteraction searchAutoComplete3 = onView(
                 allOf(withClassName(is("android.widget.SearchView$SearchAutoComplete")), withText("l"),
                         childAtPosition(
                                 allOf(withClassName(is("android.widget.LinearLayout")),
@@ -93,7 +82,7 @@ public class skipUITest {
                                                 1)),
                                 0),
                         isDisplayed()));
-        searchAutoComplete3.perform(pressImeActionButton());
+        searchAutoComplete2.perform(pressImeActionButton());
 
         ViewInteraction appCompatImageView = onView(
                 allOf(withClassName(is("androidx.appcompat.widget.AppCompatImageView")), withContentDescription("Clear query"),
@@ -106,7 +95,7 @@ public class skipUITest {
                         isDisplayed()));
         appCompatImageView.perform(click());
 
-        ViewInteraction searchAutoComplete4 = onView(
+        ViewInteraction searchAutoComplete3 = onView(
                 allOf(withClassName(is("android.widget.SearchView$SearchAutoComplete")),
                         childAtPosition(
                                 allOf(withClassName(is("android.widget.LinearLayout")),
@@ -115,9 +104,9 @@ public class skipUITest {
                                                 1)),
                                 0),
                         isDisplayed()));
-        searchAutoComplete4.perform(replaceText("l"), closeSoftKeyboard());
+        searchAutoComplete3.perform(replaceText("l"), closeSoftKeyboard());
 
-        ViewInteraction searchAutoComplete5 = onView(
+        ViewInteraction searchAutoComplete4 = onView(
                 allOf(withClassName(is("android.widget.SearchView$SearchAutoComplete")), withText("l"),
                         childAtPosition(
                                 allOf(withClassName(is("android.widget.LinearLayout")),
@@ -126,7 +115,7 @@ public class skipUITest {
                                                 1)),
                                 0),
                         isDisplayed()));
-        searchAutoComplete5.perform(pressImeActionButton());
+        searchAutoComplete4.perform(pressImeActionButton());
 
         ViewInteraction recyclerView = onView(
                 allOf(withId(R.id.recyclerView),
@@ -160,16 +149,6 @@ public class skipUITest {
         materialButton.perform(click());
 
         ViewInteraction materialButton2 = onView(
-                allOf(withId(R.id.next_button), withText("Next (Fern Canyon, 140ft)"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withClassName(is("androidx.constraintlayout.widget.ConstraintLayout")),
-                                        0),
-                                2),
-                        isDisplayed()));
-        materialButton2.perform(click());
-
-        ViewInteraction materialButton3 = onView(
                 allOf(withText("MOCK LOCATION"),
                         childAtPosition(
                                 childAtPosition(
@@ -177,7 +156,7 @@ public class skipUITest {
                                         0),
                                 1),
                         isDisplayed()));
-        materialButton3.perform(click());
+        materialButton2.perform(click());
 
         ViewInteraction editText = onView(
                 allOf(childAtPosition(
@@ -188,14 +167,24 @@ public class skipUITest {
                         isDisplayed()));
         editText.perform(replaceText("koi"), closeSoftKeyboard());
 
-        ViewInteraction materialButton4 = onView(
+        ViewInteraction materialButton3 = onView(
                 allOf(withId(android.R.id.button1), withText("Submit"),
                         childAtPosition(
                                 childAtPosition(
                                         withClassName(is("android.widget.ScrollView")),
                                         0),
                                 3)));
-        materialButton4.perform(scrollTo(), click());
+        materialButton3.perform(scrollTo(), click());
+
+        ViewInteraction materialButton4 = onView(
+                allOf(withId(R.id.next_button), withText("Next (Fern Canyon, 140ft)"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(is("androidx.constraintlayout.widget.ConstraintLayout")),
+                                        0),
+                                2),
+                        isDisplayed()));
+        materialButton4.perform(click());
 
         ViewInteraction actionMenuItemView2 = onView(
                 allOf(withId(R.id.skipButton),
@@ -207,8 +196,18 @@ public class skipUITest {
                         isDisplayed()));
         actionMenuItemView2.perform(click());
 
+        ViewInteraction actionMenuItemView3 = onView(
+                allOf(withId(R.id.skipButton),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(androidx.appcompat.R.id.action_bar),
+                                        1),
+                                1),
+                        isDisplayed()));
+        actionMenuItemView3.perform(click());
+
         ViewInteraction materialButton5 = onView(
-                allOf(withId(R.id.next_button), withText("Next (Entrance and Exit Gate, 240ft)"),
+                allOf(withId(R.id.next_button), withText("END"),
                         childAtPosition(
                                 childAtPosition(
                                         withClassName(is("androidx.constraintlayout.widget.ConstraintLayout")),
@@ -217,15 +216,15 @@ public class skipUITest {
                         isDisplayed()));
         materialButton5.perform(click());
 
-        ViewInteraction materialButton6 = onView(
-                allOf(withId(R.id.next_button), withText("END"),
+        ViewInteraction actionMenuItemView4 = onView(
+                allOf(withId(R.id.eraseSelectedExhibitsButton),
                         childAtPosition(
                                 childAtPosition(
-                                        withClassName(is("androidx.constraintlayout.widget.ConstraintLayout")),
-                                        0),
-                                2),
+                                        withId(androidx.appcompat.R.id.action_bar),
+                                        1),
+                                0),
                         isDisplayed()));
-        materialButton6.perform(click());
+        actionMenuItemView4.perform(click());
     }
 
     private static Matcher<View> childAtPosition(
