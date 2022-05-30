@@ -246,6 +246,8 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
         // Add all nodes from current direction set to nodes
         List<GraphNode> nodes = new ArrayList<>(plan.get(exhibitNum));
 
+        if (nodes.size() == 1) return new ArrayList<>();
+
         // Get Edges
         List<GraphEdge> edges = graph.getEdgesFromNodes(nodes);
         double currWeight = 0;
