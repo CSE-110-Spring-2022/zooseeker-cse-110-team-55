@@ -409,7 +409,7 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
         // Get start node
         int index = curExhibit;
         GraphNode startNode;
-        GraphNode endNode;
+        GraphNode endNode = route.getRoute().get(0).get(0);
 
         if (lastKnownLocation.getValue() == null){
             startNode = route.getRoute().get(0).get(0);
@@ -420,19 +420,21 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
         var remaining = new ArrayList<GraphNode>();
 
         int i = curExhibit + 1;
-        while (i < route.getRoute().size()){
+        for (; i < route.getRoute().size() - 1; i++){
             remaining.add(getLast(_plan.get(i)));
-            route.getRoute().remove(i);
         }
 
         // Create plan through remaining exhibits
-        var newPath = route.createShortestRoute(remaining, startNode, route.getRoute().get(0).get(0));
+        var newPath = route.createShortestRoute(remaining, startNode, endNode);
+
+        i = curExhibit;
+        while(i < route.getRoute().size()){
+            route.getRoute().remove(i);
+        }
 
         for (var path: newPath){
             route.getRoute().add(path);
         }
-
-        route.getRoute().remove(curExhibit);
 
         // Update plan
         setPlan(route.getRoute());
