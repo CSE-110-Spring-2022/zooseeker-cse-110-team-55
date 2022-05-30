@@ -38,7 +38,6 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
     private Graph graph;
     private Route route;
     private AnimalItemDao repository;
-    private GraphNode startNode;
     private boolean skip = false;
 
     private int curExhibit = -1;
@@ -353,7 +352,7 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
 
     // Ensure that the direction won't start and end at the same node
     public boolean getSkipValidation() {
-        return remainingExhibits.get() == 2 && startNode == route.getRoute().get(0).get(0);
+        return remainingExhibits.get() == 2;
     }
 
     /// Setters
@@ -386,7 +385,6 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
         }
 
         // Create plan through remaining exhibits
-        curExhibit = 0;
         route.createRouteThroughExhibits(remaining, start.id, "entrance_exit_gate");
         if (route.getRoute().get(0).size() <= 1) {
             route.getRoute().remove(0);
@@ -401,6 +399,7 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
 
     @Override
     public void rejectHandler() { }
+
   
     public void skipNextExhibit() {
         // Original     A -> B, B -> C
@@ -409,34 +408,34 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
 
         // Get start node
         int index = curExhibit;
+        GraphNode startNode;
+        GraphNode endNode;
 
-        // If skipping in a row
-        if (skip == true){
-            // Don't update startNode
-        }
-        // If skipping at first exhibit
-        else if (index == 0) {
+        if (lastKnownLocation.getValue() == null){
             startNode = route.getRoute().get(0).get(0);
-        }
-        // If skipping at second or further exhibit
-        else {
-            int startSize = route.getRoute().get(index - 1).size() - 1;
-            startNode = route.getRoute().get(index - 1).get(startSize);
+        } else {
+            startNode = graph.nodes.get(exhibitAtLocation(lastKnownLocation.getValue()).id);
         }
 
-        // Get end node
-        int nextSize = route.getRoute().get(index + 1).size() - 1;
-        GraphNode endNode = route.getRoute().get(index + 1).get(nextSize);
+        var remaining = new ArrayList<GraphNode>();
 
-        // Computer the shortest path between start and end nodes
-        List<GraphNode> newRoute = route.shortestPathToNode(startNode, endNode);
-        List<List<GraphNode>> routeList = new ArrayList<>();
-        routeList.add(newRoute);
+        int i = curExhibit + 1;
+        while (i < route.getRoute().size()){
+            remaining.add(getLast(_plan.get(i)));
+            route.getRoute().remove(i);
+        }
 
-        // Override the route for the next exhibit and update the view model
-        skip = true;
-        _plan.set(index, newRoute);
-        _plan.remove(index + 1);
+        // Create plan through remaining exhibits
+        var newPath = route.createShortestRoute(remaining, startNode, route.getRoute().get(0).get(0));
+
+        for (var path: newPath){
+            route.getRoute().add(path);
+        }
+
+        route.getRoute().remove(curExhibit);
+
+        // Update plan
+        setPlan(route.getRoute());
         updateCurrentDirections(detailedDirectionToggle.getValue());
         route.updateDistances();
         updateObservables();
