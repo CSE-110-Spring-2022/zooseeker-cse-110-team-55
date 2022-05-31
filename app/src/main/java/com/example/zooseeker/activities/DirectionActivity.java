@@ -34,6 +34,7 @@ import com.example.zooseeker.R;
 import com.example.zooseeker.adapters.DirectionAdapter;
 import com.example.zooseeker.databinding.ActivityDirectionBinding;
 import com.example.zooseeker.fragments.RouteSummaryFragment;
+import com.example.zooseeker.models.Graph;
 import com.example.zooseeker.util.Alert;
 import com.example.zooseeker.viewmodels.PlanViewModel;
 import com.google.gson.Gson;
@@ -211,23 +212,27 @@ public class DirectionActivity extends AppCompatActivity {
                 editor.clear();
                 editor.apply();
 
-                // the app will freeze and crash if we try to clean the plan
-                // Without this everything works fine and passed all tests
-                // vm.clearPlan();
-
                 // TODO Change to update activity from another activity
                 super.finish();
                 this.finish();
                 Intent intent = new Intent(this, HomeActivity.class);
                 startActivity(intent);
+                break;
 
             case R.id.toggleDetailed:
                 Detailed = !item.isChecked();
                 item.setChecked(Detailed);
                 vm.detailedDirectionToggle.setValue(Detailed);
+                break;
 
             case R.id.returnButton:
-                // TODO Implement the behaviour of return button
+                if((vm.getCurExhibit() == 0)) {
+                    Alert.oopsAlert(this,
+                            "Currently at first exhibit can't do previous action");
+                    return true;
+                }
+                vm.reverseExhibit();
+                return true;
 
             case R.id.skipButton:
                 if (vm.remainingExhibits.get() == 1) {
@@ -235,10 +240,11 @@ public class DirectionActivity extends AppCompatActivity {
                 } else {
                     vm.skipNextExhibit();
                 }
-
+                break;
             default:
                 return super.onOptionsItemSelected(item);
         }
+        return super.onOptionsItemSelected(item);
     }
 }
 

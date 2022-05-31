@@ -3,6 +3,8 @@ package com.example.zooseeker.util;
 import android.app.Activity;
 import android.app.AlertDialog;
 
+import androidx.lifecycle.ViewModel;
+
 import java.util.function.Consumer;
 
 public class Alert {

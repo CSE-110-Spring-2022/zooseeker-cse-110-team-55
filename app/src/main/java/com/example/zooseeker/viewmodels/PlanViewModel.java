@@ -1,12 +1,14 @@
 package com.example.zooseeker.viewmodels;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.example.zooseeker.util.Constant.ANIMALS_ID;
 import static com.example.zooseeker.util.Constant.CURR_INDEX;
 import static com.example.zooseeker.util.Constant.SHARED_PREF;
 import static com.example.zooseeker.util.Helper.getLast;
 
 import android.app.Application;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.util.Pair;
 
 import androidx.annotation.NonNull;
@@ -24,11 +26,16 @@ import com.example.zooseeker.models.Graph.GraphData.GraphEdge;
 import com.example.zooseeker.models.Graph.GraphData.GraphNode;
 import com.example.zooseeker.models.Graph.NodeInfo;
 import com.example.zooseeker.models.Route;
+import com.example.zooseeker.models.db.Animal;
 import com.example.zooseeker.repositories.AnimalDatabase;
 import com.example.zooseeker.repositories.AnimalItemDao;
+import com.example.zooseeker.util.Alert;
 import com.example.zooseeker.util.Alert.AlertHandler;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -38,7 +45,6 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
     private Graph graph;
     private Route route;
     private AnimalItemDao repository;
-    private boolean skip = false;
 
     private int curExhibit = -1;
     private List<List<GraphNode>> _plan;
@@ -71,8 +77,6 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
             editor.apply();
             getDirectionsToNextExhibit();
         }
-        // Reset skip
-        skip = false;
     };
 
     public PlanViewModel(@NonNull Application application) {
@@ -104,12 +108,26 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
     public void getDirectionsToNextExhibit() {
         // If there are no more exhibits to visit, do nothing
         if (curExhibit >= _plan.size() - 1) return;
+        curExhibit++;
+
+        // Get user location
+        GraphNode userNode;
+        if (lastKnownLocation.getValue() == null) {
+            userNode = route.getRoute().get(0).get(0);
+        } else {
+            var exhibit = exhibitAtLocation(lastKnownLocation.getValue());
+            userNode = graph.nodes.get(exhibit.id);
+        }
+        // Get path to next exhibit from user's location
+        var x = route.shortestPathToNode(userNode, getLast(_plan.get(curExhibit)));
+        _plan.set(curExhibit, x);
+        route.updateDistances();
 
         // Update directions display
         if (!detailedDirectionToggle.getValue()) {
-            setDirections(computeSimplePlan(_plan, ++curExhibit));
+            setDirections(computeSimplePlan(_plan, curExhibit));
         } else {
-            setDirections(computeDetailedPlan(_plan, ++curExhibit));
+            setDirections(computeDetailedPlan(_plan, curExhibit));
         }
 
         updateObservables();
@@ -232,6 +250,8 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
         List<GraphNode> nodes = new ArrayList<>(plan.get(exhibitNum));
         if (nodes.size() == 1) return new ArrayList<>();
 
+        if (nodes.size() == 1) return new ArrayList<>();
+
         // Get Edges
         List<GraphEdge> edges = graph.getEdgesFromNodes(nodes);
         double currWeight = 0;
@@ -270,6 +290,8 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
         ArrayList<DirectionItem> newDir = new ArrayList<>();
         // Add all nodes from current direction set to nodes
         List<GraphNode> nodes = new ArrayList<>(plan.get(exhibitNum));
+        if (nodes.size() == 1) return new ArrayList<>();
+
         if (nodes.size() == 1) return new ArrayList<>();
 
         // Get Edges
@@ -330,6 +352,8 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
         // Decrease amount of remaining exhibits
         remainingExhibits.set(_plan.size() - curExhibit);
     }
+
+    public int getCurExhibit() { return curExhibit; }
 
     /// Getters
     public List<List<GraphNode>> getPlan() {
@@ -397,16 +421,41 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
     @Override
     public void rejectHandler() { }
 
-  
-    public void skipNextExhibit() {
-        // Original     A -> B, B -> C
-        // Skip at A    A -> C
-        // A = startNode, C = endNode
-
+    public boolean reverseExhibit(){
+        GraphNode startNode, endNode;
         // Get start node
-        int index = curExhibit;
+        if(lastKnownLocation.getValue() == null){
+            startNode = route.getRoute().get(0).get(0);
+        }else {
+            startNode = graph.nodes.get(exhibitAtLocation(lastKnownLocation.getValue()).id);
+        }
+
+        // Get end node
+        if (curExhibit == 0){
+            endNode = _plan.get(curExhibit).get(0);
+        } else {
+            endNode = getLast(_plan.get(curExhibit - 1));
+        }
+
+        // Create a new route to previous
+        List<GraphNode> newRoute = route.shortestPathToNode(startNode, endNode);
+        List<List<GraphNode>> routeList = new ArrayList<>();
+        routeList.add(newRoute);
+        curExhibit--;
+        _plan.remove(curExhibit);
+        _plan.add(curExhibit, newRoute);
+
+        // Update
+        updateCurrentDirections(detailedDirectionToggle.getValue());
+        route.updateDistances();
+        updateObservables();
+        return true;
+    }
+
+    public void skipNextExhibit() {
+        // Get start node
         GraphNode startNode;
-        GraphNode endNode = route.getRoute().get(0).get(0);
+        GraphNode endNode = graph.nodes.get("entrance_exit_gate");
 
         if (lastKnownLocation.getValue() == null){
             startNode = route.getRoute().get(0).get(0);
@@ -423,12 +472,12 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
 
         // Create plan through remaining exhibits
         var newPath = route.createShortestRoute(remaining, startNode, endNode);
-
         i = curExhibit;
+        // Remove old exhibits
         while(i < route.getRoute().size()){
             route.getRoute().remove(i);
         }
-
+        // Add new exhibits
         for (var path: newPath){
             route.getRoute().add(path);
         }
