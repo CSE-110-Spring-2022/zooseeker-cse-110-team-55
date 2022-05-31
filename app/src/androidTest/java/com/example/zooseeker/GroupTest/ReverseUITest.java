@@ -1,9 +1,10 @@
-package com.example.zooseeker.activities;
+package com.example.zooseeker.GroupTest;
 
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static androidx.test.espresso.action.ViewActions.pressImeActionButton;
 import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
@@ -20,12 +21,13 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 
 import androidx.test.espresso.ViewInteraction;
+import androidx.test.ext.junit.rules.ActivityScenarioRule;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
-import androidx.test.rule.ActivityTestRule;
 import androidx.test.rule.GrantPermissionRule;
-import androidx.test.runner.AndroidJUnit4;
 
 import com.example.zooseeker.R;
+import com.example.zooseeker.activities.HomeActivity;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -39,7 +41,8 @@ import org.junit.runner.RunWith;
 public class ReverseUITest {
 
     @Rule
-    public ActivityTestRule<HomeActivity> mActivityTestRule = new ActivityTestRule<>(HomeActivity.class);
+    public ActivityScenarioRule<HomeActivity> mActivityScenarioRule =
+            new ActivityScenarioRule<>(HomeActivity.class);
 
     @Rule
     public GrantPermissionRule mGrantPermissionRule =
@@ -58,7 +61,40 @@ public class ReverseUITest {
                                                 1)),
                                 0),
                         isDisplayed()));
-        searchAutoComplete.perform(replaceText("cr"), closeSoftKeyboard());
+        searchAutoComplete.perform(replaceText("croc"), closeSoftKeyboard());
+
+        ViewInteraction searchAutoComplete2 = onView(
+                allOf(withClassName(is("android.widget.SearchView$SearchAutoComplete")), withText("croc"),
+                        childAtPosition(
+                                allOf(withClassName(is("android.widget.LinearLayout")),
+                                        childAtPosition(
+                                                withClassName(is("android.widget.LinearLayout")),
+                                                1)),
+                                0),
+                        isDisplayed()));
+        searchAutoComplete2.perform(pressImeActionButton());
+
+        ViewInteraction searchAutoComplete3 = onView(
+                allOf(withClassName(is("android.widget.SearchView$SearchAutoComplete")), withText("croc"),
+                        childAtPosition(
+                                allOf(withClassName(is("android.widget.LinearLayout")),
+                                        childAtPosition(
+                                                withClassName(is("android.widget.LinearLayout")),
+                                                1)),
+                                0),
+                        isDisplayed()));
+        searchAutoComplete3.perform(click());
+
+        ViewInteraction searchAutoComplete4 = onView(
+                allOf(withClassName(is("android.widget.SearchView$SearchAutoComplete")), withText("croc"),
+                        childAtPosition(
+                                allOf(withClassName(is("android.widget.LinearLayout")),
+                                        childAtPosition(
+                                                withClassName(is("android.widget.LinearLayout")),
+                                                1)),
+                                0),
+                        isDisplayed()));
+        searchAutoComplete4.perform(pressImeActionButton());
 
         ViewInteraction recyclerView = onView(
                 allOf(withId(R.id.recyclerView),
@@ -78,7 +114,7 @@ public class ReverseUITest {
                         isDisplayed()));
         appCompatImageView.perform(click());
 
-        ViewInteraction searchAutoComplete2 = onView(
+        ViewInteraction searchAutoComplete5 = onView(
                 allOf(withClassName(is("android.widget.SearchView$SearchAutoComplete")),
                         childAtPosition(
                                 allOf(withClassName(is("android.widget.LinearLayout")),
@@ -87,7 +123,18 @@ public class ReverseUITest {
                                                 1)),
                                 0),
                         isDisplayed()));
-        searchAutoComplete2.perform(replaceText("gor"), closeSoftKeyboard());
+        searchAutoComplete5.perform(replaceText("gor"), closeSoftKeyboard());
+
+        ViewInteraction searchAutoComplete6 = onView(
+                allOf(withClassName(is("android.widget.SearchView$SearchAutoComplete")), withText("gor"),
+                        childAtPosition(
+                                allOf(withClassName(is("android.widget.LinearLayout")),
+                                        childAtPosition(
+                                                withClassName(is("android.widget.LinearLayout")),
+                                                1)),
+                                0),
+                        isDisplayed()));
+        searchAutoComplete6.perform(pressImeActionButton());
 
         ViewInteraction recyclerView2 = onView(
                 allOf(withId(R.id.recyclerView),
@@ -118,10 +165,10 @@ public class ReverseUITest {
 
         ViewInteraction editText = onView(
                 allOf(childAtPosition(
-                        childAtPosition(
-                                withId(android.R.id.custom),
-                                0),
-                        2),
+                                childAtPosition(
+                                        withId(android.R.id.custom),
+                                        0),
+                                2),
                         isDisplayed()));
         editText.perform(replaceText("crocodile"), closeSoftKeyboard());
 
@@ -156,10 +203,10 @@ public class ReverseUITest {
 
         ViewInteraction editText2 = onView(
                 allOf(childAtPosition(
-                        childAtPosition(
-                                withId(android.R.id.custom),
-                                0),
-                        2),
+                                childAtPosition(
+                                        withId(android.R.id.custom),
+                                        0),
+                                2),
                         isDisplayed()));
         editText2.perform(replaceText("scripps_aviary"), closeSoftKeyboard());
 
@@ -194,12 +241,12 @@ public class ReverseUITest {
 
         ViewInteraction editText3 = onView(
                 allOf(childAtPosition(
-                        childAtPosition(
-                                withId(android.R.id.custom),
-                                0),
-                        2),
+                                childAtPosition(
+                                        withId(android.R.id.custom),
+                                        0),
+                                2),
                         isDisplayed()));
-        editText3.perform(replaceText("intxn_hippo_monkey_trails"), closeSoftKeyboard());
+        editText3.perform(replaceText("crocodile"), closeSoftKeyboard());
 
         ViewInteraction materialButton8 = onView(
                 allOf(withId(android.R.id.button1), withText("Submit"),
