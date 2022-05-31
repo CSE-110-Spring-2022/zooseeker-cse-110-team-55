@@ -57,9 +57,9 @@ public class PlanViewModelTest {
     public void testCurExhibitDist() {
         assertEquals(new Integer(90), vm.curExhibitDist.get());
         vm.getDirectionsToNextExhibit();
-        assertEquals(new Integer(150), vm.curExhibitDist.get());
-        vm.getDirectionsToNextExhibit();
         assertEquals(new Integer(240), vm.curExhibitDist.get());
+        vm.getDirectionsToNextExhibit();
+        assertEquals(new Integer(0), vm.curExhibitDist.get());
     }
 
     @Test
