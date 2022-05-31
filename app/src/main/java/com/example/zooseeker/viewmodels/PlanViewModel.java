@@ -487,5 +487,11 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
         updateCurrentDirections(detailedDirectionToggle.getValue());
         route.updateDistances();
         updateObservables();
+
+        // Update shared preferences
+        SharedPreferences sharedPreferences = app.getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(CURR_INDEX, curExhibit + 1);
+        editor.apply();
     }
 }

@@ -102,8 +102,7 @@ public class DirectionActivity extends AppCompatActivity {
         for (int i = 0; i < curr_index; i++){
             vm.nextExhibitCommand.execute(this);
         }
-
-
+        
         vm.closestExhibit.observe(this, s ->
                 Alert.alert(this,
                         "Uh oh!",
