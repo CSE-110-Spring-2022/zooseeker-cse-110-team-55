@@ -79,7 +79,6 @@ public class HomeActivity extends AppCompatActivity implements AnimalAdapter.OnA
             viewModel.setAnimals(animals);
         }
 
-        // TODO: Load last known location
         // Load shared preferences and launch direction activity if direction index != -1
         int curr_index = sharedPreferences.getInt(CURR_INDEX, -1);
         if (curr_index != -1) {

@@ -1,6 +1,7 @@
 package com.example.zooseeker.viewmodels;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.example.zooseeker.util.Constant.ANIMALS_ID;
 import static com.example.zooseeker.util.Constant.CURR_INDEX;
 import static com.example.zooseeker.util.Constant.SHARED_PREF;
 import static com.example.zooseeker.util.Helper.getLast;
@@ -25,12 +26,16 @@ import com.example.zooseeker.models.Graph.GraphData.GraphEdge;
 import com.example.zooseeker.models.Graph.GraphData.GraphNode;
 import com.example.zooseeker.models.Graph.NodeInfo;
 import com.example.zooseeker.models.Route;
+import com.example.zooseeker.models.db.Animal;
 import com.example.zooseeker.repositories.AnimalDatabase;
 import com.example.zooseeker.repositories.AnimalItemDao;
 import com.example.zooseeker.util.Alert;
 import com.example.zooseeker.util.Alert.AlertHandler;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -40,8 +45,6 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
     private Graph graph;
     private Route route;
     private AnimalItemDao repository;
-    private GraphNode startNode;
-    private GraphNode endNode;
 
     private int curExhibit = -1;
     private List<List<GraphNode>> _plan;
@@ -245,6 +248,7 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
         ArrayList<DirectionItem> newDir = new ArrayList<>();
         // Add all nodes from current direction set to nodes
         List<GraphNode> nodes = new ArrayList<>(plan.get(exhibitNum));
+        if (nodes.size() == 1) return new ArrayList<>();
 
         if (nodes.size() == 1) return new ArrayList<>();
 
@@ -286,6 +290,7 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
         ArrayList<DirectionItem> newDir = new ArrayList<>();
         // Add all nodes from current direction set to nodes
         List<GraphNode> nodes = new ArrayList<>(plan.get(exhibitNum));
+        if (nodes.size() == 1) return new ArrayList<>();
 
         if (nodes.size() == 1) return new ArrayList<>();
 
@@ -401,7 +406,6 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
         }
 
         // Create plan through remaining exhibits
-        curExhibit = 0;
         route.createRouteThroughExhibits(remaining, start.id, "entrance_exit_gate");
         if (route.getRoute().get(0).size() <= 1) {
             route.getRoute().remove(0);
@@ -418,6 +422,7 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
     public void rejectHandler() { }
 
     public boolean reverseExhibit(){
+        GraphNode startNode, endNode;
         // Get start node
         if(lastKnownLocation.getValue() == null){
             startNode = route.getRoute().get(0).get(0);
@@ -448,6 +453,39 @@ public class PlanViewModel extends AndroidViewModel implements AlertHandler {
     }
 
     public void skipNextExhibit() {
-        // TODO Implement the logic to skip next exhibit
+        // Get start node
+        GraphNode startNode;
+        GraphNode endNode = graph.nodes.get("entrance_exit_gate");
+
+        if (lastKnownLocation.getValue() == null){
+            startNode = route.getRoute().get(0).get(0);
+        } else {
+            startNode = graph.nodes.get(exhibitAtLocation(lastKnownLocation.getValue()).id);
+        }
+
+        var remaining = new ArrayList<GraphNode>();
+
+        int i = curExhibit + 1;
+        for (; i < route.getRoute().size() - 1; i++){
+            remaining.add(getLast(_plan.get(i)));
+        }
+
+        // Create plan through remaining exhibits
+        var newPath = route.createShortestRoute(remaining, startNode, endNode);
+        i = curExhibit;
+        // Remove old exhibits
+        while(i < route.getRoute().size()){
+            route.getRoute().remove(i);
+        }
+        // Add new exhibits
+        for (var path: newPath){
+            route.getRoute().add(path);
+        }
+
+        // Update plan
+        setPlan(route.getRoute());
+        updateCurrentDirections(detailedDirectionToggle.getValue());
+        route.updateDistances();
+        updateObservables();
     }
 }
